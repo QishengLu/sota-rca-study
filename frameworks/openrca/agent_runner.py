@@ -20,17 +20,13 @@ import re
 import sys
 from pathlib import Path
 
-sys.path.insert(0, "/home/nn/SOTA-agents/RolloutRunner")
-from src.usage_tracker import UsageTracker
+try:
+    from sota_rca.tracker import auto_install
+    _tracker = auto_install()
+except ImportError:
+    _tracker = None  # sota_rca not on PYTHONPATH; tracker disabled
 
-_tracker = UsageTracker()
-_tracker.install_openai_hooks()
 
-# 清理 RolloutRunner 路径和 src 模块缓存，避免与本项目的 src 包冲突
-sys.path.remove("/home/nn/SOTA-agents/RolloutRunner")
-for _mod in list(sys.modules):
-    if _mod == "src" or _mod.startswith("src."):
-        del sys.modules[_mod]
 
 
 from dotenv import load_dotenv

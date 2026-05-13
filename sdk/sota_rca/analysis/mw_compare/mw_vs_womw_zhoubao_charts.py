@@ -23,7 +23,7 @@ from matplotlib import font_manager
 
 # Register CJK font so 中文 labels render correctly
 for path in (
-    "/home/nn/.local/share/fonts/LXGWWenKai-Regular.ttf",
+    str(Path.home() / ".local" / "share" / "fonts" / "LXGWWenKai-Regular.ttf"),
     "/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc",
 ):
     if os.path.exists(path):

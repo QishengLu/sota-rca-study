@@ -31,7 +31,8 @@ def load_catalog(catalog_path: str | Path | None = None) -> dict[str, ModelSpec]
     """
     if catalog_path is None:
         # Default: repo's configs/models/catalog.yaml
-        catalog_path = Path(__file__).resolve().parent.parent.parent.parent / "configs" / "models" / "catalog.yaml"
+        # __file__: <repo>/sdk/sota_rca/model_env.py  → parents[2] = <repo>
+        catalog_path = Path(__file__).resolve().parents[2] / "configs" / "models" / "catalog.yaml"
     catalog_path = Path(catalog_path)
     with open(catalog_path) as f:
         data = yaml.safe_load(f)

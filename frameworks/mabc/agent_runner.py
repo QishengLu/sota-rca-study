@@ -21,19 +21,8 @@ os.chdir(MABC_ROOT)
 
 # Optional: hook into usage tracker if available
 try:
-    sys.path.insert(0, "/home/nn/SOTA-agents/RolloutRunner")
-    from src.usage_tracker import UsageTracker
-    _tracker = UsageTracker()
-    _tracker.install_openai_hooks()
-    # 清理 RolloutRunner 路径和 src 模块缓存，避免与本项目的 src 包冲突
-    sys.path.remove("/home/nn/SOTA-agents/RolloutRunner")
-    for _mod in list(sys.modules):
-        if _mod == "src" or _mod.startswith("src."):
-            del sys.modules[_mod]
-except ImportError:
-    _tracker = None
-
-
+    from sota_rca.tracker import auto_install
+    _tracker = auto_install()
 def extract_case_name_from_data_dir(data_dir):
     """Extract case name from RolloutRunner data_dir path.
 

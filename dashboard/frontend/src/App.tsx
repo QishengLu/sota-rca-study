@@ -4,6 +4,7 @@ import { OverviewPage } from './pages/OverviewPage';
 import { CaseListPage } from './pages/CaseListPage';
 import { CaseDetailPage } from './pages/CaseDetailPage';
 import { ComparisonPage } from './pages/ComparisonPage';
+import { MatrixView } from './pages/MatrixView';
 
 function App() {
   return (
@@ -13,6 +14,8 @@ function App() {
         <Route path="cases" element={<CaseListPage />} />
         <Route path="cases/:id" element={<CaseDetailPage />} />
         <Route path="comparison" element={<ComparisonPage />} />
+        <Route path="matrix" element={<MatrixView />} />
+        <Route path="matrix/:runId" element={<MatrixView />} />
       </Route>
     </Routes>
   );

@@ -90,6 +90,20 @@ if ! command -v claude >/dev/null 2>&1; then
     yellow "Install: npm install -g @anthropic-ai/claude-code-cli@latest"
 fi
 
+# ---------- 9.5. Dashboard frontend (npm install + build) ----------
+FRONTEND_DIR="$REPO_DIR/dashboard/frontend"
+if [[ -d "$FRONTEND_DIR" ]] && command -v npm >/dev/null 2>&1; then
+    cyan "==> Building dashboard frontend"
+    cd "$FRONTEND_DIR"
+    if [[ ! -d node_modules ]]; then
+        npm install --no-audit --no-fund || yellow "npm install had issues (non-fatal)"
+    fi
+    npm run build 2>&1 | tail -5 || yellow "frontend build failed (non-fatal; can rebuild via run_dashboard.py --build)"
+    cd "$REPO_DIR"
+else
+    yellow "Skipping frontend build (no node/npm; dashboard --mode dev still works without build)"
+fi
+
 # ---------- 10. doctor check ----------
 cyan "==> Running doctor.py"
 uv run python "$REPO_DIR/infra/doctor.py" || yellow "doctor.py reported issues — review and fix"

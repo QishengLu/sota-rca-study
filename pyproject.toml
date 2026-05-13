@@ -37,8 +37,7 @@ dependencies = [
     "langchain-openai>=0.2",
     "langchain-google-genai>=2.0",
 
-    # Orchestrator
-    "asyncio>=3.4",
+    # Orchestrator (asyncio is stdlib)
     "rich>=13.0",
     "pyyaml>=6.0",
     "typer>=0.12",
@@ -75,13 +74,13 @@ sota-rca = "sota_rca.cli:main"
 
 [project.entry-points."llm_eval.agents"]
 # 6 个 agent 通过 setuptools entry-point 注册到 aegis v3
-# 在各 agent submodule 的 pyproject.toml 中各自注册 — 这里只是文档参考:
-# thinkdepthai = "thinkdepthai.agents.eval_agent:ThinkDepthAgent"
-# aiq          = "aiq.agents.eval_agent:AiqAgent"
-# taskweaver   = "taskweaver.agents.eval_agent:TaskWeaverAgent"
-# openrca      = "openrca.agents.eval_agent:OpenRCAAgent"
-# claudecode   = "claudecode.agents.eval_agent:ClaudeCodeAgent"
-# mabc         = "mabc.agents.eval_agent:MabcAgent"
+# 这些类位于 frameworks/<name>/src/<pkg>/agents/eval_agent.py
+thinkdepthai = "thinkdepthai.agents.eval_agent:ThinkDepthAIEvalAgent"
+aiq          = "aiq_rca.agents.eval_agent:AIQEvalAgent"
+taskweaver   = "taskweaver_rca.agents.eval_agent:TaskWeaverEvalAgent"
+openrca      = "openrca.agents.eval_agent:OpenRCAEvalAgent"
+claudecode   = "claudecode_rca.agents.eval_agent:ClaudeCodeEvalAgent"
+mabc         = "mabc_rca.agents.eval_agent:MABCEvalAgent"
 
 [build-system]
 requires = ["hatchling"]

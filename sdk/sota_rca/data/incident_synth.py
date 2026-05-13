@@ -8,7 +8,9 @@ root_services / n_alarm_svc / system), which we recompose into the same
 """
 from __future__ import annotations
 
-from datetime import datetime, UTC
+from datetime import datetime, timezone
+
+UTC = timezone.utc
 
 
 def build_incident_description(case) -> str:

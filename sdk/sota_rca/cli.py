@@ -92,7 +92,7 @@ def matrix_cmd(
 
     # Hand off to scripts/run_matrix.py for actual execution
     import subprocess
-    repo_root = Path(__file__).resolve().parent.parent.parent.parent
+    repo_root = Path(__file__).resolve().parents[2]
     cmd = ["uv", "run", "python", str(repo_root / "scripts" / "run_matrix.py"), str(config)]
     subprocess.run(cmd, check=True)
 
@@ -108,7 +108,7 @@ def dashboard_cmd(
 ) -> None:
     """Launch dashboard."""
     import subprocess
-    repo_root = Path(__file__).resolve().parent.parent.parent.parent
+    repo_root = Path(__file__).resolve().parents[2]
     script = repo_root / "dashboard" / "run_dashboard.py"
     if not script.exists():
         typer.echo(f"Dashboard launcher not found at {script}", err=True)
@@ -124,7 +124,7 @@ def dashboard_cmd(
 def doctor_cmd() -> None:
     """Run environment check."""
     import subprocess
-    repo_root = Path(__file__).resolve().parent.parent.parent.parent
+    repo_root = Path(__file__).resolve().parents[2]
     subprocess.run(["uv", "run", "python", str(repo_root / "infra" / "doctor.py")])
 
 

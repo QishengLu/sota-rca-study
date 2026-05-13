@@ -13,22 +13,18 @@ import os
 import sys
 from pathlib import Path
 
-sys.path.insert(0, "/home/nn/SOTA-agents/RolloutRunner")
-from src.usage_tracker import UsageTracker
-
-_tracker = UsageTracker()
-_tracker.install_openai_hooks()
+try:
+    from sota_rca.tracker import auto_install
+    _tracker = auto_install()
+except ImportError:
+    _tracker = None  # sota_rca not on PYTHONPATH; tracker disabled
 
 # 根据模型选择 hook：Claude 走 Anthropic SDK，其余走 OpenAI SDK
 _RCA_MODEL = os.environ.get("RCA_MODEL", "claude-sonnet-4-6")
 if _RCA_MODEL.startswith("claude"):
     _tracker.install_anthropic_hooks()
 
-# 清理 RolloutRunner 路径和 src 模块缓存，避免与本项目的 src 包冲突
-sys.path.remove("/home/nn/SOTA-agents/RolloutRunner")
-for _mod in list(sys.modules):
-    if _mod == "src" or _mod.startswith("src."):
-        del sys.modules[_mod]
+
 
 
 from dotenv import load_dotenv

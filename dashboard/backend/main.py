@@ -11,7 +11,7 @@ if __name__ == "__main__":
     sys.path.insert(0, str(Path(__file__).parent))
 
 from api.deps import init_demo_mode
-from api.routes import analysis, filters, metrics, samples
+from api.routes import analysis, filters, matrix, metrics, samples
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -41,6 +41,7 @@ app.include_router(filters.router, prefix="/api/v1", tags=["filters"])
 app.include_router(metrics.router, prefix="/api/v1", tags=["metrics"])
 app.include_router(samples.router, prefix="/api/v1", tags=["samples"])
 app.include_router(analysis.router, prefix="/api/v1", tags=["analysis"])
+app.include_router(matrix.router, prefix="/api/v1", tags=["matrix"])
 
 
 @app.on_event("startup")
