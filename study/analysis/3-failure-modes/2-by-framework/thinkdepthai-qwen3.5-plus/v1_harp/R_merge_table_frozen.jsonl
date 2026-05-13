@@ -1,0 +1,29 @@
+{"agent": "aiq", "per_agent_R": "R_volume_anchor", "per_agent_count": 24, "unified_R": "U1_LoudnessAnchorOverSilentVictim", "kind": "unified"}
+{"agent": "aiq", "per_agent_R": "R_upstream_stop", "per_agent_count": 16, "unified_R": "U1_LoudnessAnchorOverSilentVictim", "kind": "unified"}
+{"agent": "aiq", "per_agent_R": "R_silent_fault_blind", "per_agent_count": 15, "unified_R": "U1_LoudnessAnchorOverSilentVictim", "kind": "unified"}
+{"agent": "aiq", "per_agent_R": "R_baseline_unchecked", "per_agent_count": 17, "unified_R": "U2_ChronicAmbientNoiseAnchor", "kind": "unified"}
+{"agent": "aiq", "per_agent_R": "R_name_twin_confusion", "per_agent_count": 8, "unified_R": "U4_NameTwinSiblingConfusion", "kind": "unified", "analytical_only": true}
+{"agent": "aiq", "per_agent_R": "R_hub_fabrication", "per_agent_count": 12, "unified_R": "aiq.R_hub_fabrication", "kind": "framework_specific_analytical"}
+{"agent": "aiq", "per_agent_R": "R_correct_then_reversed", "per_agent_count": 13, "unified_R": "aiq.R_correct_then_reversed", "kind": "framework_specific_analytical", "F_candidate": true}
+{"agent": "aiq", "per_agent_R": "R_compress_drift", "per_agent_count": 8, "unified_R": "aiq.R_compress_drift", "kind": "framework_specific_analytical", "F_candidate": true}
+{"agent": "claudecode", "per_agent_R": "R1_SilentOriginShadowedByNoisyNeighbor", "per_agent_count": 29, "unified_R": "U1_LoudnessAnchorOverSilentVictim", "kind": "unified"}
+{"agent": "claudecode", "per_agent_R": "R2_ChronicInfraNoiseAnchored_RabbitMQDNS", "per_agent_count": 24, "unified_R": "U2_ChronicAmbientNoiseAnchor", "kind": "unified"}
+{"agent": "claudecode", "per_agent_R": "R3_FabricatedAncestorOrBaselineLog", "per_agent_count": 11, "unified_R": "U2_ChronicAmbientNoiseAnchor", "kind": "unified"}
+{"agent": "claudecode", "per_agent_R": "R4_OutermostReceiverOrInvertedEdge", "per_agent_count": 17, "unified_R": "U3_EdgeDirectionOrRegionEndpointError", "kind": "unified"}
+{"agent": "claudecode", "per_agent_R": "R5_SimilarNameSiblingConfused", "per_agent_count": 10, "unified_R": "U4_NameTwinSiblingConfusion", "kind": "unified"}
+{"agent": "claudecode", "per_agent_R": "R6_InfraLayerSkipped_AppLayerAnchored", "per_agent_count": 7, "unified_R": "claudecode.R6_InfraLayerSkipped", "kind": "framework_specific_analytical", "analytical_only": true}
+{"agent": "claudecode", "per_agent_R": "R7_JVMSymptomMisreadAsDB", "per_agent_count": 4, "unified_R": "claudecode.R7_JVMSymptomMisreadAsDB", "kind": "framework_specific_analytical"}
+{"agent": "sonnet", "per_agent_R": "R_EdgeDirectionDefault", "per_agent_count": 19, "unified_R": "U3_EdgeDirectionOrRegionEndpointError", "kind": "unified"}
+{"agent": "sonnet", "per_agent_R": "R_DownstreamLeafAnchor", "per_agent_count": 12, "unified_R": "U1_LoudnessAnchorOverSilentVictim", "kind": "unified"}
+{"agent": "sonnet", "per_agent_R": "R_ChronicNoiseAsActiveFault", "per_agent_count": 7, "unified_R": "U2_ChronicAmbientNoiseAnchor", "kind": "unified"}
+{"agent": "sonnet", "per_agent_R": "R_OscillationToCompromisePair", "per_agent_count": 4, "unified_R": "sonnet.R_OscillationToCompromisePair", "kind": "framework_specific_analytical"}
+{"agent": "sonnet", "per_agent_R": "R_NarrativeOverMatchedMagnitude", "per_agent_count": 3, "unified_R": "sonnet.R_NarrativeOverMatchedMagnitude", "kind": "framework_specific_analytical", "analytical_only": true}
+{"agent": "sonnet", "per_agent_R": "R_RestartWindowDirectionInversion", "per_agent_count": 3, "unified_R": "U3_EdgeDirectionOrRegionEndpointError", "kind": "unified"}
+{"agent": "sonnet", "per_agent_R": "R_SilenceMisreadAsPaused", "per_agent_count": 2, "unified_R": "U5_SilenceReadAsHealthOrPaused", "kind": "unified"}
+{"agent": "qwen", "per_agent_R": "R_A_SilentSourceReadAsHealthy", "per_agent_count": 15, "unified_R": "U5_SilenceReadAsHealthOrPaused", "kind": "unified"}
+{"agent": "qwen", "per_agent_R": "R_B_DownstreamMessengerBlamed", "per_agent_count": 32, "unified_R": "U1_LoudnessAnchorOverSilentVictim", "kind": "unified"}
+{"agent": "qwen", "per_agent_R": "R_C_AmbientNoiseAnchor", "per_agent_count": 26, "unified_R": "U2_ChronicAmbientNoiseAnchor", "kind": "unified"}
+{"agent": "qwen", "per_agent_R": "R_D_AmplitudeGreedWrongService", "per_agent_count": 12, "unified_R": "U1_LoudnessAnchorOverSilentVictim", "kind": "unified"}
+{"agent": "qwen", "per_agent_R": "R_E_PathOvershootPastInjection", "per_agent_count": 6, "unified_R": "qwen.R_E_PathOvershootPastInjection", "kind": "framework_specific_analytical"}
+{"agent": "qwen", "per_agent_R": "R_F_QueryDesignBuriesSignal", "per_agent_count": 5, "unified_R": "qwen.R_F_QueryDesignBuriesSignal", "kind": "framework_specific_analytical"}
+{"agent": "qwen", "per_agent_R": "R_G_CausalInversionOrFabrication", "per_agent_count": 9, "unified_R": "U3_EdgeDirectionOrRegionEndpointError", "kind": "unified"}

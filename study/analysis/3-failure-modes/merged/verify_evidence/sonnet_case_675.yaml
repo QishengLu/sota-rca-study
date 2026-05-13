@@ -1,0 +1,650 @@
+case_id: sonnet.675
+framework: thinkdepthai-claude-sonnet-4.6
+data_dir: /home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-claude-sonnet-4.6/data_4901f131
+gt_from_injection_json:
+  fault_type: HTTPRequestReplaceMethod
+  fault_category: HTTPFault
+  injection_name: ts1-ts-route-plan-service-request-replace-method-bn6rxm
+  gt_services:
+  - ts-route-plan-service
+  - ts-route-service
+  source_service: null
+  target_service: null
+  start_time: '2025-07-21T19:24:57Z'
+  end_time: '2025-07-21T19:28:56Z'
+  display_config:
+    duration: 4
+    injection_point:
+      app_name: ts-route-plan-service
+      method: GET
+      route: /api/v1/routeservice/routes/*
+      server_address: ts-route-service
+      server_port: '8080'
+    namespace: ts
+    replace_method: OPTIONS
+gt_from_causal_graph_json:
+  root_causes:
+  - ts-route-plan-service
+  alarm_nodes:
+  - span|loadgenerator::HTTP POST http://ts-ui-dashboard:8080/api/v1/travelplanservice/travelPlan/minStation
+  - span|loadgenerator::HTTP POST http://ts-ui-dashboard:8080/api/v1/travelplanservice/travelPlan/cheapest
+agent_predicted:
+  root_causes:
+  - ts-travel-service
+  - ts-travel2-service
+  predicted_graph_nodes:
+  - ts-travel-service
+  - ts-travel2-service
+  - ts-route-plan-service
+  - ts-travel-plan-service
+  - ts-ui-dashboard
+  - loadgenerator
+raw_sql_count_total: 50
+raw_sql_list_sample:
+- "\nSELECT service_name, span_name, attr_status_code, attr_http_response_status_code, \n       COUNT(*) as span_count,\n       AVG(duration) as avg_duration_ns,\n       MAX(duration) as max_duration_ns,\n\
+  \       SUM(CASE WHEN attr_status_code = 'ERROR' OR attr_http_response_status_code >= 500 THEN 1 ELSE 0 END) as error_count\nFROM abnormal_traces\nGROUP BY service_name, span_name, attr_status_code, attr_http_response_status_code\n\
+  ORDER BY error_count DESC, avg_duration_ns DESC\nLIMIT 30\n"
+- "\nSELECT service_name, span_name, attr_status_code, attr_http_response_status_code,\n       COUNT(*) as span_count,\n       AVG(duration) as avg_duration_ns\nFROM abnormal_traces\nWHERE span_name LIKE\
+  \ '%travelPlan%' OR span_name LIKE '%routePlan%'\n   OR service_name LIKE '%travel-plan%' OR service_name LIKE '%route-plan%'\nGROUP BY service_name, span_name, attr_status_code, attr_http_response_status_code\n\
+  ORDER BY span_count DESC\nLIMIT 30\n"
+- "\n-- Find a sample trace that shows the full chain for minStation errors\nSELECT trace_id, service_name, span_name, span_id, parent_span_id, \n       duration, attr_status_code, attr_http_response_status_code,\
+  \ time\nFROM abnormal_traces\nWHERE trace_id IN (\n    SELECT DISTINCT trace_id FROM abnormal_traces\n    WHERE span_name = 'POST /api/v1/travelplanservice/travelPlan/minStation'\n    AND attr_status_code\
+  \ = 'Error'\n    LIMIT 3\n)\nORDER BY trace_id, time\nLIMIT 50\n"
+- "\n-- Look at the GET span in ts-route-plan-service - what service is it calling?\n-- Also look for what happens in ts-route-plan-service beyond the GET\nSELECT trace_id, service_name, span_name, span_id,\
+  \ parent_span_id,\n       duration, attr_status_code, attr_http_response_status_code, time\nFROM abnormal_traces\nWHERE trace_id = '7106814042b838efd0dac9153707e706'\nORDER BY time\nLIMIT 50\n"
+- '
+
+  SELECT time, service_name, level, message
+
+  FROM abnormal_logs
+
+  WHERE service_name = ''ts-route-plan-service''
+
+  ORDER BY time
+
+  LIMIT 30
+
+  '
+- '
+
+  SELECT time, service_name, level, message
+
+  FROM abnormal_logs
+
+  WHERE service_name = ''ts-route-plan-service'' AND level IN (''SEVERE'', ''ERROR'', ''WARN'')
+
+  ORDER BY time
+
+  LIMIT 30
+
+  '
+- '
+
+  SELECT service_name, level, COUNT(*) as count
+
+  FROM abnormal_logs
+
+  GROUP BY service_name, level
+
+  ORDER BY service_name, level
+
+  LIMIT 50
+
+  '
+- "\n-- Check ts-travel-service errors in the abnormal period\nSELECT service_name, span_name, attr_status_code, attr_http_response_status_code,\n       COUNT(*) as count, AVG(duration) as avg_duration\n\
+  FROM abnormal_traces\nWHERE service_name IN ('ts-travel-service', 'ts-travel2-service')\nGROUP BY service_name, span_name, attr_status_code, attr_http_response_status_code\nORDER BY count DESC\nLIMIT\
+  \ 30\n"
+- '
+
+  SELECT service_name, level, COUNT(*) as count
+
+  FROM abnormal_logs
+
+  WHERE service_name IN (''ts-travel-service'', ''ts-travel2-service'', ''ts-route-plan-service'')
+
+  GROUP BY service_name, level
+
+  ORDER BY service_name, level
+
+  LIMIT 30
+
+  '
+- '
+
+  -- Find distinct services with severe/error logs
+
+  SELECT service_name, level, message, time
+
+  FROM abnormal_logs
+
+  WHERE level IN (''SEVERE'', ''ERROR'') AND service_name NOT IN (''ts-route-plan-service'')
+
+  ORDER BY time
+
+  LIMIT 30
+
+  '
+- '
+
+  SELECT DISTINCT metric, service_name
+
+  FROM abnormal_metrics
+
+  WHERE service_name LIKE ''%travel%''
+
+  ORDER BY service_name, metric
+
+  LIMIT 30
+
+  '
+- "\n-- Count SEVERE errors per time window for route-plan-service to see when they spike\nSELECT \n    DATE_TRUNC('minute', time) as minute,\n    COUNT(*) as severe_count\nFROM abnormal_logs\nWHERE service_name\
+  \ = 'ts-route-plan-service' AND level = 'SEVERE'\nGROUP BY DATE_TRUNC('minute', time)\nORDER BY minute\nLIMIT 30\n"
+- '
+
+  SELECT DISTINCT metric
+
+  FROM abnormal_metrics
+
+  WHERE service_name = ''ts-travel-service''
+
+  LIMIT 30
+
+  '
+- '
+
+  -- Compare CPU/memory for ts-travel-service between normal and abnormal
+
+  SELECT metric, service_name, AVG(value) as avg_value, MAX(value) as max_value
+
+  FROM abnormal_metrics
+
+  WHERE service_name IN (''ts-travel-service'', ''ts-travel2-service'')
+
+  AND metric IN (''container.cpu.usage'', ''container.memory.usage'', ''container.memory.working_set'')
+
+  GROUP BY metric, service_name
+
+  ORDER BY metric, service_name
+
+  LIMIT 30
+
+  '
+- '
+
+  SELECT metric, service_name, AVG(value) as avg_value, MAX(value) as max_value
+
+  FROM normal_metrics
+
+  WHERE service_name IN (''ts-travel-service'', ''ts-travel2-service'')
+
+  AND metric IN (''container.cpu.usage'', ''container.memory.usage'', ''container.memory.working_set'')
+
+  GROUP BY metric, service_name
+
+  ORDER BY metric, service_name
+
+  LIMIT 30
+
+  '
+- '
+
+  -- Check JVM metrics for ts-travel-service
+
+  SELECT metric, service_name, AVG(value) as avg_value, MAX(value) as max_value
+
+  FROM abnormal_metrics
+
+  WHERE service_name = ''ts-travel-service''
+
+  AND metric LIKE ''%jvm%''
+
+  GROUP BY metric, service_name
+
+  ORDER BY metric
+
+  LIMIT 20
+
+  '
+- "\n-- Check hubble network metrics for travel service\nSELECT metric, service_name, attr_destination_workload, attr_source_workload, \n       AVG(value) as avg_value, MAX(value) as max_value, COUNT(*)\
+  \ as count\nFROM abnormal_metrics\nWHERE metric LIKE '%hubble%'\nAND (attr_destination_workload LIKE '%travel%' OR attr_source_workload LIKE '%travel%')\nGROUP BY metric, service_name, attr_destination_workload,\
+  \ attr_source_workload\nORDER BY metric, avg_value DESC\nLIMIT 30\n"
+- '
+
+  -- Compare hubble metrics for travel service normal vs abnormal
+
+  SELECT DISTINCT metric
+
+  FROM abnormal_metrics
+
+  WHERE metric LIKE ''%hubble%''
+
+  LIMIT 20
+
+  '
+- '
+
+  -- Check network error metrics or drops for travel service
+
+  SELECT DISTINCT metric
+
+  FROM abnormal_metrics_sum
+
+  WHERE service_name = ''ts-travel-service''
+
+  LIMIT 30
+
+  '
+- '
+
+  -- Check jvm system cpu load for ts-travel-service in time series
+
+  SELECT time, metric, value
+
+  FROM abnormal_metrics
+
+  WHERE service_name = ''ts-travel-service''
+
+  AND metric = ''jvm.system.cpu.load_1m''
+
+  ORDER BY time
+
+  LIMIT 30
+
+  '
+raw_sql_substring_audit:
+  has_baseline_contrast_substring: false
+  has_call_tree_build_substring: true
+  has_trace_follow_substring: true
+  has_jvm_metric_substring: true
+  has_container_metric_substring: true
+  has_k8s_metric_substring: true
+  has_db_metric_substring: false
+  has_network_metric_substring: false
+  has_status_error_filter: true
+  has_status_unset_filter: false
+  where_service_name_filters:
+  - ts-route-plan-service
+  - ts-travel-service
+  - ts-travel2-service
+parquet_evidence:
+  top_error_services_abnormal_logs:
+  - service: ts-route-plan-service
+    count: 1044
+  - service: ts-food-service
+    count: 67
+  - service: ts-travel-plan-service
+    count: 66
+  - service: ts-delivery-service
+    count: 48
+  - service: ts-notification-service
+    count: 47
+  - service: ts-order-service
+    count: 16
+  - service: ts-preserve-service
+    count: 16
+  top_error_services_normal_logs:
+  - service: ts-food-service
+    count: 228
+  - service: ts-delivery-service
+    count: 48
+  - service: ts-notification-service
+    count: 48
+  - service: ts-preserve-service
+    count: 37
+  - service: ts-order-service
+    count: 37
+  gt_service_abnormal_log_error_count:
+    ts-route-plan-service: 1044
+  gt_service_normal_log_error_count: {}
+  gt_service_status_code_distribution:
+    ts-route-service:
+      Unset: 8618
+    ts-route-plan-service:
+      Error: 2092
+      Unset: 2282
+  gt_service_abnormal_span_count:
+    ts-route-service: 8618
+    ts-route-plan-service: 4374
+  top_error_span_services:
+  - service: ts-route-plan-service
+    sc: Error
+    count: 2092
+  - service: ts-travel-plan-service
+    sc: Error
+    count: 198
+  - service: loadgenerator
+    sc: Error
+    count: 11
+  gt_latency_stats:
+  - service: ts-route-service
+    avg_ms: 1.9
+    max_ms: 820.5
+    p95_ms: 9.2
+    count: 8618
+  - service: ts-route-plan-service
+    avg_ms: 40.0
+    max_ms: 6937.3
+    p95_ms: 64.9
+    count: 4374
+  chronic_noise_detail:
+  - service: ts-food-service
+    normal_err: 228
+    abnormal_err: 67
+    ratio: 3.4
+  - service: ts-delivery-service
+    normal_err: 48
+    abnormal_err: 48
+    ratio: 1.0
+  - service: ts-notification-service
+    normal_err: 48
+    abnormal_err: 47
+    ratio: 1.02
+  - service: ts-order-service
+    normal_err: 37
+    abnormal_err: 16
+    ratio: 2.31
+  - service: ts-preserve-service
+    normal_err: 37
+    abnormal_err: 16
+    ratio: 2.31
+  gt_span_name_breakdown:
+  - span_name: SELECT ts.route_distances
+    avg_ms: 0.5
+    count: 2097
+  - span_name: SELECT ts.route_stations
+    avg_ms: 0.5
+    count: 2097
+  - span_name: GET
+    avg_ms: 14.8
+    count: 1107
+  - span_name: BasicErrorController.error
+    avg_ms: 1.0
+    count: 1044
+  - span_name: RoutePlanController.getMinStopStations
+    avg_ms: 17.5
+    count: 1040
+  - span_name: OPTIONS /*
+    avg_ms: 2.2
+    count: 1040
+  - span_name: POST /api/v1/routeplanservice/routePlan/minStopStations
+    avg_ms: 24.8
+    count: 1040
+  - span_name: HttpOptionsHandler.handle
+    avg_ms: 0.1
+    count: 1040
+  - span_name: SELECT ts.route
+    avg_ms: 0.8
+    count: 415
+  - span_name: Transaction.commit
+    avg_ms: 0.8
+    count: 269
+  - span_name: RouteRepository.findById
+    avg_ms: 3.8
+    count: 147
+  - span_name: GET /api/v1/routeservice/routes/{routeId}
+    avg_ms: 7.8
+    count: 147
+  - span_name: Session.find route.entity.Route
+    avg_ms: 0.9
+    count: 147
+  - span_name: RouteController.queryById
+    avg_ms: 6.4
+    count: 147
+  - span_name: SELECT route
+    avg_ms: 1.8
+    count: 146
+  - span_name: RouteController.queryByIds
+    avg_ms: 9.5
+    count: 146
+  - span_name: POST /api/v1/routeservice/routes/byIds/
+    avg_ms: 11.1
+    count: 146
+  - span_name: RouteRepository.findByIds
+    avg_ms: 2.1
+    count: 146
+  - span_name: RouteRepository.findAll
+    avg_ms: 3.8
+    count: 122
+  - span_name: SELECT Route
+    avg_ms: 0.8
+    count: 122
+  gt_parent_child_pairs:
+  - - ts-route-plan-service
+    - ts-travel2-service
+  - - ts-route-plan-service
+    - ts-route-service
+  - - ts-travel-service
+    - ts-route-service
+  - - ts-basic-service
+    - ts-route-service
+  - - ts-route-plan-service
+    - ts-travel-service
+  - - ts-ui-dashboard
+    - ts-route-service
+  - - ts-travel-plan-service
+    - ts-route-plan-service
+  - - ts-travel2-service
+    - ts-route-service
+  gt_caller_distribution:
+  - caller: ts-route-service
+    count: 7163
+  - caller: ts-route-plan-service
+    count: 4338
+  - caller: ts-travel-plan-service
+    count: 1076
+  - caller: ts-basic-service
+    count: 198
+  - caller: ts-ui-dashboard
+    count: 122
+trajectory_reasoning_snippets:
+- idx: 0
+  text: I'll conduct a systematic Root Cause Analysis for the reported SLO violations. Let me start by discovering the available data.
+- idx: 2
+  text: 'Now let me get the schema for all 10 files at once:'
+- idx: 6
+  text: 'Now let me investigate the trace data and logs simultaneously:'
+- idx: 112
+  text: 'Based on my comprehensive investigation, I have identified the root cause and fault propagation path. Let me provide the final structured analysis.
+
+
+    ## Root Cause Analysis Summary
+
+
+    ### Key Findings
+
+
+    1. **Primary Evidence**: `ts-route-plan-service` logs show `java.net.SocketException: Connection reset` when calling both `ts-travel-service` and `ts-travel2-service` at ~19:24:58-59
+
+    2. **Cascade Effect**: After these connection resets, `ts-route-plan-service` throws **1040 NullPointerExceptions** — it fails to null-check the responses from travel services, causing HTTP 500 on all
+    `routePlan/minStopStations` requests
+
+    3. **Upstream Impact**: `ts-travel-plan-service` receives HTTP 500/503 from `ts-route-plan-service` on its calls, resulting in 66 errors on `/travelPlan/minStation`
+
+    4. **SLO Violation**: `ts-ui-dashboard` shows 18-20 second timeouts; `loadgenerator` reports error spans for both affected endpoints
+
+    5. **Travel Services Are Healthy**: `ts-travel-service` has zero error logs, low CPU utilization, and serves 40 other successful requests from `ts-ui-dashboard` — confirming a **selective connection
+    reset** only affecting the `ts-route-plan-service → ts-travel-service/ts-travel2-se'
+- idx: -1
+  text: "Based on my comprehensive investigation, I have identified the root cause and fault propagation path. Let me provide the final structured analysis.\n\n## Root Cause Analysis Summary\n\n### Key\
+    \ Findings\n\n1. **Primary Evidence**: `ts-route-plan-service` logs show `java.net.SocketException: Connection reset` when calling both `ts-travel-service` and `ts-travel2-service` at ~19:24:58-59\n\
+    2. **Cascade Effect**: After these connection resets, `ts-route-plan-service` throws **1040 NullPointerExceptions** — it fails to null-check the responses from travel services, causing HTTP 500 on all\
+    \ `routePlan/minStopStations` requests\n3. **Upstream Impact**: `ts-travel-plan-service` receives HTTP 500/503 from `ts-route-plan-service` on its calls, resulting in 66 errors on `/travelPlan/minStation`\n\
+    4. **SLO Violation**: `ts-ui-dashboard` shows 18-20 second timeouts; `loadgenerator` reports error spans for both affected endpoints\n5. **Travel Services Are Healthy**: `ts-travel-service` has zero\
+    \ error logs, low CPU utilization, and serves 40 other successful requests from `ts-ui-dashboard` — confirming a **selective connection reset** only affecting the `ts-route-plan-service → ts-travel-service/ts-travel2-service`\
+    \ path\n\n### Fault Propagation\n\n```\nts-travel-service (CONNECTION_RESET)\n        ↓\nts-travel2-service (CONNECTION_RESET)  \n        ↓  \nts-route-plan-service (HIGH_ERROR_RATE: 1040 NPEs → HTTP\
+    \ 500)\n        ↓\nts-travel-plan-service (HIGH_ERROR_RATE: 66 HTTP 500 errors)\n        ↓\nts-ui-dashboard (HIGH_LATENCY: 20s timeouts)\n        ↓\nloadgenerator (SLO VIOLATION)\n```\n\n---\n\n```json\n\
+    {\n  \"nodes\": [\n    {\n      \"component\": \"ts-travel-service\",\n      \"state\": [\"CONNECTION_RESET\"],\n      \"timestamp\": 1753129498\n    },\n    {\n      \"component\": \"ts-travel2-service\"\
+    ,\n      \"state\": [\"CONNECTION_RESET\"],\n      \"timestamp\": 1753129499\n    },\n    {\n      \"component\": \"ts-route-plan-service\",\n      \"state\": [\"HIGH_ERROR_RATE\"],\n      \"timestamp\"\
+    : 1753129502\n    },\n    {\n      \"component\": \"ts-travel-"
+- idx: -1
+  text: 'Now let me investigate the trace data and logs simultaneously:'
+gt_required_capabilities:
+  gt_is_silent: false
+  gt_is_loudest: true
+  chronic_noise_present: true
+  chronic_noise_carriers:
+  - ts-food-service
+  - ts-delivery-service
+  - ts-notification-service
+  - ts-order-service
+  - ts-preserve-service
+  required_metric_layer: none
+  gt_path_is_edge_fault: true
+  gt_has_name_twin: true
+  name_twin_candidates:
+  - ts-user-service
+  - ts-assurance-service
+  - ts-order-service
+  - ts-security-service
+  - ts-notification-service
+  - ts-travel-service
+  - ts-station-food-service
+  - ts-contacts-service
+  - ts-auth-service
+  - ts-config-service
+  - ts-inside-payment-service
+  - ts-travel2-service
+  - ts-preserve-service
+  - ts-basic-service
+  - ts-travel-plan-service
+  - ts-seat-service
+  - ts-consign-service
+  - ts-consign-price-service
+  - ts-delivery-service
+  - ts-price-service
+  - ts-verification-code-service
+  - ts-food-service
+  - ts-station-service
+  - ts-train-food-service
+  - ts-order-other-service
+  - ts-train-service
+  - ts-route-service
+  - ts-payment-service
+  - ts-user-service
+  - ts-assurance-service
+  - ts-order-service
+  - ts-security-service
+  - ts-notification-service
+  - ts-travel-service
+  - ts-station-food-service
+  - ts-route-plan-service
+  - ts-contacts-service
+  - ts-auth-service
+  - ts-config-service
+  - ts-inside-payment-service
+  - ts-travel2-service
+  - ts-preserve-service
+  - ts-basic-service
+  - ts-travel-plan-service
+  - ts-seat-service
+  - ts-consign-service
+  - ts-consign-price-service
+  - ts-delivery-service
+  - ts-price-service
+  - ts-verification-code-service
+  - ts-food-service
+  - ts-station-service
+  - ts-train-food-service
+  - ts-order-other-service
+  - ts-train-service
+  - ts-payment-service
+  gt_diluted_across_spans: false
+path_alignment:
+  gt_touched_in_trajectory: true
+  gt_neighbors_touched: {}
+  gt_neighbors_from_causal_graph:
+  - ts-travel-plan-service
+  agent_focus_services:
+  - service: ts-travel-service
+    count: 18
+  - service: ts-route-plan-service
+    count: 10
+  agent_predicted_rc_in_gt_neighborhood: false
+counterfactual:
+  PD1_baseline_contrast:
+    chronic_noise_in_data: true
+    predicted_rc_is_chronic_carrier: false
+    predicted_rc_error_ratios:
+      ts-travel-service:
+        normal: 0
+        abnormal: 0
+      ts-travel2-service:
+        normal: 0
+        abnormal: 0
+    if_run_would_reveal: false
+  PD2_call_tree_build:
+    gt_is_upstream_of_agent_focus: true
+    if_run_would_surface_gt: true
+  PD3_fault_layer_metric_probe:
+    metric_family_if_probed: none
+    gt_metric_anomaly_exists_in_parquet: null
+  PD4_named_candidate_not_isolated:
+    if_isolated_predicted_rc_show_healthy:
+      ts-travel-service: true
+      ts-travel2-service: true
+  R_correct_heuristic_would_reach_gt:
+    if_loudness_applied: true
+    if_baseline_diff_applied: true
+    if_edge_direction_applied: false
+    if_name_twin_check_applied: true
+  D_obstacle_is_structural: true
+parquet_queries_run:
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-claude-sonnet-4.6/data_4901f131/abnormal_logs.parquet') WHERE level IN ('ERROR','SEVERE')
+    GROUP BY 1 ORDER BY n DESC LIMIT 10
+  purpose: top_error_services_abnormal_logs
+  row_count: 7
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-claude-sonnet-4.6/data_4901f131/normal_logs.parquet') WHERE level IN ('ERROR','SEVERE')
+    GROUP BY 1 ORDER BY n DESC LIMIT 10
+  purpose: top_error_services_normal_logs
+  row_count: 5
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-claude-sonnet-4.6/data_4901f131/abnormal_logs.parquet') WHERE level IN ('ERROR','SEVERE')
+    AND service_name IN ('ts-route-plan-service','ts-route-service') GROUP BY 1
+  purpose: gt_service_abnormal_log_error_count
+  row_count: 1
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-claude-sonnet-4.6/data_4901f131/normal_logs.parquet') WHERE level IN ('ERROR','SEVERE')
+    AND service_name IN ('ts-route-plan-service','ts-route-service') GROUP BY 1
+  purpose: gt_service_normal_log_error_count
+  row_count: 0
+- sql: SELECT service_name, "attr.status_code" as sc, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-claude-sonnet-4.6/data_4901f131/abnormal_traces.parquet') WHERE
+    service_name IN ('ts-route-plan-service','ts-route-service') GROUP BY 1,2
+  purpose: gt_service_status_code_distribution
+  row_count: 3
+- sql: SELECT service_name, "attr.status_code" as sc, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-claude-sonnet-4.6/data_4901f131/abnormal_traces.parquet') WHERE
+    "attr.status_code" IN ('Error','ERROR') GROUP BY 1,2 ORDER BY n DESC LIMIT 5
+  purpose: top_error_span_services
+  row_count: 3
+- sql: SELECT service_name, AVG(duration)/1e6 AS avg_ms, MAX(duration)/1e6 AS max_ms, QUANTILE_CONT(duration, 0.95)/1e6 AS p95_ms, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-claude-sonnet-4.6/data_4901f131/abnormal_traces.parquet')
+    WHERE service_name IN ('ts-route-plan-service','ts-route-service') GROUP BY 1
+  purpose: gt_latency_stats
+  row_count: 2
+- sql: SELECT DISTINCT service_name FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-claude-sonnet-4.6/data_4901f131/abnormal_traces.parquet')
+  purpose: all_abnormal_trace_services
+  row_count: 29
+counterfactual_queries_run:
+- sql: SELECT span_name, AVG(duration)/1e6 AS avg_ms, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-claude-sonnet-4.6/data_4901f131/abnormal_traces.parquet') WHERE
+    service_name IN ('ts-route-plan-service','ts-route-service') GROUP BY 1 ORDER BY n DESC LIMIT 20
+  purpose: gt_span_name_breakdown
+  row_count: 20
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-claude-sonnet-4.6/data_4901f131/normal_logs.parquet') WHERE level IN ('ERROR','SEVERE')
+    AND service_name IN ('ts-travel-service','ts-travel2-service') GROUP BY 1
+  purpose: predicted_rc_normal_err
+  row_count: 0
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-claude-sonnet-4.6/data_4901f131/abnormal_logs.parquet') WHERE level IN ('ERROR','SEVERE')
+    AND service_name IN ('ts-travel-service','ts-travel2-service') GROUP BY 1
+  purpose: predicted_rc_abnormal_err
+  row_count: 0
+- sql: SELECT DISTINCT p.service_name, c.service_name FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-claude-sonnet-4.6/data_4901f131/abnormal_traces.parquet') c JOIN read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-claude-sonnet-4.6/data_4901f131/abnormal_traces.parquet')
+    p ON c.parent_span_id=p.span_id WHERE c.service_name IN ('ts-route-plan-service','ts-route-service') OR p.service_name IN ('ts-route-plan-service','ts-route-service') LIMIT 200
+  purpose: gt_parent_child_pairs
+  row_count: 10
+- sql: SELECT p.service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-claude-sonnet-4.6/data_4901f131/abnormal_traces.parquet') c JOIN read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-claude-sonnet-4.6/data_4901f131/abnormal_traces.parquet')
+    p ON c.parent_span_id=p.span_id WHERE c.service_name IN ('ts-route-plan-service','ts-route-service') GROUP BY 1 ORDER BY n DESC LIMIT 5
+  purpose: gt_caller_distribution
+  row_count: 5
+classes_to_verify:
+- D4
+- PD_LateExplorationDegenerate
+- PD_MultiRCCompromise
+- PD_NamedCandidateNotIsolated
+- PD_NoBaselineContrast
+- U3_EdgeDirectionOrRegionEndpointError

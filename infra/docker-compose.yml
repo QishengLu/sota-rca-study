@@ -1,0 +1,31 @@
+version: "3.9"
+
+# PostgreSQL for multi-agent shared DB
+# - 端口可通过 ${POSTGRES_PORT:-5433} 自定义
+# - Apple Silicon: platform: linux/amd64 + Rosetta (postgres:16-alpine 有原生 arm64 但偶有兼容问题)
+#   如需原生 arm64, 注释 platform 行
+#
+# 启动: docker compose -f infra/docker-compose.yml up -d
+# 关闭: docker compose -f infra/docker-compose.yml down
+# 数据持久化: ./pgdata/ (gitignored)
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    # platform: linux/amd64   # 取消注释强制 amd64; arm64 Mac 默认走 native
+    container_name: sota-rca-pg
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-sota_rca_study}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "${POSTGRES_PORT:-5433}:5432"
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-sota_rca_study}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5

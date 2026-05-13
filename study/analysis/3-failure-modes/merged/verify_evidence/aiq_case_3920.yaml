@@ -1,0 +1,410 @@
+case_id: aiq.3920
+framework: aiq-qwen3.5-plus
+data_dir: /home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_f2ba318a
+gt_from_injection_json:
+  fault_type: JVMMemoryStress
+  fault_category: JVMChaos
+  injection_name: ts1-ts-payment-service-stress-5778hg
+  gt_services:
+  - ts-payment-service
+  source_service: null
+  target_service: null
+  start_time: '2025-08-05T09:24:48Z'
+  end_time: '2025-08-05T09:28:47Z'
+  display_config:
+    duration: 4
+    injection_point:
+      app_name: ts-payment-service
+      class_name: com.trainticket.service.PaymentServiceImpl
+      method_name: pay
+    mem_type: 1
+    namespace: ts
+gt_from_causal_graph_json:
+  root_causes:
+  - ts-payment-service
+  alarm_nodes:
+  - span|loadgenerator::HTTP POST http://ts-ui-dashboard:8080/api/v1/inside_pay_service/inside_payment
+agent_predicted:
+  root_causes:
+  - ts-inside-payment-service
+  predicted_graph_nodes:
+  - ts-inside-payment-service
+  - ts-ui-dashboard
+  - loadgenerator
+raw_sql_count_total: 77
+raw_sql_list_sample:
+- SELECT service_name, span_name, attr_http_response_status_code, attr_status_code, duration, COUNT(*) as count FROM abnormal_traces WHERE span_name LIKE '%inside_payment%' OR span_name LIKE '%inside_pay_service%'
+  GROUP BY service_name, span_name, attr_http_response_status_code, attr_status_code, duration ORDER BY count DESC LIMIT 50
+- SELECT trace_id, service_name, span_name, attr_http_response_status_code, attr_status_code, duration, parent_span_id FROM abnormal_traces WHERE attr_status_code = 'Error' OR attr_http_response_status_code
+  >= 400 ORDER BY time DESC LIMIT 100
+- SELECT service_name, attr_http_response_status_code, attr_status_code, COUNT(*) as error_count FROM abnormal_traces WHERE attr_status_code = 'Error' OR attr_http_response_status_code >= 400 GROUP BY service_name,
+  attr_http_response_status_code, attr_status_code ORDER BY error_count DESC LIMIT 30
+- SELECT trace_id, service_name, span_name, attr_http_response_status_code, duration FROM abnormal_traces WHERE attr_status_code = 'Error' AND service_name = 'ts-inside-payment-service' LIMIT 20
+- SELECT trace_id, span_id, parent_span_id, service_name, span_name, attr_http_response_status_code, attr_status_code, duration FROM abnormal_traces WHERE trace_id = '2d6e2c1da0b12b5c246fd1dcf00e09cc' ORDER
+  BY duration DESC LIMIT 30
+- SELECT trace_id, span_id, parent_span_id, service_name, span_name, attr_http_response_status_code, attr_status_code FROM abnormal_traces WHERE trace_id = '2d6e2c1da0b12b5c246fd1dcf00e09cc' AND span_name
+  = 'POST' AND attr_http_response_status_code = 503 LIMIT 10
+- SELECT service_name, level, message, COUNT(*) as count FROM abnormal_logs WHERE service_name = 'ts-inside-payment-service' AND level IN ('ERROR', 'WARN') GROUP BY service_name, level, message ORDER BY
+  count DESC LIMIT 20
+- SELECT time, service_name, level, message FROM abnormal_logs WHERE service_name = 'ts-inside-payment-service' AND level IN ('ERROR', 'WARN') ORDER BY time DESC LIMIT 30
+- SELECT service_name, span_name, attr_destination, COUNT(*) as count FROM abnormal_traces WHERE service_name = 'ts-inside-payment-service' AND attr_destination IS NOT NULL GROUP BY service_name, span_name,
+  attr_destination ORDER BY count DESC LIMIT 20
+- SELECT span_id, parent_span_id, service_name, span_name, attr_http_request_method, attr_http_response_status_code, duration FROM abnormal_traces WHERE trace_id = '2d6e2c1da0b12b5c246fd1dcf00e09cc' AND
+  span_id = 'a100be3edf64ebfb'
+- SELECT span_id, parent_span_id, service_name, span_name, attr_http_response_status_code FROM abnormal_traces WHERE trace_id = '2d6e2c1da0b12b5c246fd1dcf00e09cc' AND parent_span_id = 'a100be3edf64ebfb'
+  LIMIT 20
+- SELECT service_name, metric, value, attr_source, attr_destination FROM abnormal_metrics WHERE metric LIKE '%error%' OR metric LIKE '%http%' GROUP BY service_name, metric, value, attr_source, attr_destination
+  ORDER BY value DESC LIMIT 30
+- SELECT service_name, metric, value, time FROM abnormal_metrics WHERE service_name IN ('ts-inside-payment-service', 'ts-ui-dashboard', 'ts-order-service') AND metric LIKE '%error%' ORDER BY time DESC LIMIT
+  30
+- SELECT DISTINCT metric FROM abnormal_metrics WHERE service_name = 'ts-inside-payment-service' LIMIT 30
+- SELECT service_name, level, message, COUNT(*) as count FROM abnormal_logs GROUP BY service_name, level, message ORDER BY count DESC LIMIT 30
+- SELECT service_name, level, message, time FROM abnormal_logs WHERE level = 'ERROR' ORDER BY time DESC LIMIT 30
+- SELECT DISTINCT service_name FROM abnormal_traces ORDER BY service_name
+- SELECT trace_id, span_id, parent_span_id, service_name, span_name, attr_http_request_method, attr_http_response_status_code, duration FROM abnormal_traces WHERE trace_id = '2d6e2c1da0b12b5c246fd1dcf00e09cc'
+  AND (attr_http_response_status_code = 503 OR attr_status_code = 'Error') ORDER BY duration DESC LIMIT 20
+- SELECT trace_id, span_id, parent_span_id, service_name, span_name, attr_http_response_status_code FROM abnormal_traces WHERE parent_span_id IN ('a100be3edf64ebfb', '4bb160f92e69c11d', '0b5177a5c9118ddc',
+  '24ccf06d1108729d', 'b8ae7cd7051683c2') LIMIT 20
+- SELECT time, service_name, level, message, trace_id FROM abnormal_logs WHERE service_name = 'ts-inside-payment-service' ORDER BY time DESC LIMIT 50
+raw_sql_substring_audit:
+  has_baseline_contrast_substring: false
+  has_call_tree_build_substring: false
+  has_trace_follow_substring: true
+  has_jvm_metric_substring: false
+  has_container_metric_substring: false
+  has_k8s_metric_substring: false
+  has_db_metric_substring: false
+  has_network_metric_substring: false
+  has_status_error_filter: true
+  has_status_unset_filter: false
+  where_service_name_filters:
+  - ts-inside-payment-service
+  - ts-payment-service
+  - loadgenerator
+  - ts-order-service
+  - ts-ui-dashboard
+parquet_evidence:
+  top_error_services_abnormal_logs:
+  - service: ts-food-service
+    count: 275
+  - service: ts-preserve-service
+    count: 108
+  - service: ts-order-service
+    count: 108
+  - service: ts-notification-service
+    count: 48
+  - service: ts-delivery-service
+    count: 48
+  - service: ts-inside-payment-service
+    count: 19
+  - service: ts-payment-service
+    count: 1
+  top_error_services_normal_logs:
+  - service: ts-food-service
+    count: 203
+  - service: ts-preserve-service
+    count: 54
+  - service: ts-order-service
+    count: 54
+  - service: ts-notification-service
+    count: 48
+  - service: ts-delivery-service
+    count: 48
+  gt_service_abnormal_log_error_count:
+    ts-payment-service: 1
+  gt_service_normal_log_error_count: {}
+  gt_service_status_code_distribution:
+    ts-payment-service:
+      Unset: 235
+  gt_service_abnormal_span_count:
+    ts-payment-service: 235
+  top_error_span_services:
+  - service: ts-inside-payment-service
+    sc: Error
+    count: 57
+  - service: loadgenerator
+    sc: Error
+    count: 3
+  gt_latency_stats:
+  - service: ts-payment-service
+    avg_ms: 24.9
+    max_ms: 2278.0
+    p95_ms: 15.9
+    count: 235
+  chronic_noise_detail:
+  - service: ts-food-service
+    normal_err: 203
+    abnormal_err: 275
+    ratio: 0.74
+  - service: ts-preserve-service
+    normal_err: 54
+    abnormal_err: 108
+    ratio: 0.5
+  - service: ts-order-service
+    normal_err: 54
+    abnormal_err: 108
+    ratio: 0.5
+  - service: ts-notification-service
+    normal_err: 48
+    abnormal_err: 48
+    ratio: 1.0
+  - service: ts-delivery-service
+    normal_err: 48
+    abnormal_err: 48
+    ratio: 1.0
+  gt_span_name_breakdown:
+  - span_name: SELECT ts.payment
+    avg_ms: 0.5
+    count: 40
+  - span_name: SELECT ts
+    avg_ms: 0.6
+    count: 34
+  - span_name: Transaction.commit
+    avg_ms: 2.3
+    count: 21
+  - span_name: Session.merge com.trainticket.entity.Payment
+    avg_ms: 17.0
+    count: 20
+  - span_name: PaymentRepository.save
+    avg_ms: 20.5
+    count: 20
+  - span_name: INSERT ts.payment
+    avg_ms: 0.3
+    count: 20
+  - span_name: PaymentController.pay
+    avg_ms: 94.8
+    count: 19
+  - span_name: PaymentRepository.findByOrderId
+    avg_ms: 24.4
+    count: 19
+  - span_name: POST /api/v1/paymentservice/payment
+    avg_ms: 134.0
+    count: 19
+  - span_name: SELECT Payment
+    avg_ms: 1.8
+    count: 19
+  - span_name: SELECT ts.ts
+    avg_ms: 2.2
+    count: 2
+  - span_name: Session.find com.trainticket.entity.Payment
+    avg_ms: 65.6
+    count: 1
+  - span_name: PaymentRepository.findById
+    avg_ms: 91.4
+    count: 1
+  gt_parent_child_pairs:
+  - - ts-inside-payment-service
+    - ts-payment-service
+trajectory_reasoning_snippets:
+- idx: 4
+  text: 'Now I have the schema information. The investigation query focuses on the endpoint `http://ts-ui-dashboard:8080/api/v1/inside_pay_service/inside_payment`. Let me start by querying the abnormal
+    traces to find information about this specific endpoint, including HTTP status codes, latency, and error patterns.
+
+
+    '
+- idx: 6
+  text: 'I can see some interesting patterns. There are traces with HTTP 500 errors and "Error" status codes in `ts-inside-payment-service`. I also notice some very high duration values (like 20001709865,
+    20001399049 microseconds which is about 20 seconds). Let me investigate further by looking at the error traces and their propagation paths.
+
+
+    '
+- idx: 8
+  text: 'Let me reduce the limit and focus on specific columns to understand the error patterns better.
+
+
+    '
+- idx: 10
+  text: 'The errors are concentrated in `ts-inside-payment-service` with HTTP 500 and 503 status codes. Let me now look at the trace propagation to understand how errors flow through the system, and also
+    check the logs for error messages.
+
+
+    '
+- idx: 12
+  text: 'I see that `ts-inside-payment-service` has errors with HTTP 500 and 503 status codes. The "POST" span with 503 status code suggests there''s an outbound call that''s failing. Let me trace the full
+    call chain for one of these error traces to understand the propagation path.
+
+
+    '
+- idx: 14
+  text: 'This is very revealing! I can see the trace propagation:
+
+
+    1. `loadgenerator` → `ts-ui-dashboard` → `ts-inside-payment-service`
+
+    2. Within `ts-inside-payment-service`, there''s a "POST" span with HTTP 503 error
+
+    3. The "POST" span is a child of "InsidePaymentController.pay" which is a child of "POST /api/v1/inside_pay_service/inside_payment"
+
+
+    The 503 error on a "POST" span suggests `ts-inside-payment-service` is making an outbound HTTP call that''s failing. Let me check what service it''s calling by looking at the span details and also check
+    the logs for error messages.
+
+
+    '
+- idx: -1
+  text: "Based on my investigation, I have gathered strong evidence that **strengthens** the preliminary root cause graph. Here are my findings:\n\n## Evidence Summary\n\n### Root Cause: ts-inside-payment-service\n\
+    \n**Strong Evidence from Traces:**\n- **57 error traces** in ts-inside-payment-service vs only 3 in loadgenerator\n- All error traces show a consistent pattern:\n  - `POST /api/v1/inside_pay_service/inside_payment`\
+    \ → returns **HTTP 500**\n  - `InsidePaymentController.pay` → internal processing fails\n  - Internal `POST` call → returns **HTTP 503 (Service Unavailable)**\n- Average error duration: **~3.6 seconds**\
+    \ (extremely high latency indicating timeout/failure)\n\n**Evidence from Logs:**\n- Only 1 WARN log found: `\"[Inside Payment Service.pay][Order status Not allowed to Pay]\"`\n- This indicates a business\
+    \ logic failure or state validation issue within the payment service\n\n**Evidence from Metrics:**\n- No elevated error rate metrics found directly (metrics may be aggregated differently)\n- Container/pod\
+    \ metrics show normal resource usage (CPU ~1.5%, Memory ~24% of limit)\n- This suggests the issue is **application-level**, not infrastructure-related\n\n### Fault Propagation Path (Confirmed)\n\nThe\
+    \ trace data clearly shows the causal chain:\n\n1. **loadgenerator** → makes HTTP POST to `ts-ui-dashboard:8080/api/v1/inside_pay_service/inside_payment`\n2. **ts-ui-dashboard** → forwards request to\
+    \ ts-inside-payment-service (returns 200 to loadgenerator but request times out)\n3. **ts-inside-payment-service** → internal POST call fails with **503 Service Unavailable**, causing the entire transaction\
+    \ to fail with **500 Internal Server Error**\n\n### Refined Causal Graph\n\nThe preliminary graph is **well-supported** by the evidence. The only refinement needed is to clarify the state based on actual\
+    \ observed data:\n\n```json\n{\n  \"nodes\": [\n    {\n      \"component\": \"ts-inside-payment-service\",\n      \"state\": [\"HIGH_ERROR_RATE\", \"HIGH_LATENCY\"],\n      \"timestamp\": 1722850029000\n\
+    \    },\n    {\n      \"componen"
+- idx: -1
+  text: "Based on my comprehensive analysis of the telemetry data, I can now provide the final root cause analysis.\n\n## Root Cause Analysis Summary\n\n**Root Cause Service**: `ts-inside-payment-service`\n\
+    \n**Key Evidence**:\n1. **Error Concentration**: All 19 HTTP 500 and 503 errors are in `ts-inside-payment-service`\n2. **Log Evidence**: SEVERE logs show \"503 Service Unavailable: [upstream connect\
+    \ error... Connection refused]\"\n3. **Trace Evidence**: The call chain shows `InsidePaymentController.pay` making an outbound \"POST\" call that returns 503\n4. **Propagation**: Errors cascade from\
+    \ `ts-inside-payment-service` → `ts-ui-dashboard` → `loadgenerator`\n\n**Fault Propagation Path**:\n```\nts-inside-payment-service (ROOT CAUSE)\n    ↓ (503 Service Unavailable - Connection refused)\n\
+    ts-inside-payment-service returns HTTP 500\n    ↓\nts-ui-dashboard receives 500\n    ↓\nloadgenerator receives error response\n```\n\n```json\n{\n  \"nodes\": [\n    {\"component\": \"ts-inside-payment-service\"\
+    , \"state\": [\"HIGH_ERROR_RATE\"], \"timestamp\": 1722850029000},\n    {\"component\": \"ts-ui-dashboard\", \"state\": [\"HIGH_ERROR_RATE\"], \"timestamp\": 1722850030000},\n    {\"component\": \"\
+    loadgenerator\", \"state\": [\"HIGH_ERROR_RATE\"], \"timestamp\": 1722850031000}\n  ],\n  \"edges\": [\n    {\"source\": \"ts-inside-payment-service\", \"target\": \"ts-ui-dashboard\"},\n    {\"source\"\
+    : \"ts-ui-dashboard\", \"target\": \"loadgenerator\"}\n  ],\n  \"root_causes\": [\n    {\"component\": \"ts-inside-payment-service\", \"state\": [\"HIGH_ERROR_RATE\"], \"timestamp\": 1722850029000}\n\
+    \  ],\n  \"component_to_service\": {}\n}\n```"
+gt_required_capabilities:
+  gt_is_silent: false
+  gt_is_loudest: false
+  chronic_noise_present: true
+  chronic_noise_carriers:
+  - ts-food-service
+  - ts-preserve-service
+  - ts-order-service
+  - ts-notification-service
+  - ts-delivery-service
+  required_metric_layer: jvm
+  gt_path_is_edge_fault: false
+  gt_has_name_twin: true
+  name_twin_candidates:
+  - ts-user-service
+  - ts-assurance-service
+  - ts-order-service
+  - ts-security-service
+  - ts-notification-service
+  - ts-travel-service
+  - ts-cancel-service
+  - ts-station-food-service
+  - ts-route-plan-service
+  - ts-contacts-service
+  - ts-auth-service
+  - ts-config-service
+  - ts-inside-payment-service
+  - ts-travel2-service
+  - ts-preserve-service
+  - ts-basic-service
+  - ts-travel-plan-service
+  - ts-seat-service
+  - ts-consign-service
+  - ts-consign-price-service
+  - ts-delivery-service
+  - ts-price-service
+  - ts-verification-code-service
+  - ts-food-service
+  - ts-station-service
+  - ts-train-food-service
+  - ts-order-other-service
+  - ts-train-service
+  - ts-route-service
+  gt_diluted_across_spans: false
+path_alignment:
+  gt_touched_in_trajectory: true
+  gt_neighbors_touched:
+    ts-inside-payment-service: 26
+  gt_neighbors_from_causal_graph:
+  - ts-inside-payment-service
+  agent_focus_services:
+  - service: ts-inside-payment-service
+    count: 26
+  - service: ts-payment-service
+    count: 5
+  agent_predicted_rc_in_gt_neighborhood: true
+counterfactual:
+  PD1_baseline_contrast:
+    chronic_noise_in_data: true
+    predicted_rc_is_chronic_carrier: false
+    predicted_rc_error_ratios:
+      ts-inside-payment-service:
+        normal: 0
+        abnormal: 19
+    if_run_would_reveal: false
+  PD2_call_tree_build:
+    gt_is_upstream_of_agent_focus: false
+    if_run_would_surface_gt: false
+  PD3_fault_layer_metric_probe:
+    metric_family_if_probed: jvm
+    gt_metric_anomaly_exists_in_parquet: true
+    gt_metric_families_probed:
+    - jvm.cpu.recent_utilization
+    - jvm.system.cpu.load_1m
+    - jvm.system.cpu.utilization
+  PD4_named_candidate_not_isolated:
+    if_isolated_predicted_rc_show_healthy:
+      ts-inside-payment-service: false
+  R_correct_heuristic_would_reach_gt:
+    if_loudness_applied: false
+    if_baseline_diff_applied: true
+    if_edge_direction_applied: null
+    if_name_twin_check_applied: true
+  D_obstacle_is_structural: true
+parquet_queries_run:
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_f2ba318a/abnormal_logs.parquet') WHERE level IN ('ERROR','SEVERE') GROUP BY
+    1 ORDER BY n DESC LIMIT 10
+  purpose: top_error_services_abnormal_logs
+  row_count: 7
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_f2ba318a/normal_logs.parquet') WHERE level IN ('ERROR','SEVERE') GROUP BY 1
+    ORDER BY n DESC LIMIT 10
+  purpose: top_error_services_normal_logs
+  row_count: 5
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_f2ba318a/abnormal_logs.parquet') WHERE level IN ('ERROR','SEVERE') AND service_name
+    IN ('ts-payment-service') GROUP BY 1
+  purpose: gt_service_abnormal_log_error_count
+  row_count: 1
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_f2ba318a/normal_logs.parquet') WHERE level IN ('ERROR','SEVERE') AND service_name
+    IN ('ts-payment-service') GROUP BY 1
+  purpose: gt_service_normal_log_error_count
+  row_count: 0
+- sql: SELECT service_name, "attr.status_code" as sc, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_f2ba318a/abnormal_traces.parquet') WHERE service_name
+    IN ('ts-payment-service') GROUP BY 1,2
+  purpose: gt_service_status_code_distribution
+  row_count: 1
+- sql: SELECT service_name, "attr.status_code" as sc, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_f2ba318a/abnormal_traces.parquet') WHERE "attr.status_code"
+    IN ('Error','ERROR') GROUP BY 1,2 ORDER BY n DESC LIMIT 5
+  purpose: top_error_span_services
+  row_count: 2
+- sql: SELECT service_name, AVG(duration)/1e6 AS avg_ms, MAX(duration)/1e6 AS max_ms, QUANTILE_CONT(duration, 0.95)/1e6 AS p95_ms, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_f2ba318a/abnormal_traces.parquet')
+    WHERE service_name IN ('ts-payment-service') GROUP BY 1
+  purpose: gt_latency_stats
+  row_count: 1
+- sql: SELECT DISTINCT service_name FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_f2ba318a/abnormal_traces.parquet')
+  purpose: all_abnormal_trace_services
+  row_count: 30
+counterfactual_queries_run:
+- sql: SELECT span_name, AVG(duration)/1e6 AS avg_ms, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_f2ba318a/abnormal_traces.parquet') WHERE service_name
+    IN ('ts-payment-service') GROUP BY 1 ORDER BY n DESC LIMIT 20
+  purpose: gt_span_name_breakdown
+  row_count: 13
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_f2ba318a/normal_logs.parquet') WHERE level IN ('ERROR','SEVERE') AND service_name
+    IN ('ts-inside-payment-service') GROUP BY 1
+  purpose: predicted_rc_normal_err
+  row_count: 0
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_f2ba318a/abnormal_logs.parquet') WHERE level IN ('ERROR','SEVERE') AND service_name
+    IN ('ts-inside-payment-service') GROUP BY 1
+  purpose: predicted_rc_abnormal_err
+  row_count: 1
+- sql: SELECT DISTINCT p.service_name, c.service_name FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_f2ba318a/abnormal_traces.parquet') c JOIN read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_f2ba318a/abnormal_traces.parquet')
+    p ON c.parent_span_id=p.span_id WHERE c.service_name IN ('ts-payment-service') OR p.service_name IN ('ts-payment-service') LIMIT 200
+  purpose: gt_parent_child_pairs
+  row_count: 2
+- sql: SELECT DISTINCT metric FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_f2ba318a/abnormal_metrics.parquet') WHERE service_name IN ('ts-payment-service') AND metric
+    LIKE 'jvm.%' LIMIT 10
+  purpose: gt_metric_families_probed
+  row_count: 3
+classes_to_verify:
+- D6
+- PD_NamedCandidateNotIsolated
+- PD_NoBaselineContrast
+- PD_NoFaultLayerMetricProbe
+- U4_NameTwinSiblingConfusion
+- aiq.PD_ReflectionStageWithoutNewProbe
+- aiq.PD_StageEndsWithoutCommitment

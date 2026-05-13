@@ -1,0 +1,406 @@
+case_id: qwen.4258
+framework: thinkdepthai-qwen3.5-plus
+data_dir: /home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-qwen3.5-plus/data_f607bf13
+gt_from_injection_json:
+  fault_type: ContainerKill
+  fault_category: PodChaos
+  injection_name: ts3-ts-contacts-service-container-kill-262mnp
+  gt_services:
+  - ts-contacts-service
+  source_service: null
+  target_service: null
+  start_time: '2025-07-20T11:15:48Z'
+  end_time: '2025-07-20T11:19:48Z'
+  display_config:
+    duration: 4
+    injection_point:
+      app_label: ts-contacts-service
+      container_name: ts-contacts-service
+      pod_name: ts-contacts-service-5766d9977d-4fhn6
+    namespace: ts
+gt_from_causal_graph_json:
+  root_causes:
+  - ts-contacts-service
+  alarm_nodes:
+  - span|loadgenerator::HTTP GET http://ts-ui-dashboard:8080/api/v1/contactservice/contacts/account/{accountId}
+  - span|loadgenerator::HTTP POST http://ts-ui-dashboard:8080/api/v1/preserveservice/preserve
+agent_predicted:
+  root_causes:
+  - ts-ui-dashboard
+  predicted_graph_nodes:
+  - ts-ui-dashboard
+  - loadgenerator
+raw_sql_count_total: 43
+raw_sql_list_sample:
+- SELECT service_name, level, COUNT(*) as count FROM abnormal_logs GROUP BY service_name, level ORDER BY count DESC LIMIT 30
+- SELECT service_name, level, message, COUNT(*) as count FROM abnormal_logs WHERE level IN ('ERROR', 'WARN') GROUP BY service_name, level, message ORDER BY count DESC LIMIT 50
+- SELECT service_name, attr_status_code, COUNT(*) as count FROM abnormal_traces GROUP BY service_name, attr_status_code ORDER BY count DESC LIMIT 50
+- SELECT service_name, attr_status_code, attr_http_response_status_code, span_name, duration, trace_id, parent_span_id FROM abnormal_traces WHERE attr_status_code = 'Error' ORDER BY time ASC LIMIT 30
+- SELECT trace_id, span_id, parent_span_id, service_name, span_name, attr_status_code, attr_http_response_status_code, duration FROM abnormal_traces WHERE trace_id = 'd16b4494f435f081a83277563b6a3103' ORDER
+  BY time ASC
+- SELECT trace_id, span_id, parent_span_id, service_name, span_name, attr_status_code, attr_http_response_status_code, duration FROM abnormal_traces WHERE parent_span_id IN ('c1ba4b3b959b7c9c', '723b8ac5af250ff2',
+  '342467a94ccff60f', 'a239f6856908382f', '5f5914c3a063113c') ORDER BY time ASC LIMIT 50
+- SELECT trace_id, span_id, parent_span_id, service_name, span_name, attr_status_code, attr_http_response_status_code, duration FROM abnormal_traces WHERE service_name IN ('ts-contacts-service', 'ts-preserve-service')
+  ORDER BY time ASC LIMIT 50
+- SELECT service_name, COUNT(*) as count FROM abnormal_traces WHERE service_name IN ('ts-contacts-service', 'ts-preserve-service') GROUP BY service_name
+- SELECT trace_id, service_name, span_name, attr_status_code, attr_http_response_status_code FROM abnormal_traces WHERE service_name = 'ts-contacts-service' AND attr_status_code = 'Error' LIMIT 20
+- SELECT trace_id, service_name, span_name, attr_status_code, attr_http_response_status_code FROM abnormal_traces WHERE service_name = 'ts-preserve-service' AND attr_status_code = 'Error' LIMIT 20
+- SELECT service_name, metric, AVG(value) as avg_value, MAX(value) as max_value FROM abnormal_metrics WHERE metric LIKE '%error%' OR metric LIKE '%Error%' GROUP BY service_name, metric ORDER BY avg_value
+  DESC LIMIT 30
+- SELECT DISTINCT metric FROM abnormal_metrics LIMIT 30
+- SELECT service_name, metric, value, time FROM abnormal_metrics WHERE metric LIKE '%http%' AND value > 1 ORDER BY time DESC LIMIT 30
+- SELECT service_name, level, message, time FROM abnormal_logs WHERE service_name IN ('ts-contacts-service', 'ts-preserve-service') ORDER BY time DESC LIMIT 30
+- SELECT DISTINCT span_name FROM abnormal_traces WHERE service_name = 'ts-ui-dashboard' LIMIT 30
+- SELECT span_name FROM abnormal_traces WHERE service_name = 'ts-ui-dashboard' AND span_name LIKE '%contactservice%' LIMIT 10
+- SELECT trace_id, span_id, parent_span_id, service_name, span_name, attr_status_code FROM abnormal_traces WHERE trace_id IN (SELECT trace_id FROM abnormal_traces WHERE service_name = 'ts-ui-dashboard'
+  AND span_name LIKE '%contactservice%' LIMIT 5) ORDER BY trace_id, time ASC LIMIT 100
+- SELECT service_name, COUNT(*) as count FROM abnormal_traces WHERE parent_span_id IN (SELECT span_id FROM abnormal_traces WHERE service_name = 'ts-ui-dashboard') GROUP BY service_name LIMIT 20
+- SELECT trace_id, span_id, parent_span_id, service_name, span_name, attr_status_code, attr_http_response_status_code, duration FROM abnormal_traces WHERE service_name = 'ts-contacts-service' ORDER BY time
+  DESC LIMIT 30
+- SELECT service_name, metric, AVG(value) as avg_value, MAX(value) as max_value FROM abnormal_metrics WHERE service_name = 'ts-ui-dashboard' GROUP BY service_name, metric ORDER BY avg_value DESC LIMIT 30
+raw_sql_substring_audit:
+  has_baseline_contrast_substring: false
+  has_call_tree_build_substring: false
+  has_trace_follow_substring: true
+  has_jvm_metric_substring: false
+  has_container_metric_substring: false
+  has_k8s_metric_substring: true
+  has_db_metric_substring: false
+  has_network_metric_substring: false
+  has_status_error_filter: true
+  has_status_unset_filter: false
+  where_service_name_filters:
+  - ts-contacts-service
+  - ts-preserve-service
+  - ts-ui-dashboard
+  - ts-user-service
+  - ts-auth-service
+  - ts-verification-code-service
+parquet_evidence:
+  top_error_services_abnormal_logs:
+  - service: ts-delivery-service
+    count: 48
+  - service: ts-notification-service
+    count: 48
+  - service: ts-food-service
+    count: 46
+  - service: ts-ui-dashboard
+    count: 20
+  - service: ts-order-service
+    count: 13
+  - service: ts-preserve-service
+    count: 13
+  top_error_services_normal_logs:
+  - service: ts-food-service
+    count: 96
+  - service: ts-delivery-service
+    count: 48
+  - service: ts-notification-service
+    count: 48
+  - service: ts-preserve-service
+    count: 14
+  - service: ts-order-service
+    count: 14
+  gt_service_abnormal_log_error_count: {}
+  gt_service_normal_log_error_count: {}
+  gt_service_status_code_distribution:
+    ts-contacts-service:
+      Unset: 490
+  gt_service_abnormal_span_count:
+    ts-contacts-service: 490
+  top_error_span_services:
+  - service: ts-ui-dashboard
+    sc: Error
+    count: 20
+  - service: loadgenerator
+    sc: Error
+    count: 4
+  gt_latency_stats:
+  - service: ts-contacts-service
+    avg_ms: 9.5
+    max_ms: 641.1
+    p95_ms: 25.0
+    count: 490
+  chronic_noise_detail:
+  - service: ts-delivery-service
+    normal_err: 48
+    abnormal_err: 48
+    ratio: 1.0
+  - service: ts-notification-service
+    normal_err: 48
+    abnormal_err: 48
+    ratio: 1.0
+  - service: ts-food-service
+    normal_err: 96
+    abnormal_err: 46
+    ratio: 2.09
+  - service: ts-order-service
+    normal_err: 14
+    abnormal_err: 13
+    ratio: 1.08
+  - service: ts-preserve-service
+    normal_err: 14
+    abnormal_err: 13
+    ratio: 1.08
+  gt_span_name_breakdown:
+  - span_name: SELECT ts.contacts
+    avg_ms: 1.5
+    count: 86
+  - span_name: ContactsController.findContactsByAccountId
+    avg_ms: 10.6
+    count: 58
+  - span_name: SELECT Contacts
+    avg_ms: 4.0
+    count: 58
+  - span_name: GET /api/v1/contactservice/contacts/account/{accountId}
+    avg_ms: 24.0
+    count: 58
+  - span_name: ContactsRepository.findByAccountId
+    avg_ms: 6.4
+    count: 58
+  - span_name: SELECT ts
+    avg_ms: 2.0
+    count: 36
+  - span_name: ContactsController.getContactsByContactsId
+    avg_ms: 12.1
+    count: 26
+  - span_name: GET /api/v1/contactservice/contacts/{id}
+    avg_ms: 36.8
+    count: 26
+  - span_name: ContactsRepository.findById
+    avg_ms: 8.4
+    count: 26
+  - span_name: Session.find contacts.entity.Contacts
+    avg_ms: 2.7
+    count: 26
+  - span_name: Transaction.commit
+    avg_ms: 0.9
+    count: 26
+  - span_name: SELECT contacts
+    avg_ms: 38.3
+    count: 2
+  - span_name: SELECT ts.ts
+    avg_ms: 2.6
+    count: 2
+  - span_name: ContactsRepository.findByAccountIdAndDocumentTypeAndDocumentType
+    avg_ms: 83.9
+    count: 2
+  gt_parent_child_pairs:
+  - - ts-ui-dashboard
+    - ts-contacts-service
+  - - ts-preserve-service
+    - ts-contacts-service
+trajectory_reasoning_snippets:
+- idx: 2
+  text: 'I have discovered all 10 parquet files. Now I need to get the schema for all files to understand the column structure before querying.
+
+
+    '
+- idx: 16
+  text: 'I see ts-ui-dashboard is returning 503 errors for the contacts API. Let me trace the full call chain to understand which downstream service is causing the 503. I need to look at a specific trace
+    to see the full span hierarchy.
+
+
+    '
+- idx: 18
+  text: 'I see the trace shows loadgenerator → ts-ui-dashboard, but I need to see what ts-ui-dashboard calls downstream. The parent_span_id for ts-ui-dashboard spans is "3b87771d4ca0b0c5" which is the loadgenerator
+    span. Let me look for spans where ts-ui-dashboard is the parent to see what services it calls.
+
+
+    '
+- idx: 20
+  text: 'No child spans found for those ts-ui-dashboard spans. Let me look at the traces differently - I need to find traces that involve ts-contacts-service and ts-preserve-service to understand the call
+    chain.
+
+
+    '
+- idx: 26
+  text: 'ts-contacts-service doesn''t have Error status. Let me check ts-preserve-service and also look at the metrics to understand where the actual problem is.
+
+
+    '
+- idx: 28
+  text: 'Neither ts-contacts-service nor ts-preserve-service have Error status. The errors are in ts-ui-dashboard (503 responses). Let me look at the metrics to understand what''s happening - specifically
+    looking for high error rates or latency.
+
+
+    '
+- idx: -1
+  text: "Based on my comprehensive analysis of the telemetry data, I can now provide the final Root Cause Analysis.\n\n## Root Cause Analysis Summary\n\n**Root Cause Service**: `ts-ui-dashboard`\n\n**Evidence**:\n\
+    1. ts-ui-dashboard returns HTTP 503 \"Service Unavailable\" for 20 requests to the contactservice endpoint\n2. The 503 responses have a consistent duration of ~3.5 seconds (timeout behavior)\n3. In\
+    \ error traces, there are no downstream calls to ts-contacts-service - the failure happens before any downstream call\n4. ts-contacts-service itself is healthy (all 200 responses, no errors)\n5. The\
+    \ preserveservice endpoint works correctly (200 responses), indicating the issue is specific to contactservice handling\n\n**Fault Propagation**:\n- ts-ui-dashboard fails to process requests and returns\
+    \ 503\n- loadgenerator receives the error responses\n\n```json\n{\n  \"nodes\": [\n    {\"component\": \"ts-ui-dashboard\", \"state\": [\"HIGH_ERROR_RATE\", \"UNAVAILABLE\"], \"timestamp\": 1753010157},\n\
+    \    {\"component\": \"loadgenerator\", \"state\": [\"HIGH_ERROR_RATE\"], \"timestamp\": 1753010157},\n    {\"component\": \"ts-contacts-service\", \"state\": [\"HEALTHY\"], \"timestamp\": 1753010157}\n\
+    \  ],\n  \"edges\": [\n    {\"source\": \"ts-ui-dashboard\", \"target\": \"loadgenerator\"}\n  ],\n  \"root_causes\": [\n    {\"component\": \"ts-ui-dashboard\", \"state\": [\"HIGH_ERROR_RATE\", \"\
+    UNAVAILABLE\"], \"timestamp\": 1753010157}\n  ],\n  \"component_to_service\": {}\n}\n```"
+- idx: -1
+  text: 'Based on my analysis, I have enough evidence to identify the root cause and fault propagation path. Let me construct the final CausalGraph.
+
+
+    **Summary of findings:**
+
+    - **Root Cause**: ts-ui-dashboard is returning 503 errors for the contactservice endpoint
+
+    - **Affected Services**: loadgenerator (receives 503 errors)
+
+    - **ts-contacts-service**: Working correctly, not part of the failure path
+
+    - **Evidence**: 20 error traces with 503 status, ~3.5 second duration, no downstream calls to ts-contacts-service in error traces
+
+
+    '
+gt_required_capabilities:
+  gt_is_silent: true
+  gt_is_loudest: false
+  chronic_noise_present: true
+  chronic_noise_carriers:
+  - ts-delivery-service
+  - ts-notification-service
+  - ts-food-service
+  - ts-order-service
+  - ts-preserve-service
+  required_metric_layer: k8s/container
+  gt_path_is_edge_fault: false
+  gt_has_name_twin: true
+  name_twin_candidates:
+  - ts-user-service
+  - ts-assurance-service
+  - ts-order-service
+  - ts-security-service
+  - ts-notification-service
+  - ts-travel-service
+  - ts-cancel-service
+  - ts-station-food-service
+  - ts-route-plan-service
+  - ts-auth-service
+  - ts-config-service
+  - ts-inside-payment-service
+  - ts-travel2-service
+  - ts-preserve-service
+  - ts-basic-service
+  - ts-travel-plan-service
+  - ts-seat-service
+  - ts-consign-price-service
+  - ts-consign-service
+  - ts-delivery-service
+  - ts-price-service
+  - ts-verification-code-service
+  - ts-food-service
+  - ts-station-service
+  - ts-train-food-service
+  - ts-order-other-service
+  - ts-train-service
+  - ts-route-service
+  - ts-payment-service
+  gt_diluted_across_spans: true
+path_alignment:
+  gt_touched_in_trajectory: true
+  gt_neighbors_touched:
+    ts-preserve-service: 1
+    ts-ui-dashboard: 13
+  gt_neighbors_from_causal_graph:
+  - ts-preserve-service
+  - ts-ui-dashboard
+  agent_focus_services:
+  - service: ts-ui-dashboard
+    count: 13
+  - service: ts-contacts-service
+    count: 4
+  - service: ts-preserve-service
+    count: 1
+  agent_predicted_rc_in_gt_neighborhood: true
+counterfactual:
+  PD1_baseline_contrast:
+    chronic_noise_in_data: true
+    predicted_rc_is_chronic_carrier: false
+    predicted_rc_error_ratios:
+      ts-ui-dashboard:
+        normal: 0
+        abnormal: 20
+    if_run_would_reveal: false
+  PD2_call_tree_build:
+    gt_is_upstream_of_agent_focus: false
+    if_run_would_surface_gt: false
+  PD3_fault_layer_metric_probe:
+    metric_family_if_probed: k8s/container
+    gt_metric_anomaly_exists_in_parquet: true
+    gt_metric_families_probed:
+    - k8s.pod.memory.working_set
+    - k8s.pod.filesystem.capacity
+    - k8s.pod.memory.node.utilization
+    - k8s.pod.memory.page_faults
+    - k8s.deployment.desired
+    - k8s.pod.memory.rss
+    - k8s.pod.cpu.node.utilization
+    - k8s.pod.memory.available
+    - k8s.pod.filesystem.usage
+    - k8s.pod.memory.major_page_faults
+  PD4_named_candidate_not_isolated:
+    if_isolated_predicted_rc_show_healthy:
+      ts-ui-dashboard: false
+  R_correct_heuristic_would_reach_gt:
+    if_loudness_applied: false
+    if_baseline_diff_applied: false
+    if_edge_direction_applied: null
+    if_name_twin_check_applied: true
+  D_obstacle_is_structural: true
+parquet_queries_run:
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-qwen3.5-plus/data_f607bf13/abnormal_logs.parquet') WHERE level IN ('ERROR','SEVERE')
+    GROUP BY 1 ORDER BY n DESC LIMIT 10
+  purpose: top_error_services_abnormal_logs
+  row_count: 6
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-qwen3.5-plus/data_f607bf13/normal_logs.parquet') WHERE level IN ('ERROR','SEVERE') GROUP
+    BY 1 ORDER BY n DESC LIMIT 10
+  purpose: top_error_services_normal_logs
+  row_count: 5
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-qwen3.5-plus/data_f607bf13/abnormal_logs.parquet') WHERE level IN ('ERROR','SEVERE')
+    AND service_name IN ('ts-contacts-service') GROUP BY 1
+  purpose: gt_service_abnormal_log_error_count
+  row_count: 0
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-qwen3.5-plus/data_f607bf13/normal_logs.parquet') WHERE level IN ('ERROR','SEVERE') AND
+    service_name IN ('ts-contacts-service') GROUP BY 1
+  purpose: gt_service_normal_log_error_count
+  row_count: 0
+- sql: SELECT service_name, "attr.status_code" as sc, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-qwen3.5-plus/data_f607bf13/abnormal_traces.parquet') WHERE
+    service_name IN ('ts-contacts-service') GROUP BY 1,2
+  purpose: gt_service_status_code_distribution
+  row_count: 1
+- sql: SELECT service_name, "attr.status_code" as sc, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-qwen3.5-plus/data_f607bf13/abnormal_traces.parquet') WHERE
+    "attr.status_code" IN ('Error','ERROR') GROUP BY 1,2 ORDER BY n DESC LIMIT 5
+  purpose: top_error_span_services
+  row_count: 2
+- sql: SELECT service_name, AVG(duration)/1e6 AS avg_ms, MAX(duration)/1e6 AS max_ms, QUANTILE_CONT(duration, 0.95)/1e6 AS p95_ms, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-qwen3.5-plus/data_f607bf13/abnormal_traces.parquet')
+    WHERE service_name IN ('ts-contacts-service') GROUP BY 1
+  purpose: gt_latency_stats
+  row_count: 1
+- sql: SELECT DISTINCT service_name FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-qwen3.5-plus/data_f607bf13/abnormal_traces.parquet')
+  purpose: all_abnormal_trace_services
+  row_count: 30
+counterfactual_queries_run:
+- sql: SELECT span_name, AVG(duration)/1e6 AS avg_ms, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-qwen3.5-plus/data_f607bf13/abnormal_traces.parquet') WHERE
+    service_name IN ('ts-contacts-service') GROUP BY 1 ORDER BY n DESC LIMIT 20
+  purpose: gt_span_name_breakdown
+  row_count: 14
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-qwen3.5-plus/data_f607bf13/normal_logs.parquet') WHERE level IN ('ERROR','SEVERE') AND
+    service_name IN ('ts-ui-dashboard') GROUP BY 1
+  purpose: predicted_rc_normal_err
+  row_count: 0
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-qwen3.5-plus/data_f607bf13/abnormal_logs.parquet') WHERE level IN ('ERROR','SEVERE')
+    AND service_name IN ('ts-ui-dashboard') GROUP BY 1
+  purpose: predicted_rc_abnormal_err
+  row_count: 1
+- sql: SELECT DISTINCT p.service_name, c.service_name FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-qwen3.5-plus/data_f607bf13/abnormal_traces.parquet') c JOIN read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-qwen3.5-plus/data_f607bf13/abnormal_traces.parquet')
+    p ON c.parent_span_id=p.span_id WHERE c.service_name IN ('ts-contacts-service') OR p.service_name IN ('ts-contacts-service') LIMIT 200
+  purpose: gt_parent_child_pairs
+  row_count: 3
+- sql: SELECT DISTINCT metric FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-qwen3.5-plus/data_f607bf13/abnormal_metrics.parquet') WHERE service_name IN ('ts-contacts-service')
+    AND metric LIKE 'k8s.%' LIMIT 10
+  purpose: gt_metric_families_probed
+  row_count: 10
+classes_to_verify:
+- D1
+- PD_ErrorOnlyFilterBias
+- PD_NoBaselineContrast
+- PD_NoFaultLayerMetricProbe
+- U5_SilenceReadAsHealthOrPaused

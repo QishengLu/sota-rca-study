@@ -1,0 +1,525 @@
+case_id: sonnet.1280
+framework: thinkdepthai-claude-sonnet-4.6
+data_dir: /home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-claude-sonnet-4.6/data_e718bd70
+gt_from_injection_json:
+  fault_type: JVMMemoryStress
+  fault_category: JVMChaos
+  injection_name: ts2-ts-preserve-service-stress-s4zzmk
+  gt_services:
+  - ts-preserve-service
+  source_service: null
+  target_service: null
+  start_time: '2025-09-06T11:53:02Z'
+  end_time: '2025-09-06T11:57:01Z'
+  display_config:
+    duration: 4
+    injection_point:
+      app_name: ts-preserve-service
+      class_name: preserve.service.PreserveServiceImpl
+      method_name: preserve
+    mem_type: 2
+    namespace: ts
+gt_from_causal_graph_json:
+  root_causes:
+  - ts-preserve-service
+  alarm_nodes:
+  - span|loadgenerator::HTTP POST http://ts-ui-dashboard:8080/api/v1/preserveservice/preserve
+agent_predicted:
+  root_causes:
+  - ts-rabbitmq
+  predicted_graph_nodes:
+  - ts-rabbitmq
+  - ts-notification-service
+  - ts-delivery-service
+  - ts-food-service
+  - ts-preserve-service
+  - ts-ui-dashboard
+  - loadgenerator
+raw_sql_count_total: 29
+raw_sql_list_sample:
+- "\nSELECT service_name, span_name, attr_http_request_method, attr_http_response_status_code, \n       COUNT(*) as count,\n       AVG(duration) as avg_duration_ns,\n       PERCENTILE_CONT(0.99) WITHIN\
+  \ GROUP (ORDER BY duration) as p99_duration_ns,\n       SUM(CASE WHEN attr_status_code = 'ERROR' THEN 1 ELSE 0 END) as error_count\nFROM abnormal_traces\nWHERE span_name LIKE '%preserve%' OR service_name\
+  \ LIKE '%preserve%'\nGROUP BY service_name, span_name, attr_http_request_method, attr_http_response_status_code\nORDER BY count DESC\n"
+- "\nSELECT service_name, \n       COUNT(*) as total_spans,\n       SUM(CASE WHEN attr_status_code = 'ERROR' THEN 1 ELSE 0 END) as error_count,\n       ROUND(100.0 * SUM(CASE WHEN attr_status_code = 'ERROR'\
+  \ THEN 1 ELSE 0 END) / COUNT(*), 2) as error_rate_pct,\n       AVG(duration) as avg_duration_ns,\n       PERCENTILE_CONT(0.99) WITHIN GROUP (ORDER BY duration) as p99_duration_ns\nFROM abnormal_traces\n\
+  GROUP BY service_name\nORDER BY error_count DESC\n"
+- "\nSELECT service_name, span_name, attr_http_request_method, attr_http_response_status_code, \n       COUNT(*) as count,\n       AVG(duration) as avg_duration_ns,\n       PERCENTILE_CONT(0.99) WITHIN\
+  \ GROUP (ORDER BY duration) as p99_duration_ns\nFROM normal_traces\nWHERE span_name LIKE '%preserve%' OR service_name LIKE '%preserve%'\nGROUP BY service_name, span_name, attr_http_request_method, attr_http_response_status_code\n\
+  ORDER BY count DESC\n"
+- "\nSELECT trace_id, span_id, parent_span_id, service_name, span_name, duration, \n       attr_status_code, attr_http_response_status_code, time\nFROM abnormal_traces\nWHERE attr_http_response_status_code\
+  \ = 503\nORDER BY time\nLIMIT 20\n"
+- "\nSELECT trace_id, span_id, parent_span_id, service_name, span_name, duration, \n       attr_status_code, attr_http_response_status_code, time\nFROM abnormal_traces\nWHERE trace_id = '3ad44e87d722b93c4b996d8f5dd69e2d'\n\
+  ORDER BY time\n"
+- '
+
+  SELECT time, level, service_name, message, attr_k8s_pod_name
+
+  FROM abnormal_logs
+
+  WHERE level = ''ERROR'' OR level = ''WARN''
+
+  ORDER BY time
+
+  LIMIT 50
+
+  '
+- "\n-- Find traces for preserve service in abnormal period to understand what it calls downstream\nSELECT t1.trace_id, t1.service_name, t1.span_name, t1.duration, \n       t1.attr_status_code, t1.attr_http_response_status_code\n\
+  FROM abnormal_traces t1\nWHERE t1.trace_id IN (\n    SELECT DISTINCT trace_id FROM abnormal_traces\n    WHERE service_name = 'ts-preserve-service' \n    AND span_name = 'POST /api/v1/preserveservice/preserve'\n\
+  \    LIMIT 5\n)\nORDER BY t1.trace_id, t1.time\n"
+- '
+
+  SELECT time, level, service_name, message, attr_k8s_pod_name
+
+  FROM abnormal_logs
+
+  WHERE service_name LIKE ''%preserve%''
+
+  ORDER BY time
+
+  LIMIT 50
+
+  '
+- "\n-- Check what spans ts-preserve-service has in the 503 traces\nSELECT t.trace_id, t.service_name, t.span_name, t.duration, \n       t.attr_status_code, t.attr_http_response_status_code, t.time\nFROM\
+  \ abnormal_traces t\nWHERE t.trace_id IN ('fa729cf8a7bfb2ff15730d9b128e50f4', '70f491ef444f0d748340dedd51c1e6df')\nAND (t.service_name = 'ts-preserve-service' OR t.service_name = 'ts-ui-dashboard')\n\
+  ORDER BY t.time\n"
+- '
+
+  SELECT time, level, service_name, message, attr_k8s_pod_name
+
+  FROM abnormal_logs
+
+  WHERE time >= ''2025-09-06T11:53:15'' AND time <= ''2025-09-06T11:54:00''
+
+  AND (level = ''ERROR'' OR level = ''WARN'')
+
+  ORDER BY time
+
+  LIMIT 100
+
+  '
+- '
+
+  -- Look at all preserve service logs during the 503 period
+
+  SELECT time, level, service_name, message, attr_k8s_pod_name
+
+  FROM abnormal_logs
+
+  WHERE time >= ''2025-09-06T11:53:15'' AND time <= ''2025-09-06T11:54:10''
+
+  AND service_name = ''ts-preserve-service''
+
+  ORDER BY time
+
+  LIMIT 100
+
+  '
+- '
+
+  -- Check metrics for ts-preserve-service pod
+
+  SELECT DISTINCT metric
+
+  FROM abnormal_metrics
+
+  WHERE service_name = ''ts-preserve-service'' OR attr_k8s_pod_name LIKE ''%preserve%''
+
+  LIMIT 50
+
+  '
+- '
+
+  -- Check CPU and memory metrics for ts-preserve-service pod around the incident time
+
+  SELECT time, metric, value, attr_k8s_pod_name
+
+  FROM abnormal_metrics
+
+  WHERE attr_k8s_pod_name LIKE ''%preserve%''
+
+  AND time >= ''2025-09-06T11:52:00'' AND time <= ''2025-09-06T11:54:10''
+
+  ORDER BY time
+
+  '
+- '
+
+  -- Get JVM CPU metrics for ts-preserve-service
+
+  SELECT time, metric, value, attr_k8s_pod_name
+
+  FROM abnormal_metrics
+
+  WHERE service_name = ''ts-preserve-service''
+
+  AND time >= ''2025-09-06T11:52:00'' AND time <= ''2025-09-06T11:54:10''
+
+  ORDER BY time
+
+  '
+- '
+
+  -- Check specific key metrics for ts-preserve-service pod around incident
+
+  SELECT time, metric, AVG(value) as avg_value, MAX(value) as max_value
+
+  FROM abnormal_metrics
+
+  WHERE attr_k8s_pod_name LIKE ''%preserve%''
+
+  AND time >= ''2025-09-06T11:52:00'' AND time <= ''2025-09-06T11:54:10''
+
+  GROUP BY time, metric
+
+  ORDER BY time, metric
+
+  '
+- '
+
+  -- Get k8s.pod.phase for preserve service to track pod state
+
+  SELECT time, metric, value, attr_k8s_pod_name
+
+  FROM abnormal_metrics
+
+  WHERE attr_k8s_pod_name LIKE ''%preserve%''
+
+  AND metric = ''k8s.pod.phase''
+
+  ORDER BY time
+
+  '
+- '
+
+  -- Check JVM GC metrics for preserve service
+
+  SELECT time, metric, service_name, count, sum, min, max, attr_jvm_gc_name, attr_k8s_pod_name
+
+  FROM abnormal_metrics_histogram
+
+  WHERE service_name = ''ts-preserve-service''
+
+  ORDER BY time
+
+  '
+- "\n-- Check sum metrics (error rates, request counts) for preserve service\nSELECT DISTINCT metric \nFROM abnormal_metrics_sum\nWHERE service_name = 'ts-preserve-service'\n"
+- '
+
+  -- Check JVM memory and CPU metrics for preserve service around incident
+
+  SELECT time, metric, value, attr_k8s_pod_name
+
+  FROM abnormal_metrics_sum
+
+  WHERE service_name = ''ts-preserve-service''
+
+  AND metric IN (''jvm.memory.used'', ''jvm.memory.limit'', ''jvm.cpu.time'', ''jvm.thread.count'', ''k8s.pod.network.errors'')
+
+  AND time >= ''2025-09-06T11:52:00'' AND time <= ''2025-09-06T11:54:30''
+
+  ORDER BY time, metric
+
+  '
+- '
+
+  -- Check GC metrics for preserve service (smaller query)
+
+  SELECT time, metric, service_name, count, sum, min, max, attr_jvm_gc_name
+
+  FROM abnormal_metrics_histogram
+
+  WHERE service_name = ''ts-preserve-service''
+
+  AND time >= ''2025-09-06T11:51:00'' AND time <= ''2025-09-06T11:54:30''
+
+  ORDER BY time
+
+  '
+raw_sql_substring_audit:
+  has_baseline_contrast_substring: false
+  has_call_tree_build_substring: false
+  has_trace_follow_substring: true
+  has_jvm_metric_substring: true
+  has_container_metric_substring: false
+  has_k8s_metric_substring: true
+  has_db_metric_substring: false
+  has_network_metric_substring: true
+  has_status_error_filter: true
+  has_status_unset_filter: false
+  where_service_name_filters:
+  - ts-preserve-service
+parquet_evidence:
+  top_error_services_abnormal_logs:
+  - service: ts-food-service
+    count: 145
+  - service: ts-order-service
+    count: 73
+  - service: ts-preserve-service
+    count: 72
+  - service: ts-notification-service
+    count: 48
+  - service: ts-delivery-service
+    count: 47
+  top_error_services_normal_logs:
+  - service: ts-food-service
+    count: 261
+  - service: ts-order-service
+    count: 80
+  - service: ts-preserve-service
+    count: 80
+  - service: ts-notification-service
+    count: 48
+  - service: ts-delivery-service
+    count: 48
+  gt_service_abnormal_log_error_count:
+    ts-preserve-service: 72
+  gt_service_normal_log_error_count:
+    ts-preserve-service: 80
+  gt_service_status_code_distribution:
+    ts-preserve-service:
+      Unset: 716
+  gt_service_abnormal_span_count:
+    ts-preserve-service: 716
+  top_error_span_services:
+  - service: ts-ui-dashboard
+    sc: Error
+    count: 25
+  - service: loadgenerator
+    sc: Error
+    count: 5
+  gt_latency_stats:
+  - service: ts-preserve-service
+    avg_ms: 151.3
+    max_ms: 2099.4
+    p95_ms: 680.0
+    count: 716
+  chronic_noise_detail:
+  - service: ts-food-service
+    normal_err: 261
+    abnormal_err: 145
+    ratio: 1.8
+  - service: ts-order-service
+    normal_err: 80
+    abnormal_err: 73
+    ratio: 1.1
+  - service: ts-notification-service
+    normal_err: 48
+    abnormal_err: 48
+    ratio: 1.0
+  - service: ts-delivery-service
+    normal_err: 48
+    abnormal_err: 47
+    ratio: 1.02
+  gt_span_name_breakdown:
+  - span_name: POST
+    avg_ms: 71.6
+    count: 352
+  - span_name: GET
+    avg_ms: 33.5
+    count: 194
+  - span_name: POST /api/v1/preserveservice/preserve
+    avg_ms: 468.0
+    count: 85
+  - span_name: PreserveController.preserve
+    avg_ms: 433.7
+    count: 85
+  gt_parent_child_pairs:
+  - - ts-preserve-service
+    - ts-travel-service
+  - - ts-preserve-service
+    - ts-order-service
+  - - ts-preserve-service
+    - ts-assurance-service
+  - - ts-preserve-service
+    - ts-user-service
+  - - ts-preserve-service
+    - ts-food-service
+  - - ts-preserve-service
+    - ts-security-service
+  - - ts-preserve-service
+    - ts-contacts-service
+  - - ts-ui-dashboard
+    - ts-preserve-service
+  - - ts-preserve-service
+    - ts-basic-service
+  - - ts-preserve-service
+    - ts-seat-service
+trajectory_reasoning_snippets:
+- idx: 0
+  text: I'll conduct a systematic Root Cause Analysis for the SLO violations on the preserve service endpoint. Let me start by discovering the available data.
+- idx: 2
+  text: All 10 files are available. Now let me get the schema for all files at once.
+- idx: 6
+  text: 'Now let me query the traces and logs to understand the incident:'
+- idx: 77
+  text: 'Based on my thorough investigation, I have identified the complete root cause and fault propagation path. Let me provide the final analysis.
+
+
+    ## Root Cause Analysis Summary
+
+
+    ### Timeline of Events
+
+    - **11:53:05 UTC** — `ts-notification-service` starts failing to connect to `ts-rabbitmq:5672` ("Restarting Consumer", "Attempting to connect to: [ts-rabbitmq:5672]", "Failed to check/redeclare auto-delete
+    queue(s)")
+
+    - **11:53:06 UTC** — `ts-delivery-service` also begins failing to connect to RabbitMQ
+
+    - **11:53:15 UTC** — `ts-food-service` explicitly throws `java.net.UnknownHostException: ts-rabbitmq: Name or service not known` when attempting to send food order delivery info to MQ
+
+    - **11:53:15 UTC** — `ts-preserve-service` last log before crash; it was mid-way through a booking flow (`createOrder` → Step 6 `createFoodOrder` calls `ts-food-service` which hangs on RabbitMQ)
+
+    - **11:53:17 UTC** — First HTTP 503 appears on `ts-ui-dashboard` for `POST /api/v1/preserveservice/preserve` (thread pool of `ts-preserve-service` exhausted)
+
+    - **11:54:02 UTC** — `ts-preserve-service` Spring Boot process restart: `"Starting PreserveApplication v1.0"` confirms container was killed and restarted by Kubern'
+- idx: -1
+  text: "Based on my thorough investigation, I have identified the complete root cause and fault propagation path. Let me provide the final analysis.\n\n## Root Cause Analysis Summary\n\n### Timeline of\
+    \ Events\n- **11:53:05 UTC** — `ts-notification-service` starts failing to connect to `ts-rabbitmq:5672` (\"Restarting Consumer\", \"Attempting to connect to: [ts-rabbitmq:5672]\", \"Failed to check/redeclare\
+    \ auto-delete queue(s)\")\n- **11:53:06 UTC** — `ts-delivery-service` also begins failing to connect to RabbitMQ\n- **11:53:15 UTC** — `ts-food-service` explicitly throws `java.net.UnknownHostException:\
+    \ ts-rabbitmq: Name or service not known` when attempting to send food order delivery info to MQ\n- **11:53:15 UTC** — `ts-preserve-service` last log before crash; it was mid-way through a booking flow\
+    \ (`createOrder` → Step 6 `createFoodOrder` calls `ts-food-service` which hangs on RabbitMQ)\n- **11:53:17 UTC** — First HTTP 503 appears on `ts-ui-dashboard` for `POST /api/v1/preserveservice/preserve`\
+    \ (thread pool of `ts-preserve-service` exhausted)\n- **11:54:02 UTC** — `ts-preserve-service` Spring Boot process restart: `\"Starting PreserveApplication v1.0\"` confirms container was killed and\
+    \ restarted by Kubernetes\n\n### Key Evidence\n1. `ts-rabbitmq` became unreachable at ~11:53:05 — evidenced by multiple services simultaneously failing to reach port 5672\n2. `ts-food-service` DNS error:\
+    \ `\"UnknownHostException: ts-rabbitmq: Name or service not known\"` — confirms DNS-level failure\n3. Normal `ts-preserve-service` flow: Step 6 calls `createFoodOrder` → `ts-food-service` — when this\
+    \ step hangs due to RabbitMQ failure, preserve-service threads are exhausted\n4. `ts-preserve-service` container restarted (Spring Boot startup message at 11:54:02, same pod name `ts-preserve-service-b649b6578-wwcm8`)\n\
+    5. `ts-ui-dashboard` received HTTP 503 responses from `ts-preserve-service` during the ~47-second crash/restart window\n\n---\n\n```json\n{\n  \"nodes\": [\n    {\n      \"component\": \"ts-rabbitmq\"\
+    ,\n      \"state\": [\"UNAVAI"
+- idx: -1
+  text: 'Now let me query the traces and logs to understand the incident:'
+gt_required_capabilities:
+  gt_is_silent: false
+  gt_is_loudest: false
+  chronic_noise_present: true
+  chronic_noise_carriers:
+  - ts-food-service
+  - ts-order-service
+  - ts-notification-service
+  - ts-delivery-service
+  required_metric_layer: jvm
+  gt_path_is_edge_fault: false
+  gt_has_name_twin: true
+  name_twin_candidates:
+  - ts-user-service
+  - ts-assurance-service
+  - ts-order-service
+  - ts-security-service
+  - ts-notification-service
+  - ts-travel-service
+  - ts-station-food-service
+  - ts-route-plan-service
+  - ts-contacts-service
+  - ts-auth-service
+  - ts-config-service
+  - ts-inside-payment-service
+  - ts-travel2-service
+  - ts-basic-service
+  - ts-travel-plan-service
+  - ts-seat-service
+  - ts-consign-service
+  - ts-consign-price-service
+  - ts-delivery-service
+  - ts-price-service
+  - ts-verification-code-service
+  - ts-food-service
+  - ts-station-service
+  - ts-train-food-service
+  - ts-order-other-service
+  - ts-train-service
+  - ts-route-service
+  - ts-payment-service
+  gt_diluted_across_spans: false
+path_alignment:
+  gt_touched_in_trajectory: true
+  gt_neighbors_touched:
+    ts-ui-dashboard: 1
+  gt_neighbors_from_causal_graph:
+  - ts-ui-dashboard
+  agent_focus_services:
+  - service: ts-preserve-service
+    count: 13
+  agent_predicted_rc_in_gt_neighborhood: false
+counterfactual:
+  PD1_baseline_contrast:
+    chronic_noise_in_data: true
+    predicted_rc_is_chronic_carrier: false
+    predicted_rc_error_ratios:
+      ts-rabbitmq:
+        normal: 0
+        abnormal: 0
+    if_run_would_reveal: false
+  PD2_call_tree_build:
+    gt_is_upstream_of_agent_focus: true
+    if_run_would_surface_gt: true
+  PD3_fault_layer_metric_probe:
+    metric_family_if_probed: jvm
+    gt_metric_anomaly_exists_in_parquet: true
+    gt_metric_families_probed:
+    - jvm.cpu.recent_utilization
+    - jvm.system.cpu.load_1m
+    - jvm.system.cpu.utilization
+  PD4_named_candidate_not_isolated:
+    if_isolated_predicted_rc_show_healthy:
+      ts-rabbitmq: true
+  R_correct_heuristic_would_reach_gt:
+    if_loudness_applied: false
+    if_baseline_diff_applied: true
+    if_edge_direction_applied: null
+    if_name_twin_check_applied: true
+  D_obstacle_is_structural: true
+parquet_queries_run:
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-claude-sonnet-4.6/data_e718bd70/abnormal_logs.parquet') WHERE level IN ('ERROR','SEVERE')
+    GROUP BY 1 ORDER BY n DESC LIMIT 10
+  purpose: top_error_services_abnormal_logs
+  row_count: 5
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-claude-sonnet-4.6/data_e718bd70/normal_logs.parquet') WHERE level IN ('ERROR','SEVERE')
+    GROUP BY 1 ORDER BY n DESC LIMIT 10
+  purpose: top_error_services_normal_logs
+  row_count: 5
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-claude-sonnet-4.6/data_e718bd70/abnormal_logs.parquet') WHERE level IN ('ERROR','SEVERE')
+    AND service_name IN ('ts-preserve-service') GROUP BY 1
+  purpose: gt_service_abnormal_log_error_count
+  row_count: 1
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-claude-sonnet-4.6/data_e718bd70/normal_logs.parquet') WHERE level IN ('ERROR','SEVERE')
+    AND service_name IN ('ts-preserve-service') GROUP BY 1
+  purpose: gt_service_normal_log_error_count
+  row_count: 1
+- sql: SELECT service_name, "attr.status_code" as sc, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-claude-sonnet-4.6/data_e718bd70/abnormal_traces.parquet') WHERE
+    service_name IN ('ts-preserve-service') GROUP BY 1,2
+  purpose: gt_service_status_code_distribution
+  row_count: 1
+- sql: SELECT service_name, "attr.status_code" as sc, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-claude-sonnet-4.6/data_e718bd70/abnormal_traces.parquet') WHERE
+    "attr.status_code" IN ('Error','ERROR') GROUP BY 1,2 ORDER BY n DESC LIMIT 5
+  purpose: top_error_span_services
+  row_count: 2
+- sql: SELECT service_name, AVG(duration)/1e6 AS avg_ms, MAX(duration)/1e6 AS max_ms, QUANTILE_CONT(duration, 0.95)/1e6 AS p95_ms, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-claude-sonnet-4.6/data_e718bd70/abnormal_traces.parquet')
+    WHERE service_name IN ('ts-preserve-service') GROUP BY 1
+  purpose: gt_latency_stats
+  row_count: 1
+- sql: SELECT DISTINCT service_name FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-claude-sonnet-4.6/data_e718bd70/abnormal_traces.parquet')
+  purpose: all_abnormal_trace_services
+  row_count: 29
+counterfactual_queries_run:
+- sql: SELECT span_name, AVG(duration)/1e6 AS avg_ms, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-claude-sonnet-4.6/data_e718bd70/abnormal_traces.parquet') WHERE
+    service_name IN ('ts-preserve-service') GROUP BY 1 ORDER BY n DESC LIMIT 20
+  purpose: gt_span_name_breakdown
+  row_count: 4
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-claude-sonnet-4.6/data_e718bd70/normal_logs.parquet') WHERE level IN ('ERROR','SEVERE')
+    AND service_name IN ('ts-rabbitmq') GROUP BY 1
+  purpose: predicted_rc_normal_err
+  row_count: 0
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-claude-sonnet-4.6/data_e718bd70/abnormal_logs.parquet') WHERE level IN ('ERROR','SEVERE')
+    AND service_name IN ('ts-rabbitmq') GROUP BY 1
+  purpose: predicted_rc_abnormal_err
+  row_count: 0
+- sql: SELECT DISTINCT p.service_name, c.service_name FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-claude-sonnet-4.6/data_e718bd70/abnormal_traces.parquet') c JOIN read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-claude-sonnet-4.6/data_e718bd70/abnormal_traces.parquet')
+    p ON c.parent_span_id=p.span_id WHERE c.service_name IN ('ts-preserve-service') OR p.service_name IN ('ts-preserve-service') LIMIT 200
+  purpose: gt_parent_child_pairs
+  row_count: 11
+- sql: SELECT DISTINCT metric FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-claude-sonnet-4.6/data_e718bd70/abnormal_metrics.parquet') WHERE service_name IN ('ts-preserve-service')
+    AND metric LIKE 'jvm.%' LIMIT 10
+  purpose: gt_metric_families_probed
+  row_count: 3
+classes_to_verify:
+- D3
+- PD_NoBaselineContrast
+- U2_ChronicAmbientNoiseAnchor

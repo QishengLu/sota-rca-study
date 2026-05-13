@@ -1,0 +1,357 @@
+case_id: aiq.4617
+framework: aiq-qwen3.5-plus
+data_dir: /home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_7100b72c
+gt_from_injection_json:
+  fault_type: JVMCPUStress
+  fault_category: JVMChaos
+  injection_name: ts5-ts-cancel-service-stress-d8xbsn
+  gt_services:
+  - ts-cancel-service
+  source_service: null
+  target_service: null
+  start_time: '2025-09-01T14:21:01Z'
+  end_time: '2025-09-01T14:24:59Z'
+  display_config:
+    cpu_count: 8
+    duration: 4
+    injection_point:
+      app_name: ts-cancel-service
+      class_name: cancel.service.CancelServiceImpl
+      method_name: cancelFromOrder
+    namespace: ts
+gt_from_causal_graph_json:
+  root_causes:
+  - ts-cancel-service
+  alarm_nodes:
+  - span|loadgenerator::HTTP GET http://ts-ui-dashboard:8080/api/v1/cancelservice/cancel/{orderId}/{loginId}
+  - span|loadgenerator::HTTP GET http://ts-ui-dashboard:8080/api/v1/cancelservice/cancel/refound/{orderId}
+agent_predicted:
+  root_causes:
+  - mysql
+  predicted_graph_nodes:
+  - mysql
+  - ts-station-service
+  - ts-route-service
+  - ts-seat-service
+  - ts-config-service
+  - ts-order-service
+  - ts-preserve-service
+  - ts-basic-service
+  - ts-travel-service
+  - ts-route-plan-service
+  - ts-travel-plan-service
+  - ts-ui-dashboard
+  - loadgenerator
+  - ts-notification-service
+  - ts-delivery-service
+  - ts-food-service
+  - ts-cancel-service
+raw_sql_count_total: 80
+raw_sql_list_sample:
+- SELECT service_name, span_name, attr_http_response_status_code, duration, COUNT(*) as count FROM abnormal_traces WHERE span_name LIKE '%cancel%' OR span_name LIKE '%cancelservice%' GROUP BY service_name,
+  span_name, attr_http_response_status_code, duration ORDER BY count DESC LIMIT 50
+- SELECT DISTINCT service_name FROM abnormal_traces LIMIT 30
+- SELECT DISTINCT span_name FROM abnormal_traces WHERE span_name LIKE '%cancel%' OR span_name LIKE '%Cancel%' LIMIT 30
+- SELECT span_name, COUNT(*) as cnt FROM abnormal_traces GROUP BY span_name ORDER BY cnt DESC LIMIT 30
+- SELECT service_name, message, COUNT(*) as cnt FROM abnormal_logs WHERE message LIKE '%cancel%' OR message LIKE '%Cancel%' GROUP BY service_name, message ORDER BY cnt DESC LIMIT 30
+- SELECT level, service_name, COUNT(*) as cnt FROM abnormal_logs GROUP BY level, service_name ORDER BY cnt DESC LIMIT 30
+- SELECT service_name, message, COUNT(*) as cnt FROM abnormal_logs WHERE level = 'ERROR' GROUP BY service_name, message ORDER BY cnt DESC LIMIT 30
+- SELECT service_name, metric, AVG(value) as avg_value, COUNT(*) as cnt FROM abnormal_metrics GROUP BY service_name, metric ORDER BY cnt DESC LIMIT 50
+- SELECT DISTINCT metric FROM abnormal_metrics WHERE metric LIKE '%http%' OR metric LIKE '%error%' OR metric LIKE '%latency%' OR metric LIKE '%duration%' LIMIT 30
+- SELECT DISTINCT metric FROM abnormal_metrics LIMIT 50
+- SELECT attr_status_code, attr_http_response_status_code, service_name, COUNT(*) as cnt FROM abnormal_traces GROUP BY attr_status_code, attr_http_response_status_code, service_name ORDER BY cnt DESC LIMIT
+  30
+- SELECT attr_status_code, attr_http_response_status_code, service_name, COUNT(*) as cnt FROM abnormal_traces WHERE attr_http_response_status_code >= 400 OR attr_status_code = 'Error' GROUP BY attr_status_code,
+  attr_http_response_status_code, service_name ORDER BY cnt DESC LIMIT 30
+- SELECT service_name, attr_log_template, COUNT(*) as cnt FROM abnormal_logs GROUP BY service_name, attr_log_template ORDER BY cnt DESC LIMIT 30
+- SELECT service_name, span_name, AVG(duration) as avg_duration, MAX(duration) as max_duration, COUNT(*) as cnt FROM abnormal_traces GROUP BY service_name, span_name ORDER BY avg_duration DESC LIMIT 30
+- SELECT trace_id, service_name, span_name, duration, attr_status_code FROM abnormal_traces WHERE attr_status_code = 'Error' ORDER BY time DESC LIMIT 20
+- SELECT trace_id, service_name, span_name, duration, attr_status_code, parent_span_id FROM abnormal_traces WHERE trace_id = 'faf7b345a47c5e830d5365847fcfae23' ORDER BY duration DESC
+- SELECT service_name, message, level, COUNT(*) as cnt FROM abnormal_logs WHERE service_name = 'ts-station-service' GROUP BY service_name, message, level ORDER BY cnt DESC LIMIT 20
+- SELECT service_name, message, level, COUNT(*) as cnt FROM abnormal_logs WHERE message LIKE '%Hikari%' OR message LIKE '%connection%' OR message LIKE '%MySQL%' OR message LIKE '%database%' GROUP BY service_name,
+  message, level ORDER BY cnt DESC LIMIT 30
+- SELECT DISTINCT span_name FROM abnormal_traces WHERE span_name LIKE '%/api/%' ORDER BY span_name LIMIT 50
+- SELECT DISTINCT span_name FROM normal_traces WHERE span_name LIKE '%cancel%' OR span_name LIKE '%Cancel%' LIMIT 20
+raw_sql_substring_audit:
+  has_baseline_contrast_substring: false
+  has_call_tree_build_substring: false
+  has_trace_follow_substring: true
+  has_jvm_metric_substring: false
+  has_container_metric_substring: false
+  has_k8s_metric_substring: false
+  has_db_metric_substring: true
+  has_network_metric_substring: false
+  has_status_error_filter: true
+  has_status_unset_filter: false
+  where_service_name_filters:
+  - ts-station-service
+  - ts-cancel-service
+  - ts-ui-dashboard
+  - mysql
+parquet_evidence:
+  top_error_services_abnormal_logs:
+  - service: ts-food-service
+    count: 74
+  - service: ts-preserve-service
+    count: 46
+  - service: ts-order-service
+    count: 46
+  - service: ts-notification-service
+    count: 40
+  - service: ts-delivery-service
+    count: 34
+  top_error_services_normal_logs:
+  - service: ts-food-service
+    count: 214
+  - service: ts-order-service
+    count: 104
+  - service: ts-preserve-service
+    count: 104
+  - service: ts-notification-service
+    count: 48
+  - service: ts-delivery-service
+    count: 48
+  gt_service_abnormal_log_error_count: {}
+  gt_service_normal_log_error_count: {}
+  gt_service_status_code_distribution: {}
+  gt_service_abnormal_span_count: {}
+  top_error_span_services:
+  - service: loadgenerator
+    sc: Error
+    count: 8
+  gt_latency_stats: []
+  chronic_noise_detail:
+  - service: ts-food-service
+    normal_err: 214
+    abnormal_err: 74
+    ratio: 2.89
+  - service: ts-preserve-service
+    normal_err: 104
+    abnormal_err: 46
+    ratio: 2.26
+  - service: ts-order-service
+    normal_err: 104
+    abnormal_err: 46
+    ratio: 2.26
+  - service: ts-notification-service
+    normal_err: 48
+    abnormal_err: 40
+    ratio: 1.2
+  - service: ts-delivery-service
+    normal_err: 48
+    abnormal_err: 34
+    ratio: 1.41
+  gt_span_name_breakdown: []
+  gt_parent_child_pairs: []
+trajectory_reasoning_snippets:
+- idx: 4
+  text: 'Now I have a clear understanding of the schema. The investigation focuses on the cancel service endpoints with URL patterns `/api/v1/cancelservice/cancel/{orderId}/{loginId}` and `/api/v1/cancelservice/cancel/refound/{orderId}`.
+    Let me start by querying the abnormal traces to find evidence related to these endpoints.
+
+
+    '
+- idx: 8
+  text: 'I don''t see a "ts-cancel-service" in the list. Let me check the span_name column to see what HTTP endpoints are being traced, and look for any cancel-related patterns.
+
+
+    '
+- idx: 12
+  text: 'I see the span_name contains HTTP methods (GET, POST) and SQL queries, but not the full URL paths. Let me check the abnormal_logs for any cancel-related messages, and also look at the metrics to
+    understand which services are experiencing issues.
+
+
+    '
+- idx: 16
+  text: 'I see there are ERROR level logs in ts-food-service (74), ts-preserve-service (46), and ts-order-service (46). Let me investigate the error logs to understand what''s happening.
+
+
+    '
+- idx: 18
+  text: 'I see errors related to ts-notification-service and ts-delivery-service with "Failed to check/redeclare auto-delete queue(s)" which suggests RabbitMQ issues. Also ts-food-service has errors about
+    "Get the Get Food Request Failed". Let me check the metrics to see which services have high error rates or latency.
+
+
+    '
+- idx: 20
+  text: 'Let me look for HTTP-related metrics like error rates and latency that would be more relevant to the cancel service investigation.
+
+
+    '
+- idx: -1
+  text: "Based on my comprehensive analysis of the telemetry data, I can now provide the final root cause analysis and fault propagation path.\n\n## Root Cause Analysis Summary\n\n**Root Cause**: MySQL\
+    \ database connectivity issues causing connection pool exhaustion and slow queries.\n\n**Evidence**:\n1. MySQL server logs show \"Aborted connection\" errors with \"Got an error reading communication\
+    \ packets\"\n2. Multiple services have HikariPool connection validation failures (ts-station-service, ts-route-service, ts-delivery-service, ts-food-service, ts-auth-service)\n3. ts-station-service\
+    \ has the longest query durations (~23 seconds for SELECT station queries)\n4. The fault propagates through the service chain causing cascading latency\n\n**Fault Propagation Path**:\n```\nmysql → ts-station-service\
+    \ → ts-basic-service → ts-travel-service → ts-route-plan-service → ts-travel-plan-service → ts-ui-dashboard → loadgenerator\n```\n\n**Secondary Issues**:\n- RabbitMQ connection issues affecting ts-notification-service\
+    \ and ts-delivery-service\n- ts-food-service failures due to upstream service timeouts\n\n**Cancel Service Impact**:\n- ts-cancel-service deployment is AVAILABLE but has no traces/logs in the abnormal\
+    \ period\n- No cancel requests were processed during the incident\n\n```json\n{\n  \"nodes\": [\n    {\"component\": \"mysql\", \"state\": [\"HIGH_ERROR_RATE\"], \"timestamp\": 1725200462000},\n   \
+    \ {\"component\": \"ts-station-service\", \"state\": [\"HIGH_LATENCY\"], \"timestamp\": 1725200552000},\n    {\"component\": \"ts-basic-service\", \"state\": [\"HIGH_LATENCY\"], \"timestamp\": 1725200552000},\n\
+    \    {\"component\": \"ts-travel-service\", \"state\": [\"HIGH_LATENCY\"], \"timestamp\": 1725200552000},\n    {\"component\": \"ts-route-plan-service\", \"state\": [\"HIGH_LATENCY\"], \"timestamp\"\
+    : 1725200552000},\n    {\"component\": \"ts-travel-plan-service\", \"state\": [\"HIGH_LATENCY\"], \"timestamp\": 1725200552000},\n    {\"component\": \"ts-ui-dashboard\", \"state\": [\"HIGH_LATENCY\"\
+    ], \"timestamp\": 1725200552000},\n    {\"component\": \"loadgenerator\", \"state\": [\"TIMEOUT\"], \"ti"
+- idx: -1
+  text: 'The ts-station-service has the highest average duration for SELECT queries (~150ms average, with max reaching ~23 seconds as seen earlier). This confirms ts-station-service is a key bottleneck.
+
+
+    Now let me create the final causal graph. Based on my analysis:
+
+
+    1. **Root Cause**: MySQL database (connection issues, aborted connections)
+
+    2. **Primary affected service**: ts-station-service (slow SELECT queries)
+
+    3. **Propagation path**: ts-station-service → ts-basic-service → ts-travel-service → ts-route-plan-service → ts-travel-plan-service → ts-ui-dashboard → loadgenerator
+
+
+    Additionally, there are secondary issues with RabbitMQ affecting ts-notification-service and ts-delivery-service.
+
+
+    '
+gt_required_capabilities:
+  gt_is_silent: true
+  gt_is_loudest: false
+  chronic_noise_present: true
+  chronic_noise_carriers:
+  - ts-food-service
+  - ts-preserve-service
+  - ts-order-service
+  - ts-notification-service
+  - ts-delivery-service
+  required_metric_layer: jvm
+  gt_path_is_edge_fault: false
+  gt_has_name_twin: true
+  name_twin_candidates:
+  - ts-user-service
+  - ts-assurance-service
+  - ts-order-service
+  - ts-security-service
+  - ts-notification-service
+  - ts-travel-service
+  - ts-station-food-service
+  - ts-route-plan-service
+  - ts-contacts-service
+  - ts-auth-service
+  - ts-config-service
+  - ts-inside-payment-service
+  - ts-travel2-service
+  - ts-preserve-service
+  - ts-basic-service
+  - ts-travel-plan-service
+  - ts-seat-service
+  - ts-consign-service
+  - ts-delivery-service
+  - ts-price-service
+  - ts-verification-code-service
+  - ts-food-service
+  - ts-station-service
+  - ts-train-food-service
+  - ts-order-other-service
+  - ts-train-service
+  - ts-route-service
+  - ts-payment-service
+  gt_diluted_across_spans: false
+path_alignment:
+  gt_touched_in_trajectory: true
+  gt_neighbors_touched:
+    ts-ui-dashboard: 2
+  gt_neighbors_from_causal_graph:
+  - ts-ui-dashboard
+  agent_focus_services:
+  - service: ts-cancel-service
+    count: 12
+  - service: ts-ui-dashboard
+    count: 2
+  - service: ts-station-service
+    count: 1
+  - service: mysql
+    count: 1
+  agent_predicted_rc_in_gt_neighborhood: false
+counterfactual:
+  PD1_baseline_contrast:
+    chronic_noise_in_data: true
+    predicted_rc_is_chronic_carrier: false
+    predicted_rc_error_ratios:
+      mysql:
+        normal: 0
+        abnormal: 0
+    if_run_would_reveal: false
+  PD2_call_tree_build:
+    gt_is_upstream_of_agent_focus: false
+    if_run_would_surface_gt: false
+  PD3_fault_layer_metric_probe:
+    metric_family_if_probed: jvm
+    gt_metric_anomaly_exists_in_parquet: true
+    gt_metric_families_probed:
+    - jvm.cpu.recent_utilization
+    - jvm.system.cpu.load_1m
+    - jvm.system.cpu.utilization
+  PD4_named_candidate_not_isolated:
+    if_isolated_predicted_rc_show_healthy:
+      mysql: true
+  R_correct_heuristic_would_reach_gt:
+    if_loudness_applied: false
+    if_baseline_diff_applied: false
+    if_edge_direction_applied: null
+    if_name_twin_check_applied: true
+  D_obstacle_is_structural: true
+parquet_queries_run:
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_7100b72c/abnormal_logs.parquet') WHERE level IN ('ERROR','SEVERE') GROUP BY
+    1 ORDER BY n DESC LIMIT 10
+  purpose: top_error_services_abnormal_logs
+  row_count: 5
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_7100b72c/normal_logs.parquet') WHERE level IN ('ERROR','SEVERE') GROUP BY 1
+    ORDER BY n DESC LIMIT 10
+  purpose: top_error_services_normal_logs
+  row_count: 5
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_7100b72c/abnormal_logs.parquet') WHERE level IN ('ERROR','SEVERE') AND service_name
+    IN ('ts-cancel-service') GROUP BY 1
+  purpose: gt_service_abnormal_log_error_count
+  row_count: 0
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_7100b72c/normal_logs.parquet') WHERE level IN ('ERROR','SEVERE') AND service_name
+    IN ('ts-cancel-service') GROUP BY 1
+  purpose: gt_service_normal_log_error_count
+  row_count: 0
+- sql: SELECT service_name, "attr.status_code" as sc, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_7100b72c/abnormal_traces.parquet') WHERE service_name
+    IN ('ts-cancel-service') GROUP BY 1,2
+  purpose: gt_service_status_code_distribution
+  row_count: 0
+- sql: SELECT service_name, "attr.status_code" as sc, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_7100b72c/abnormal_traces.parquet') WHERE "attr.status_code"
+    IN ('Error','ERROR') GROUP BY 1,2 ORDER BY n DESC LIMIT 5
+  purpose: top_error_span_services
+  row_count: 1
+- sql: SELECT service_name, AVG(duration)/1e6 AS avg_ms, MAX(duration)/1e6 AS max_ms, QUANTILE_CONT(duration, 0.95)/1e6 AS p95_ms, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_7100b72c/abnormal_traces.parquet')
+    WHERE service_name IN ('ts-cancel-service') GROUP BY 1
+  purpose: gt_latency_stats
+  row_count: 0
+- sql: SELECT DISTINCT service_name FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_7100b72c/abnormal_traces.parquet')
+  purpose: all_abnormal_trace_services
+  row_count: 28
+counterfactual_queries_run:
+- sql: SELECT span_name, AVG(duration)/1e6 AS avg_ms, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_7100b72c/abnormal_traces.parquet') WHERE service_name
+    IN ('ts-cancel-service') GROUP BY 1 ORDER BY n DESC LIMIT 20
+  purpose: gt_span_name_breakdown
+  row_count: 0
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_7100b72c/normal_logs.parquet') WHERE level IN ('ERROR','SEVERE') AND service_name
+    IN ('mysql') GROUP BY 1
+  purpose: predicted_rc_normal_err
+  row_count: 0
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_7100b72c/abnormal_logs.parquet') WHERE level IN ('ERROR','SEVERE') AND service_name
+    IN ('mysql') GROUP BY 1
+  purpose: predicted_rc_abnormal_err
+  row_count: 0
+- sql: SELECT DISTINCT p.service_name, c.service_name FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_7100b72c/abnormal_traces.parquet') c JOIN read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_7100b72c/abnormal_traces.parquet')
+    p ON c.parent_span_id=p.span_id WHERE c.service_name IN ('ts-cancel-service') OR p.service_name IN ('ts-cancel-service') LIMIT 200
+  purpose: gt_parent_child_pairs
+  row_count: 0
+- sql: SELECT DISTINCT metric FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_7100b72c/abnormal_metrics.parquet') WHERE service_name IN ('ts-cancel-service') AND metric
+    LIKE 'jvm.%' LIMIT 10
+  purpose: gt_metric_families_probed
+  row_count: 3
+classes_to_verify:
+- D2
+- PD_NamedCandidateNotIsolated
+- PD_NoBaselineContrast
+- PD_NoCallTreeBuild
+- PD_NoFaultLayerMetricProbe
+- aiq.PD_StageEndsWithoutCommitment
+- aiq.R_hub_fabrication

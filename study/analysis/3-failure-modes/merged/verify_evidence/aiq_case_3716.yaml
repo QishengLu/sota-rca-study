@@ -1,0 +1,424 @@
+case_id: aiq.3716
+framework: aiq-qwen3.5-plus
+data_dir: /home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_4b676cdb
+gt_from_injection_json:
+  fault_type: JVMMemoryStress
+  fault_category: JVMChaos
+  injection_name: ts0-ts-food-service-stress-xfwkgh
+  gt_services:
+  - ts-food-service
+  source_service: null
+  target_service: null
+  start_time: '2025-08-10T10:01:09Z'
+  end_time: '2025-08-10T10:05:08Z'
+  display_config:
+    duration: 4
+    injection_point:
+      app_name: ts-food-service
+      class_name: foodsearch.controller.FoodController
+      method_name: home
+    mem_type: 2
+    namespace: ts
+gt_from_causal_graph_json:
+  root_causes:
+  - ts-food-service
+  alarm_nodes:
+  - span|loadgenerator::HTTP POST http://ts-ui-dashboard:8080/api/v1/preserveservice/preserve
+  - 'span|loadgenerator:: http://ts-ui-dashboard:8080/api/v1/foodservice/foods/{date}/{startStation}/{endStation}/{tripId}'
+agent_predicted:
+  root_causes:
+  - ts-rabbitmq
+  predicted_graph_nodes:
+  - ts-rabbitmq
+  - ts-food-service
+  - ts-ui-dashboard
+  - ts-preserve-service
+  - ts-notification-service
+  - ts-delivery-service
+raw_sql_count_total: 65
+raw_sql_list_sample:
+- SELECT DISTINCT metric, service_name FROM abnormal_metrics LIMIT 50
+- SELECT DISTINCT metric FROM abnormal_metrics WHERE metric LIKE '%error%' OR metric LIKE '%http%' OR metric LIKE '%latency%' LIMIT 30
+- SELECT span_name, service_name, attr_http_response_status_code, COUNT(*) as count FROM abnormal_traces WHERE span_name LIKE '%preserve%' OR span_name LIKE '%food%' GROUP BY span_name, service_name, attr_http_response_status_code
+  ORDER BY count DESC LIMIT 50
+- SELECT service_name, attr_http_response_status_code, span_name, COUNT(*) as count FROM abnormal_traces WHERE attr_http_response_status_code >= 500 GROUP BY service_name, attr_http_response_status_code,
+  span_name ORDER BY count DESC LIMIT 50
+- SELECT service_name, level, message, COUNT(*) as count FROM abnormal_logs WHERE level IN ('ERROR', 'WARN', 'FATAL') GROUP BY service_name, level, message ORDER BY count DESC LIMIT 50
+- SELECT service_name, level, message, time FROM abnormal_logs WHERE level = 'ERROR' AND service_name = 'ts-food-service' ORDER BY time ASC LIMIT 30
+- SELECT service_name, level, message, COUNT(*) as count FROM abnormal_logs WHERE message LIKE '%UnknownHostException%' OR message LIKE '%DNS%' OR message LIKE '%rabbitmq%' GROUP BY service_name, level,
+  message ORDER BY count DESC LIMIT 30
+- SELECT service_name, level, message FROM abnormal_logs WHERE service_name LIKE '%rabbitmq%' OR service_name = 'ts-rabbitmq' ORDER BY time ASC LIMIT 30
+- SELECT trace_id, service_name, span_name, attr_status_code, attr_http_response_status_code, duration FROM abnormal_traces WHERE attr_status_code = 'ERROR' OR attr_http_response_status_code >= 500 ORDER
+  BY time ASC LIMIT 50
+- SELECT trace_id, service_name, span_name, parent_span_id, span_id, attr_status_code, attr_http_response_status_code, duration FROM abnormal_traces WHERE trace_id = 'ea775f11f3b8522782124d16835b88c2' ORDER
+  BY duration DESC
+- SELECT service_name, level, message, time FROM abnormal_logs WHERE service_name = 'ts-preserve-service' AND level = 'ERROR' ORDER BY time ASC LIMIT 30
+- SELECT trace_id, service_name, span_name, parent_span_id, span_id, attr_status_code, attr_http_response_status_code, duration FROM abnormal_traces WHERE trace_id = 'ee2e94d4d42fc5b4c0cd628fae2099cf' ORDER
+  BY duration DESC
+- SELECT trace_id, service_name, span_name, parent_span_id, span_id, attr_status_code, attr_http_response_status_code, duration FROM abnormal_traces WHERE trace_id = 'ee2e94d4d42fc5b4c0cd628fae2099cf' ORDER
+  BY time ASC
+- SELECT service_name, level, message, time FROM abnormal_logs WHERE service_name = 'ts-food-service' AND (message LIKE '%UnknownHostException%' OR message LIKE '%DNS%' OR message LIKE '%rabbitmq%' OR message
+  LIKE '%Failed%') ORDER BY time ASC LIMIT 30
+- SELECT service_name, level, message, COUNT(*) as count FROM abnormal_logs WHERE message LIKE '%UnknownHostException%' GROUP BY service_name, level, message ORDER BY count DESC LIMIT 20
+- SELECT DISTINCT service_name FROM abnormal_traces WHERE span_name LIKE '%foodservice%' OR span_name LIKE '%food%' ORDER BY service_name
+- SELECT trace_id, service_name, span_name, attr_status_code, attr_http_response_status_code FROM abnormal_traces WHERE service_name = 'ts-food-service' AND (attr_status_code = 'Error' OR attr_http_response_status_code
+  >= 500) ORDER BY time ASC LIMIT 30
+- SELECT service_name, metric, value, time FROM abnormal_metrics WHERE metric LIKE '%http%' AND service_name IN ('ts-food-service', 'ts-ui-dashboard', 'ts-preserve-service') ORDER BY time ASC LIMIT 50
+- SELECT trace_id, service_name, span_name, parent_span_id, span_id, attr_status_code, attr_http_response_status_code FROM abnormal_traces WHERE trace_id IN (SELECT trace_id FROM abnormal_traces WHERE span_name
+  LIKE '%foodservice/foods%' AND attr_http_response_status_code = 503 LIMIT 5) ORDER BY time ASC LIMIT 60
+- SELECT trace_id, service_name, span_name, parent_span_id, span_id, attr_status_code, attr_http_response_status_code, duration FROM abnormal_traces WHERE trace_id = 'ee2e94d4d42fc5b4c0cd628fae2099cf' AND
+  service_name = 'ts-food-service' ORDER BY time ASC
+raw_sql_substring_audit:
+  has_baseline_contrast_substring: false
+  has_call_tree_build_substring: false
+  has_trace_follow_substring: true
+  has_jvm_metric_substring: false
+  has_container_metric_substring: false
+  has_k8s_metric_substring: false
+  has_db_metric_substring: false
+  has_network_metric_substring: false
+  has_status_error_filter: true
+  has_status_unset_filter: false
+  where_service_name_filters:
+  - ts-food-service
+  - ts-rabbitmq
+  - ts-preserve-service
+  - ts-ui-dashboard
+  - ts-delivery-service
+  - ts-notification-service
+parquet_evidence:
+  top_error_services_abnormal_logs:
+  - service: ts-food-service
+    count: 256
+  - service: ts-preserve-service
+    count: 89
+  - service: ts-order-service
+    count: 88
+  - service: ts-notification-service
+    count: 48
+  - service: ts-delivery-service
+    count: 47
+  - service: ts-ui-dashboard
+    count: 22
+  - service: ts-inside-payment-service
+    count: 1
+  top_error_services_normal_logs:
+  - service: ts-food-service
+    count: 334
+  - service: ts-preserve-service
+    count: 95
+  - service: ts-order-service
+    count: 95
+  - service: ts-notification-service
+    count: 48
+  - service: ts-delivery-service
+    count: 48
+  - service: ts-inside-payment-service
+    count: 1
+  gt_service_abnormal_log_error_count:
+    ts-food-service: 256
+  gt_service_normal_log_error_count:
+    ts-food-service: 334
+  gt_service_status_code_distribution:
+    ts-food-service:
+      Unset: 1437
+  gt_service_abnormal_span_count:
+    ts-food-service: 1437
+  top_error_span_services:
+  - service: ts-ui-dashboard
+    sc: Error
+    count: 22
+  - service: loadgenerator
+    sc: Error
+    count: 4
+  - service: ts-preserve-service
+    sc: Error
+    count: 3
+  gt_latency_stats:
+  - service: ts-food-service
+    avg_ms: 21.8
+    max_ms: 2066.9
+    p95_ms: 43.8
+    count: 1437
+  chronic_noise_detail:
+  - service: ts-preserve-service
+    normal_err: 95
+    abnormal_err: 89
+    ratio: 1.07
+  - service: ts-order-service
+    normal_err: 95
+    abnormal_err: 88
+    ratio: 1.08
+  - service: ts-notification-service
+    normal_err: 48
+    abnormal_err: 48
+    ratio: 1.0
+  - service: ts-delivery-service
+    normal_err: 48
+    abnormal_err: 47
+    ratio: 1.02
+  - service: ts-inside-payment-service
+    normal_err: 1
+    abnormal_err: 1
+    ratio: 1.0
+  gt_span_name_breakdown:
+  - span_name: GET
+    avg_ms: 10.2
+    count: 460
+  - span_name: GET /api/v1/foodservice/foods/{date}/{startStation}/{endStation}/{tripId}
+    avg_ms: 37.7
+    count: 341
+  - span_name: FoodController.getAllFood
+    avg_ms: 31.0
+    count: 341
+  - span_name: POST
+    avg_ms: 11.1
+    count: 119
+  - span_name: SELECT ts
+    avg_ms: 0.8
+    count: 34
+  - span_name: SELECT ts.food_order
+    avg_ms: 0.7
+    count: 28
+  - span_name: SELECT FoodOrder
+    avg_ms: 6.3
+    count: 14
+  - span_name: INSERT ts.food_order
+    avg_ms: 0.9
+    count: 14
+  - span_name: FoodOrderRepository.save
+    avg_ms: 11.7
+    count: 14
+  - span_name: POST /api/v1/foodservice/orders
+    avg_ms: 42.3
+    count: 14
+  - span_name: Session.merge foodsearch.entity.FoodOrder
+    avg_ms: 5.3
+    count: 14
+  - span_name: Transaction.commit
+    avg_ms: 3.9
+    count: 14
+  - span_name: FoodController.createFoodOrder
+    avg_ms: 38.9
+    count: 14
+  - span_name: FoodOrderRepository.findByOrderId
+    avg_ms: 18.6
+    count: 14
+  - span_name: SELECT ts.ts
+    avg_ms: 2.6
+    count: 2
+  gt_parent_child_pairs:
+  - - ts-food-service
+    - ts-travel-service
+  - - ts-food-service
+    - ts-station-food-service
+  - - ts-food-service
+    - ts-train-food-service
+  - - ts-ui-dashboard
+    - ts-food-service
+  - - ts-preserve-service
+    - ts-food-service
+trajectory_reasoning_snippets:
+- idx: 4
+  text: 'Now I have the schema information. Let me start investigating the incident by querying metrics and logs for the specific endpoints mentioned: ''/api/v1/preserveservice/preserve'' and ''/api/v1/foodservice/foods''.
+
+
+    First, let me query the abnormal metrics to understand what metrics are available and look for error rates and latency data related to these endpoints.
+
+
+    '
+- idx: 6
+  text: 'I can see there are HTTP latency metrics (`hubble_http_request_duration_p95_seconds`). Let me also check for error rate metrics and look at the traces to find the specific endpoints mentioned.
+
+
+    '
+- idx: 8
+  text: 'Let me check the traces to find the specific endpoints mentioned in the investigation query: ''/api/v1/preserveservice/preserve'' and ''/api/v1/foodservice/foods''.
+
+
+    '
+- idx: 10
+  text: 'I can see there are 503 errors on the `/api/v1/foodservice/foods` endpoint. Let me now look for error traces more broadly to understand the error propagation. Let me check for traces with error
+    status codes (5xx).
+
+
+    '
+- idx: 12
+  text: 'I see 503 errors in ts-ui-dashboard and some 500/503 errors in ts-preserve-service. Let me look at the logs to understand what errors are occurring and trace the propagation path.
+
+
+    '
+- idx: 14
+  text: 'I see important errors in `ts-food-service` with messages like "Get the Get Food Request Failed!" Let me look at more specific error logs to understand the root cause. Let me also check the traces
+    to understand the call chain.
+
+
+    '
+- idx: -1
+  text: "Based on my investigation, I have identified the root cause and fault propagation path. Let me construct the final causal graph:\n\n```json\n{\n  \"nodes\": [\n    {\"component\": \"ts-rabbitmq\"\
+    , \"state\": [\"UNAVAILABLE\"], \"timestamp\": 1723284070000},\n    {\"component\": \"ts-food-service\", \"state\": [\"HIGH_ERROR_RATE\"], \"timestamp\": 1723284070249},\n    {\"component\": \"ts-ui-dashboard\"\
+    , \"state\": [\"HIGH_ERROR_RATE\"], \"timestamp\": 1723284090430},\n    {\"component\": \"ts-preserve-service\", \"state\": [\"HIGH_ERROR_RATE\"], \"timestamp\": 1723284069136}\n  ],\n  \"edges\": [\n\
+    \    {\"source\": \"ts-rabbitmq\", \"target\": \"ts-food-service\"},\n    {\"source\": \"ts-food-service\", \"target\": \"ts-ui-dashboard\"}\n  ],\n  \"root_causes\": [\n    {\"component\": \"ts-rabbitmq\"\
+    , \"state\": [\"UNAVAILABLE\"], \"timestamp\": 1723284070000}\n  ],\n  \"component_to_service\": {}\n}\n```\n\n**Summary of Findings:**\n\n1. **Root Cause Service**: `ts-rabbitmq` - The RabbitMQ message\
+    \ broker is unavailable due to DNS resolution failure.\n\n2. **Root Cause**: DNS resolution failure (`java.net.UnknownHostException: ts-rabbitmq`) preventing services from connecting to the message\
+    \ queue.\n\n3. **Fault Propagation Path**:\n   - **ts-rabbitmq** (UNAVAILABLE - DNS resolution failure)\n   - → **ts-food-service** (HIGH_ERROR_RATE - Cannot send delivery info to MQ, \"Get the Get\
+    \ Food Request Failed\" errors)\n   - → **ts-ui-dashboard** (HIGH_ERROR_RATE - Returns 503 errors for `/api/v1/foodservice/foods` endpoint)\n\n4. **Secondary Issue**: `ts-preserve-service` also shows\
+    \ HIGH_ERROR_RATE with \"Order already exist\" errors, which may be a separate application-level issue or related to retry logic during the incident.\n\n5. **Affected Endpoints**:\n   - `/api/v1/foodservice/foods`\
+    \ - Returns 503 errors\n   - `/api/v1/preserveservice/preserve` - Returns 500/503 errors"
+- idx: -1
+  text: "The logs show 503 errors from ts-ui-dashboard with \"X-Envoy-Upstream-Service-Time\" indicating the upstream service (ts-food-service) is taking a long time or failing. The 503 errors suggest the\
+    \ upstream service is unavailable.\n\nBased on my investigation, I have enough evidence to construct the causal graph:\n\n1. **Root Cause**: DNS resolution failure for `ts-rabbitmq` - the ts-food-service\
+    \ cannot resolve the hostname `ts-rabbitmq`, causing `UnknownHostException` errors.\n\n2. **Propagation Path**:\n   - ts-rabbitmq (DNS failure) → ts-food-service (UnknownHostException when trying to\
+    \ send to MQ) → ts-ui-dashboard (503 errors when calling foodservice)\n\n3. **Additional Issue**: ts-preserve-service has \"Order already exist\" errors which may be a separate issue or related to retry\
+    \ logic.\n\nLet me now create the final causal graph output.\n\n"
+gt_required_capabilities:
+  gt_is_silent: false
+  gt_is_loudest: true
+  chronic_noise_present: true
+  chronic_noise_carriers:
+  - ts-preserve-service
+  - ts-order-service
+  - ts-notification-service
+  - ts-delivery-service
+  - ts-inside-payment-service
+  required_metric_layer: jvm
+  gt_path_is_edge_fault: false
+  gt_has_name_twin: true
+  name_twin_candidates:
+  - ts-user-service
+  - ts-assurance-service
+  - ts-order-service
+  - ts-security-service
+  - ts-notification-service
+  - ts-travel-service
+  - ts-cancel-service
+  - ts-station-food-service
+  - ts-route-plan-service
+  - ts-contacts-service
+  - ts-auth-service
+  - ts-config-service
+  - ts-inside-payment-service
+  - ts-travel2-service
+  - ts-preserve-service
+  - ts-basic-service
+  - ts-travel-plan-service
+  - ts-seat-service
+  - ts-consign-service
+  - ts-consign-price-service
+  - ts-delivery-service
+  - ts-price-service
+  - ts-verification-code-service
+  - ts-station-service
+  - ts-train-food-service
+  - ts-order-other-service
+  - ts-train-service
+  - ts-route-service
+  - ts-payment-service
+  gt_diluted_across_spans: false
+path_alignment:
+  gt_touched_in_trajectory: true
+  gt_neighbors_touched:
+    ts-preserve-service: 4
+    ts-ui-dashboard: 6
+  gt_neighbors_from_causal_graph:
+  - ts-preserve-service
+  - ts-ui-dashboard
+  agent_focus_services:
+  - service: ts-food-service
+    count: 9
+  - service: ts-rabbitmq
+    count: 8
+  - service: ts-ui-dashboard
+    count: 6
+  - service: ts-preserve-service
+    count: 4
+  agent_predicted_rc_in_gt_neighborhood: false
+counterfactual:
+  PD1_baseline_contrast:
+    chronic_noise_in_data: true
+    predicted_rc_is_chronic_carrier: false
+    predicted_rc_error_ratios:
+      ts-rabbitmq:
+        normal: 0
+        abnormal: 0
+    if_run_would_reveal: false
+  PD2_call_tree_build:
+    gt_is_upstream_of_agent_focus: true
+    if_run_would_surface_gt: true
+  PD3_fault_layer_metric_probe:
+    metric_family_if_probed: jvm
+    gt_metric_anomaly_exists_in_parquet: true
+    gt_metric_families_probed:
+    - jvm.cpu.recent_utilization
+    - jvm.system.cpu.load_1m
+    - jvm.system.cpu.utilization
+  PD4_named_candidate_not_isolated:
+    if_isolated_predicted_rc_show_healthy:
+      ts-rabbitmq: true
+  R_correct_heuristic_would_reach_gt:
+    if_loudness_applied: true
+    if_baseline_diff_applied: true
+    if_edge_direction_applied: null
+    if_name_twin_check_applied: true
+  D_obstacle_is_structural: true
+parquet_queries_run:
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_4b676cdb/abnormal_logs.parquet') WHERE level IN ('ERROR','SEVERE') GROUP BY
+    1 ORDER BY n DESC LIMIT 10
+  purpose: top_error_services_abnormal_logs
+  row_count: 7
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_4b676cdb/normal_logs.parquet') WHERE level IN ('ERROR','SEVERE') GROUP BY 1
+    ORDER BY n DESC LIMIT 10
+  purpose: top_error_services_normal_logs
+  row_count: 6
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_4b676cdb/abnormal_logs.parquet') WHERE level IN ('ERROR','SEVERE') AND service_name
+    IN ('ts-food-service') GROUP BY 1
+  purpose: gt_service_abnormal_log_error_count
+  row_count: 1
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_4b676cdb/normal_logs.parquet') WHERE level IN ('ERROR','SEVERE') AND service_name
+    IN ('ts-food-service') GROUP BY 1
+  purpose: gt_service_normal_log_error_count
+  row_count: 1
+- sql: SELECT service_name, "attr.status_code" as sc, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_4b676cdb/abnormal_traces.parquet') WHERE service_name
+    IN ('ts-food-service') GROUP BY 1,2
+  purpose: gt_service_status_code_distribution
+  row_count: 1
+- sql: SELECT service_name, "attr.status_code" as sc, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_4b676cdb/abnormal_traces.parquet') WHERE "attr.status_code"
+    IN ('Error','ERROR') GROUP BY 1,2 ORDER BY n DESC LIMIT 5
+  purpose: top_error_span_services
+  row_count: 3
+- sql: SELECT service_name, AVG(duration)/1e6 AS avg_ms, MAX(duration)/1e6 AS max_ms, QUANTILE_CONT(duration, 0.95)/1e6 AS p95_ms, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_4b676cdb/abnormal_traces.parquet')
+    WHERE service_name IN ('ts-food-service') GROUP BY 1
+  purpose: gt_latency_stats
+  row_count: 1
+- sql: SELECT DISTINCT service_name FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_4b676cdb/abnormal_traces.parquet')
+  purpose: all_abnormal_trace_services
+  row_count: 30
+counterfactual_queries_run:
+- sql: SELECT span_name, AVG(duration)/1e6 AS avg_ms, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_4b676cdb/abnormal_traces.parquet') WHERE service_name
+    IN ('ts-food-service') GROUP BY 1 ORDER BY n DESC LIMIT 20
+  purpose: gt_span_name_breakdown
+  row_count: 15
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_4b676cdb/normal_logs.parquet') WHERE level IN ('ERROR','SEVERE') AND service_name
+    IN ('ts-rabbitmq') GROUP BY 1
+  purpose: predicted_rc_normal_err
+  row_count: 0
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_4b676cdb/abnormal_logs.parquet') WHERE level IN ('ERROR','SEVERE') AND service_name
+    IN ('ts-rabbitmq') GROUP BY 1
+  purpose: predicted_rc_abnormal_err
+  row_count: 0
+- sql: SELECT DISTINCT p.service_name, c.service_name FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_4b676cdb/abnormal_traces.parquet') c JOIN read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_4b676cdb/abnormal_traces.parquet')
+    p ON c.parent_span_id=p.span_id WHERE c.service_name IN ('ts-food-service') OR p.service_name IN ('ts-food-service') LIMIT 200
+  purpose: gt_parent_child_pairs
+  row_count: 6
+- sql: SELECT DISTINCT metric FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_4b676cdb/abnormal_metrics.parquet') WHERE service_name IN ('ts-food-service') AND metric
+    LIKE 'jvm.%' LIMIT 10
+  purpose: gt_metric_families_probed
+  row_count: 3
+classes_to_verify:
+- D3
+- PD_NamedCandidateNotIsolated
+- PD_NoBaselineContrast
+- PD_NoFaultLayerMetricProbe
+- PD_SurveyWithoutDrill
+- U2_ChronicAmbientNoiseAnchor
+- aiq.PD_StageEndsWithoutCommitment

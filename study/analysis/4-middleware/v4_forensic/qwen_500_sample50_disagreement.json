@@ -1,0 +1,452 @@
+[
+  {
+    "di": 3552,
+    "i": 37,
+    "rnd": 46,
+    "sql": "SELECT service_name, span_name, attr_status_code, duration FROM abnormal_traces WHERE trace_id = 'dffa7ec5e49bedfea78e84da34c16e71' AND parent_span_id = '41353e43d6c0b15d' ORDER BY duration DESC LIMIT 20",
+    "qwen": "call_tree_build",
+    "final": "trace_follow",
+    "rule": "R3"
+  },
+  {
+    "di": 710,
+    "i": 29,
+    "rnd": 38,
+    "sql": "SELECT DISTINCT service_name FROM abnormal_traces",
+    "qwen": "latency_ranking",
+    "final": "call_tree_build",
+    "rule": "R0"
+  },
+  {
+    "di": 149,
+    "i": 23,
+    "rnd": 29,
+    "sql": "SELECT DISTINCT service_name FROM abnormal_logs ORDER BY service_name LIMIT 40",
+    "qwen": "metric_scan",
+    "final": "network_layer",
+    "rule": "R0"
+  },
+  {
+    "di": 4515,
+    "i": 10,
+    "rnd": 16,
+    "sql": "SELECT DISTINCT service_name FROM abnormal_traces WHERE trace_id IN (SELECT trace_id FROM abnormal_traces WHERE service_name = 'ts-travel-plan-service' AND attr_status_code = 'Error') ORDER BY service_name",
+    "qwen": "call_tree_build",
+    "final": "service_trace_scan",
+    "rule": "user_svc_count_single"
+  },
+  {
+    "di": 1884,
+    "i": 6,
+    "rnd": 11,
+    "sql": "SELECT DISTINCT trace_id, service_name, span_name, attr_status_code, parent_span_id FROM abnormal_traces WHERE trace_id = '19405515c375d054c1d0001a2c64c18e' AND parent_span_id IS NULL OR parent_span_id = '' ORDER BY time LIMIT 10",
+    "qwen": "unknown",
+    "final": "trace_follow",
+    "rule": "R0"
+  },
+  {
+    "di": 1581,
+    "i": 4,
+    "rnd": 10,
+    "sql": "SELECT trace_id, service_name, span_name, parent_span_id, span_id, attr_status_code, duration FROM abnormal_traces WHERE trace_id IN (SELECT trace_id FROM abnormal_traces WHERE attr_status_code = 'Error' LIMIT 5) ORDER BY trace_id, time LIMIT 50",
+    "qwen": "call_tree_build",
+    "final": "service_trace_scan",
+    "rule": "user_svc_count_single"
+  },
+  {
+    "di": 1484,
+    "i": 14,
+    "rnd": 19,
+    "sql": "SELECT service_name, level, COUNT(*) as count FROM abnormal_logs WHERE service_name = 'ts-route-plan-service' GROUP BY service_name, level",
+    "qwen": "error_log_overview",
+    "final": "service_error_log",
+    "rule": "user_svc_count_single"
+  },
+  {
+    "di": 846,
+    "i": 2,
+    "rnd": 6,
+    "sql": "SELECT service_name, level, message, COUNT(*) as cnt FROM abnormal_logs WHERE level IN ('ERROR', 'SEVERE') GROUP BY service_name, level, message ORDER BY cnt DESC LIMIT 50",
+    "qwen": "service_error_log",
+    "final": "error_log_overview",
+    "rule": "R0"
+  },
+  {
+    "di": 4468,
+    "i": 24,
+    "rnd": 32,
+    "sql": "SELECT DISTINCT service_name, span_name FROM abnormal_traces WHERE trace_id = '4b473aa6b4fcf711ae338597215e4a7e' ORDER BY service_name",
+    "qwen": "trace_follow",
+    "final": "k8s_state",
+    "rule": "R0"
+  },
+  {
+    "di": 601,
+    "i": 23,
+    "rnd": 30,
+    "sql": "SELECT trace_id, service_name, span_name, duration, parent_span_id FROM abnormal_traces WHERE service_name = 'ts-order-service' AND duration > 1000000000 ORDER BY time ASC LIMIT 20",
+    "qwen": "service_trace_scan",
+    "final": "keyword_search",
+    "rule": "R3"
+  },
+  {
+    "di": 3776,
+    "i": 21,
+    "rnd": 28,
+    "sql": "SELECT span_id, parent_span_id, service_name, span_name, attr_status_code, duration FROM abnormal_traces WHERE trace_id = '8452a3d8cca6b1b7cc86e123bfb9a91d' AND parent_span_id = '8e4f9565fc3144fe'",
+    "qwen": "call_tree_build",
+    "final": "trace_follow",
+    "rule": "R0"
+  },
+  {
+    "di": 4511,
+    "i": 33,
+    "rnd": 46,
+    "sql": "SELECT DISTINCT attr_status_code FROM abnormal_traces",
+    "qwen": "error_rate_scan",
+    "final": "service_trace_scan",
+    "rule": "R0"
+  },
+  {
+    "di": 3144,
+    "i": 13,
+    "rnd": 19,
+    "sql": "SELECT service_name, level, COUNT(*) as count FROM abnormal_logs WHERE service_name = 'ts-route-plan-service' GROUP BY service_name, level",
+    "qwen": "error_log_overview",
+    "final": "service_log_browse",
+    "rule": "R0"
+  },
+  {
+    "di": 551,
+    "i": 8,
+    "rnd": 13,
+    "sql": "SELECT trace_id, parent_span_id, service_name, span_name, attr_status_code, duration FROM abnormal_traces WHERE trace_id IN (SELECT trace_id FROM abnormal_traces WHERE service_name = 'ts-consign-service' LIMIT 5) ORDER BY time ASC LIMIT 50",
+    "qwen": "call_tree_build",
+    "final": "service_trace_scan",
+    "rule": "user_svc_count_single"
+  },
+  {
+    "di": 3298,
+    "i": 7,
+    "rnd": 14,
+    "sql": "SELECT service_name, metric, value, time FROM abnormal_metrics WHERE metric LIKE '%cpu%' OR metric LIKE '%memory%' OR metric LIKE '%error%' ORDER BY time DESC LIMIT 50",
+    "qwen": "metric_scan",
+    "final": "container_resource",
+    "rule": "R0"
+  },
+  {
+    "di": 2697,
+    "i": 40,
+    "rnd": 52,
+    "sql": "SELECT trace_id, service_name, span_name, attr_status_code FROM abnormal_traces WHERE trace_id = 'ec0374aeb0744e27cd6f2240f359c9f8' AND (service_name = 'ts-seat-service' OR service_name = 'ts-basic-service' OR service_name = 'ts-travel-service') ORDER BY time ASC LIMIT 30",
+    "qwen": "trace_follow",
+    "final": "error_rate_scan",
+    "rule": "user_traces_error_agg"
+  },
+  {
+    "di": 187,
+    "i": 20,
+    "rnd": 26,
+    "sql": "SELECT service_name, level, message, time FROM abnormal_logs WHERE service_name = 'ts-security-service' AND level IN ('ERROR', 'SEVERE', 'WARN') ORDER BY time ASC LIMIT 15",
+    "qwen": "service_log_browse",
+    "final": "service_error_log",
+    "rule": "R0"
+  },
+  {
+    "di": 184,
+    "i": 24,
+    "rnd": 30,
+    "sql": "SELECT span_id, parent_span_id, service_name, span_name, attr_status_code, duration FROM abnormal_traces WHERE trace_id = '85af56fad788362a447af057cf900e97' AND parent_span_id = '6760d80430345495' ORDER BY time LIMIT 15",
+    "qwen": "call_tree_build",
+    "final": "trace_follow",
+    "rule": "R3"
+  },
+  {
+    "di": 551,
+    "i": 72,
+    "rnd": 81,
+    "sql": "SELECT service_name, message FROM abnormal_logs WHERE service_name = 'ts-consign-service' AND message LIKE '%[queryByAccountId]%' LIMIT 10",
+    "qwen": "keyword_search",
+    "final": "metric_scan",
+    "rule": "R0"
+  },
+  {
+    "di": 1459,
+    "i": 17,
+    "rnd": 23,
+    "sql": "SELECT DISTINCT service_name FROM abnormal_traces ORDER BY service_name",
+    "qwen": "unknown",
+    "final": "service_trace_scan",
+    "rule": "R3"
+  },
+  {
+    "di": 1514,
+    "i": 44,
+    "rnd": 51,
+    "sql": "SELECT trace_id, span_id, parent_span_id, service_name, span_name, attr_status_code, duration FROM abnormal_traces WHERE trace_id = 'a791bc2a2da43b135d9132218de2a13f' AND parent_span_id = '9a3040ccf86fc5c9' LIMIT 10",
+    "qwen": "call_tree_build",
+    "final": "trace_follow",
+    "rule": "R0"
+  },
+  {
+    "di": 3035,
+    "i": 32,
+    "rnd": 38,
+    "sql": "SELECT service_name, span_name, attr_http_response_status_code, duration FROM abnormal_traces WHERE service_name = 'ts-train-food-service' AND span_name = 'GET /api/v1/trainfoodservice/trainfoods/{tripId}' AND duration > 100000000 ORDER BY time ASC LIMIT 20",
+    "qwen": "service_trace_scan",
+    "final": "service_error_log",
+    "rule": "R0"
+  },
+  {
+    "di": 3344,
+    "i": 16,
+    "rnd": 21,
+    "sql": "SELECT trace_id, span_id, parent_span_id, service_name, span_name, attr_status_code, duration FROM abnormal_traces WHERE trace_id IN (SELECT DISTINCT trace_id FROM abnormal_traces WHERE service_name = 'ts-preserve-service' AND attr_status_code = 'Error') AND service_name = 'ts-travel-service' LIMIT 20",
+    "qwen": "call_tree_build",
+    "final": "error_timeline",
+    "rule": "user_svc_count_2_services_or_none"
+  },
+  {
+    "di": 156,
+    "i": 31,
+    "rnd": 38,
+    "sql": "SELECT trace_id, service_name, span_name, attr_status_code, parent_span_id, span_id FROM abnormal_traces WHERE trace_id = '988cae666837b2fa8fd0b9d644dfd54c' AND parent_span_id = 'b167a403995e3911' ORDER BY time ASC LIMIT 20",
+    "qwen": "call_tree_build",
+    "final": "trace_follow",
+    "rule": "R3"
+  },
+  {
+    "di": 3219,
+    "i": 18,
+    "rnd": 22,
+    "sql": "SELECT trace_id, span_id, parent_span_id, service_name, span_name, duration, attr_status_code FROM abnormal_traces WHERE trace_id = 'b536d8e5564d9d663d6d57258ce9ea78' AND parent_span_id = '2d7a65897f9f09ea' ORDER BY duration DESC LIMIT 30",
+    "qwen": "call_tree_build",
+    "final": "trace_follow",
+    "rule": "R3"
+  },
+  {
+    "di": 1326,
+    "i": 33,
+    "rnd": 44,
+    "sql": "SELECT service_name, metric, value, time FROM abnormal_metrics WHERE service_name = 'ts-route-plan-service' AND metric = 'queueSize' ORDER BY time DESC LIMIT 10",
+    "qwen": "metric_scan",
+    "final": "baseline_collect",
+    "rule": "R0"
+  },
+  {
+    "di": 4258,
+    "i": 41,
+    "rnd": 54,
+    "sql": "SELECT message FROM abnormal_logs WHERE service_name = 'ts-ui-dashboard' AND message NOT LIKE '%handled request%' LIMIT 10",
+    "qwen": "keyword_search",
+    "final": "call_tree_build",
+    "rule": "user_parent_span_sub_tree"
+  },
+  {
+    "di": 3595,
+    "i": 24,
+    "rnd": 29,
+    "sql": "SELECT span_id, service_name, span_name, parent_span_id, attr_status_code, duration FROM abnormal_traces WHERE trace_id = 'b20155c4a8717ae987276d309cd5d6f4' AND span_id IN (SELECT span_id FROM abnormal_traces WHERE trace_id = 'b20155c4a8717ae987276d309cd5d6f4' AND parent_span_id LIKE '776%')",
+    "qwen": "call_tree_build",
+    "final": "trace_follow",
+    "rule": "R3"
+  },
+  {
+    "di": 4081,
+    "i": 3,
+    "rnd": 7,
+    "sql": "SELECT service_name, message, COUNT(*) as count FROM abnormal_logs WHERE level = 'ERROR' GROUP BY service_name, message ORDER BY count DESC LIMIT 30",
+    "qwen": "service_error_log",
+    "final": "error_log_overview",
+    "rule": "R0"
+  },
+  {
+    "di": 3144,
+    "i": 7,
+    "rnd": 12,
+    "sql": "SELECT trace_id, service_name, span_name, attr_status_code, duration, parent_span_id FROM abnormal_traces WHERE trace_id = '6ea78ddeb6e5729463d61eba30a4e488' AND service_name = 'ts-travel-plan-service' ORDER BY time LIMIT 20",
+    "qwen": "service_trace_scan",
+    "final": "trace_follow",
+    "rule": "R0"
+  },
+  {
+    "di": 2697,
+    "i": 7,
+    "rnd": 12,
+    "sql": "SELECT trace_id, service_name, span_name, attr_status_code, duration FROM abnormal_traces WHERE attr_status_code = 'Error' ORDER BY time ASC LIMIT 30",
+    "qwen": "service_trace_scan",
+    "final": "error_timeline",
+    "rule": "user_time_only_refined"
+  },
+  {
+    "di": 1481,
+    "i": 13,
+    "rnd": 20,
+    "sql": "SELECT service_name, metric, value, time FROM abnormal_metrics WHERE service_name = 'rabbitmq' ORDER BY time ASC LIMIT 30",
+    "qwen": "metric_scan",
+    "final": "keyword_search",
+    "rule": "R0"
+  },
+  {
+    "di": 2757,
+    "i": 26,
+    "rnd": 33,
+    "sql": "SELECT message FROM abnormal_logs WHERE service_name = 'ts-travel-plan-service' AND level = 'SEVERE' LIMIT 5",
+    "qwen": "service_error_log",
+    "final": "error_timeline",
+    "rule": "user_svc_count_2_services_or_none"
+  },
+  {
+    "di": 3294,
+    "i": 20,
+    "rnd": 26,
+    "sql": "SELECT trace_id, service_name, span_name, attr_status_code, duration FROM abnormal_traces WHERE trace_id = '859cc7c2281c1e578fd060db0c332553'",
+    "qwen": "trace_follow",
+    "final": "baseline_collect",
+    "rule": "R0"
+  },
+  {
+    "di": 1886,
+    "i": 23,
+    "rnd": 28,
+    "sql": "SELECT DISTINCT service_name FROM abnormal_metrics ORDER BY service_name LIMIT 50",
+    "qwen": "metric_scan",
+    "final": "service_trace_scan",
+    "rule": "R0"
+  },
+  {
+    "di": 4849,
+    "i": 10,
+    "rnd": 15,
+    "sql": "SELECT span_id, parent_span_id, service_name, span_name, attr_status_code, duration FROM abnormal_traces WHERE trace_id = 'ae82eb1e63954bfc27680c49906a861e' AND service_name = 'ts-train-food-service' ORDER BY duration DESC LIMIT 15",
+    "qwen": "service_trace_scan",
+    "final": "trace_follow",
+    "rule": "R0"
+  },
+  {
+    "di": 41,
+    "i": 1,
+    "rnd": 5,
+    "sql": "SELECT service_name, level, message FROM abnormal_logs WHERE level IN ('ERROR', 'SEVERE') ORDER BY time ASC LIMIT 50",
+    "qwen": "error_log_overview",
+    "final": "error_timeline",
+    "rule": "user_time_only_refined"
+  },
+  {
+    "di": 4620,
+    "i": 6,
+    "rnd": 11,
+    "sql": "SELECT trace_id, service_name, attr_status_code, duration, span_name, parent_span_id FROM abnormal_traces WHERE attr_status_code = 'Error' ORDER BY time ASC LIMIT 30",
+    "qwen": "service_trace_scan",
+    "final": "metric_scan",
+    "rule": "R0"
+  },
+  {
+    "di": 4839,
+    "i": 10,
+    "rnd": 15,
+    "sql": "SELECT trace_id, service_name, span_name, parent_span_id, span_id, attr_status_code, duration FROM abnormal_traces WHERE trace_id = '2052cacf4db472f463f27532579d877a' AND service_name = 'ts-route-plan-service' ORDER BY time ASC LIMIT 15",
+    "qwen": "unknown",
+    "final": "trace_follow",
+    "rule": "R0"
+  },
+  {
+    "di": 1029,
+    "i": 23,
+    "rnd": 31,
+    "sql": "SELECT trace_id, service_name, span_name, attr_status_code, duration FROM abnormal_traces WHERE attr_status_code = 'Error' AND service_name != 'loadgenerator' ORDER BY time ASC LIMIT 20",
+    "qwen": "service_trace_scan",
+    "final": "error_timeline",
+    "rule": "user_time_only_refined"
+  },
+  {
+    "di": 4073,
+    "i": 3,
+    "rnd": 8,
+    "sql": "SELECT service_name, attr_status_code, span_name, duration, trace_id, parent_span_id FROM abnormal_traces WHERE attr_status_code = 'Error' ORDER BY time ASC LIMIT 30",
+    "qwen": "service_trace_scan",
+    "final": "error_timeline",
+    "rule": "user_time_only_refined"
+  },
+  {
+    "di": 2700,
+    "i": 12,
+    "rnd": 15,
+    "sql": "SELECT service_name, message, time FROM abnormal_logs WHERE service_name = 'ts-preserve-service' ORDER BY time ASC LIMIT 30",
+    "qwen": "service_log_browse",
+    "final": "service_error_log",
+    "rule": "R0"
+  },
+  {
+    "di": 2258,
+    "i": 6,
+    "rnd": 10,
+    "sql": "SELECT DISTINCT service_name FROM abnormal_traces ORDER BY service_name",
+    "qwen": "latency_ranking",
+    "final": "service_trace_scan",
+    "rule": "R3"
+  },
+  {
+    "di": 1886,
+    "i": 21,
+    "rnd": 26,
+    "sql": "SELECT service_name, level, message FROM abnormal_logs WHERE service_name = 'ts-inside-payment-service' AND level = 'ERROR' LIMIT 10",
+    "qwen": "service_error_log",
+    "final": "trace_follow",
+    "rule": "R0"
+  },
+  {
+    "di": 1004,
+    "i": 30,
+    "rnd": 41,
+    "sql": "SELECT trace_id, service_name, span_name, parent_span_id, duration, time FROM abnormal_traces WHERE service_name = 'ts-route-service' AND duration > 5000000000 ORDER BY time ASC LIMIT 30",
+    "qwen": "service_trace_scan",
+    "final": "trace_follow",
+    "rule": "R0"
+  },
+  {
+    "di": 1435,
+    "i": 14,
+    "rnd": 21,
+    "sql": "SELECT trace_id, service_name, span_name, attr_status_code, duration FROM abnormal_traces WHERE trace_id = '0e212450176ee645daba229d3de60e99' ORDER BY time ASC",
+    "qwen": "trace_follow",
+    "final": "error_rate_scan",
+    "rule": "R0"
+  },
+  {
+    "di": 4666,
+    "i": 21,
+    "rnd": 27,
+    "sql": "SELECT service_name, level, message FROM abnormal_logs WHERE service_name = 'ts-preserve-service' AND level = 'ERROR' LIMIT 20",
+    "qwen": "service_error_log",
+    "final": "error_log_overview",
+    "rule": "R0"
+  },
+  {
+    "di": 2239,
+    "i": 12,
+    "rnd": 19,
+    "sql": "SELECT trace_id, service_name, span_name, attr_status_code, duration, parent_span_id, span_id FROM abnormal_traces WHERE parent_span_id = '' OR parent_span_id IS NULL ORDER BY time ASC LIMIT 30",
+    "qwen": "call_tree_build",
+    "final": "service_trace_scan",
+    "rule": "R0"
+  },
+  {
+    "di": 601,
+    "i": 21,
+    "rnd": 27,
+    "sql": "SELECT trace_id, service_name, span_name, parent_span_id, duration FROM abnormal_traces WHERE trace_id = 'fe504f8053ce408d449eb14dbbd7d809' ORDER BY time ASC",
+    "qwen": "trace_follow",
+    "final": "latency_ranking",
+    "rule": "R0"
+  },
+  {
+    "di": 551,
+    "i": 61,
+    "rnd": 69,
+    "sql": "SELECT service_name, attr_http_response_status_code, COUNT(*) as cnt FROM abnormal_traces WHERE attr_http_response_status_code >= 500 GROUP BY service_name, attr_http_response_status_code ORDER BY cnt DESC LIMIT 20",
+    "qwen": "error_rate_scan",
+    "final": "keyword_search",
+    "rule": "R0"
+  }
+]

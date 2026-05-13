@@ -1,0 +1,56 @@
+[
+  {
+    "pd": "PD_ErrorOnlyFilterBias",
+    "count": 73,
+    "v_d": 0.3060983807790561,
+    "v_r": 0.3492841934756919
+  },
+  {
+    "pd": "PD_LateExplorationDegenerate",
+    "count": 25,
+    "v_d": 0.2701669666071374,
+    "v_r": 0.30219907418258646
+  },
+  {
+    "pd": "PD_MultiRCCompromise",
+    "count": 7,
+    "v_d": 0.18018856331274197,
+    "v_r": 0.7596127440095961
+  },
+  {
+    "pd": "PD_NamedCandidateNotIsolated",
+    "count": 138,
+    "v_d": 0.44901810378442897,
+    "v_r": 0.5737177547316449
+  },
+  {
+    "pd": "PD_NoBaselineContrast",
+    "count": 316,
+    "v_d": 0.18173131023747963,
+    "v_r": 0.33257330461710016
+  },
+  {
+    "pd": "PD_NoCallTreeBuild",
+    "count": 202,
+    "v_d": 0.17674844157342623,
+    "v_r": 0.1970021222072117
+  },
+  {
+    "pd": "PD_NoFaultLayerMetricProbe",
+    "count": 188,
+    "v_d": 0.3253004008080264,
+    "v_r": 0.31685903413127614
+  },
+  {
+    "pd": "PD_SurveyWithoutDrill",
+    "count": 59,
+    "v_d": 0.20662389077278134,
+    "v_r": 0.2600556420396319
+  },
+  {
+    "pd": "PD_TraceFollowAbsent",
+    "count": 6,
+    "v_d": 0.11977272973039377,
+    "v_r": 0.21638228351603084
+  }
+]

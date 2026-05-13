@@ -1,0 +1,25 @@
+# User requested ignores
+openlangchain_rca.py
+thinkdepthai_rca.py
+data/
+experiments/
+.env
+
+# Standard Python ignores
+__pycache__/
+*.py[cod]
+*$py.class
+.ipynb_checkpoints/
+.venv/
+env/
+venv/
+*.egg-info/
+
+# Databases
+*.db
+
+# Logs
+*.log
+
+# Local analysis/plan docs
+middleware/v4_plan.md

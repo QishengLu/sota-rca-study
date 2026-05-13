@@ -1,0 +1,503 @@
+case_id: aiq.3059
+framework: aiq-qwen3.5-plus
+data_dir: /home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_5bc86df8
+gt_from_injection_json:
+  fault_type: NetworkCorrupt
+  fault_category: NetworkChaos
+  injection_name: ts5-ts-order-service-corrupt-bd4p5g
+  gt_services:
+  - ts-order-service
+  - ts-ui-dashboard
+  source_service: ts-order-service
+  target_service: ts-ui-dashboard
+  start_time: '2025-07-20T12:47:02Z'
+  end_time: '2025-07-20T12:51:01Z'
+  display_config:
+    correlation: 65
+    corrupt: 48
+    direction: both
+    duration: 4
+    injection_point:
+      source_service: ts-order-service
+      target_service: ts-ui-dashboard
+    namespace: ts
+gt_from_causal_graph_json:
+  root_causes:
+  - ts-order-service
+  alarm_nodes:
+  - span|loadgenerator::HTTP POST http://ts-ui-dashboard:8080/api/v1/preserveservice/preserve
+  - span|loadgenerator::HTTP POST http://ts-ui-dashboard:8080/api/v1/travelplanservice/travelPlan/minStation
+  - span|loadgenerator::HTTP POST http://ts-ui-dashboard:8080/api/v1/travelplanservice/travelPlan/cheapest
+  - span|loadgenerator::HTTP POST http://ts-ui-dashboard:8080/api/v1/travelservice/trips/left
+  - span|loadgenerator::HTTP POST http://ts-ui-dashboard:8080/api/v1/orderservice/order/refresh
+agent_predicted:
+  root_causes:
+  - rabbitmq
+  predicted_graph_nodes:
+  - rabbitmq
+  - ts-food-service
+  - ts-delivery-service
+  - ts-notification-service
+  - ts-order-service
+  - ts-preserve-service
+  - ts-ui-dashboard
+  - ts-travel-service
+  - ts-travel-plan-service
+  - ts-route-plan-service
+raw_sql_count_total: 74
+raw_sql_list_sample:
+- SELECT DISTINCT metric FROM abnormal_metrics LIMIT 50
+- SELECT DISTINCT metric FROM abnormal_metrics WHERE metric LIKE '%http%' OR metric LIKE '%latency%' OR metric LIKE '%error%' OR metric LIKE '%request%' LIMIT 50
+- SELECT service_name, attr_status_code, COUNT(*) as count, AVG(duration) as avg_duration, MAX(duration) as max_duration FROM abnormal_traces GROUP BY service_name, attr_status_code ORDER BY service_name,
+  attr_status_code LIMIT 100
+- SELECT service_name, level, COUNT(*) as count FROM abnormal_logs GROUP BY service_name, level ORDER BY count DESC LIMIT 50
+- SELECT service_name, level, message, time FROM abnormal_logs WHERE level = 'ERROR' ORDER BY time LIMIT 100
+- SELECT service_name, COUNT(*) as error_count FROM abnormal_logs WHERE level = 'ERROR' GROUP BY service_name ORDER BY error_count DESC LIMIT 20
+- SELECT service_name, message, time FROM abnormal_logs WHERE level = 'ERROR' AND service_name IN ('ts-ui-dashboard', 'ts-preserve-service', 'ts-order-service', 'ts-travel-service', 'ts-travel-plan-service')
+  ORDER BY time LIMIT 50
+- SELECT service_name, COUNT(*) as total_spans, AVG(duration) as avg_duration_ns, MAX(duration) as max_duration_ns FROM abnormal_traces GROUP BY service_name ORDER BY avg_duration_ns DESC LIMIT 30
+- SELECT trace_id, service_name, span_name, duration, attr_status_code, attr_http_response_status_code FROM abnormal_traces WHERE attr_status_code = 'Error' OR attr_http_response_status_code >= 500 ORDER
+  BY time LIMIT 50
+- SELECT trace_id, service_name, span_name, duration, parent_span_id FROM abnormal_traces WHERE trace_id = '85b898989f9e94b91e21058c4225355f' ORDER BY duration DESC LIMIT 30
+- SELECT DISTINCT service_name FROM abnormal_traces ORDER BY service_name
+- SELECT trace_id, service_name, span_name, duration, parent_span_id, attr_status_code FROM abnormal_traces WHERE service_name = 'ts-travel-plan-service' LIMIT 5
+- SELECT trace_id, service_name, span_name, duration, parent_span_id, attr_status_code FROM abnormal_traces WHERE trace_id = 'aeb287812a731ebde873eda4f8737c42' ORDER BY duration DESC LIMIT 30
+- SELECT service_name, metric, AVG(value) as avg_value, MAX(value) as max_value FROM abnormal_metrics WHERE metric LIKE '%memory%' OR metric LIKE '%cpu%' GROUP BY service_name, metric ORDER BY service_name,
+  metric LIMIT 100
+- SELECT service_name, metric, AVG(value) as avg_value FROM abnormal_metrics WHERE metric IN ('k8s.pod.memory.usage', 'k8s.pod.cpu.usage', 'k8s.container.memory_limit', 'k8s.container.cpu_limit') GROUP
+  BY service_name, metric ORDER BY service_name LIMIT 50
+- SELECT trace_id, service_name, span_name, duration, parent_span_id, attr_status_code FROM abnormal_traces WHERE trace_id = '6a60b19ad6982e964cba1834da726f7c' ORDER BY duration DESC LIMIT 30
+- SELECT service_name, metric, count, sum, min, max FROM abnormal_metrics_histogram WHERE metric LIKE '%latency%' OR metric LIKE '%duration%' ORDER BY service_name, metric LIMIT 50
+- SELECT service_name, message FROM abnormal_logs WHERE level = 'ERROR' AND service_name = 'ts-ui-dashboard' LIMIT 10
+- SELECT service_name, span_name, COUNT(*) as count, AVG(duration) as avg_duration FROM abnormal_traces WHERE span_name LIKE '%orderservice%' OR span_name LIKE '%order/refresh%' GROUP BY service_name, span_name
+  ORDER BY count DESC LIMIT 30
+- SELECT service_name, metric, AVG(value) as avg_value, MAX(value) as max_value FROM abnormal_metrics WHERE metric LIKE '%network%' OR metric LIKE '%restart%' OR metric LIKE '%phase%' OR metric LIKE '%ready%'
+  OR metric LIKE '%available%' GROUP BY service_name, metric HAVING MAX(value) > 0 ORDER BY service_name, metric LIMIT 50
+raw_sql_substring_audit:
+  has_baseline_contrast_substring: false
+  has_call_tree_build_substring: false
+  has_trace_follow_substring: true
+  has_jvm_metric_substring: true
+  has_container_metric_substring: true
+  has_k8s_metric_substring: true
+  has_db_metric_substring: false
+  has_network_metric_substring: false
+  has_status_error_filter: true
+  has_status_unset_filter: false
+  where_service_name_filters:
+  - ts-travel-plan-service
+  - ts-ui-dashboard
+  - ts-basic-service
+  - rabbitmq
+  - ts-notification-service
+  - ts-food-service
+  - ts-delivery-service
+  - ts-order-service
+  - ts-preserve-service
+  - ts-travel-service
+parquet_evidence:
+  top_error_services_abnormal_logs:
+  - service: ts-food-service
+    count: 58
+  - service: ts-delivery-service
+    count: 48
+  - service: ts-notification-service
+    count: 47
+  - service: ts-preserve-service
+    count: 12
+  - service: ts-order-service
+    count: 12
+  - service: ts-ui-dashboard
+    count: 4
+  top_error_services_normal_logs:
+  - service: ts-food-service
+    count: 123
+  - service: ts-delivery-service
+    count: 48
+  - service: ts-notification-service
+    count: 48
+  - service: ts-preserve-service
+    count: 8
+  - service: ts-order-service
+    count: 8
+  gt_service_abnormal_log_error_count:
+    ts-order-service: 12
+    ts-ui-dashboard: 4
+  gt_service_normal_log_error_count:
+    ts-order-service: 8
+  gt_service_status_code_distribution:
+    ts-ui-dashboard:
+      Unset: 1111
+    ts-order-service:
+      Unset: 3168
+  gt_service_abnormal_span_count:
+    ts-ui-dashboard: 1111
+    ts-order-service: 3168
+  top_error_span_services:
+  - service: loadgenerator
+    sc: Error
+    count: 4
+  gt_latency_stats:
+  - service: ts-order-service
+    avg_ms: 7.1
+    max_ms: 2864.7
+    p95_ms: 16.4
+    count: 3168
+  - service: ts-ui-dashboard
+    avg_ms: 186.2
+    max_ms: 20001.4
+    p95_ms: 453.0
+    count: 1111
+  chronic_noise_detail:
+  - service: ts-food-service
+    normal_err: 123
+    abnormal_err: 58
+    ratio: 2.12
+  - service: ts-delivery-service
+    normal_err: 48
+    abnormal_err: 48
+    ratio: 1.0
+  - service: ts-notification-service
+    normal_err: 48
+    abnormal_err: 47
+    ratio: 1.02
+  - service: ts-preserve-service
+    normal_err: 8
+    abnormal_err: 12
+    ratio: 0.67
+  gt_span_name_breakdown:
+  - span_name: SELECT ts.orders
+    avg_ms: 2.2
+    count: 625
+  - span_name: SELECT Order
+    avg_ms: 4.4
+    count: 573
+  - span_name: OrderRepository.findByTravelDateAndTrainNumber
+    avg_ms: 3.0
+    count: 417
+  - span_name: OrderController.getTicketListByDateAndTripId
+    avg_ms: 4.8
+    count: 417
+  - span_name: POST /api/v1/orderservice/order/tickets
+    avg_ms: 6.0
+    count: 417
+  - span_name: POST /api/v1/users/login
+    avg_ms: 110.9
+    count: 169
+  - span_name: GET /api/v1/userservice/users/id/4d2a46c7-71cb-4cf1-b5bb-b68406d9da6f
+    avg_ms: 15.6
+    count: 169
+  - span_name: POST /api/v1/orderservice/order/refresh
+    avg_ms: 622.8
+    count: 136
+  - span_name: OrderRepository.findByAccountId
+    avg_ms: 10.4
+    count: 127
+  - span_name: GET /api/v1/routeservice/routes
+    avg_ms: 51.0
+    count: 91
+  - span_name: GET /api/v1/contactservice/contacts/account/4d2a46c7-71cb-4cf1-b5bb-b68406d9da6f
+    avg_ms: 12.4
+    count: 71
+  - span_name: Transaction.commit
+    avg_ms: 3.3
+    count: 69
+  - span_name: OrderController.queryOrdersForRefresh
+    avg_ms: 18.0
+    count: 67
+  - span_name: POST /api/v1/orderOtherService/orderOther/refresh
+    avg_ms: 67.7
+    count: 64
+  - span_name: GET /api/v1/trainservice/trains
+    avg_ms: 11.6
+    count: 49
+  - span_name: Session.find order.entity.Order
+    avg_ms: 1.7
+    count: 35
+  - span_name: OrderRepository.findById
+    avg_ms: 9.3
+    count: 35
+  - span_name: Session.merge order.entity.Order
+    avg_ms: 0.7
+    count: 34
+  - span_name: OrderRepository.save
+    avg_ms: 5.8
+    count: 34
+  - span_name: OrderController.securityInfoCheck
+    avg_ms: 11.7
+    count: 30
+  gt_parent_child_pairs:
+  - - ts-cancel-service
+    - ts-order-service
+  - - ts-ui-dashboard
+    - ts-cancel-service
+  - - loadgenerator
+    - ts-ui-dashboard
+  - - ts-ui-dashboard
+    - ts-contacts-service
+  - - ts-ui-dashboard
+    - ts-consign-service
+  - - ts-ui-dashboard
+    - ts-order-service
+  - - ts-ui-dashboard
+    - ts-travel-service
+  - - ts-ui-dashboard
+    - ts-assurance-service
+  - - ts-preserve-service
+    - ts-order-service
+  - - ts-ui-dashboard
+    - ts-inside-payment-service
+  - - ts-inside-payment-service
+    - ts-order-service
+  - - ts-ui-dashboard
+    - ts-verification-code-service
+  - - ts-ui-dashboard
+    - ts-user-service
+  - - ts-seat-service
+    - ts-order-service
+  - - ts-ui-dashboard
+    - ts-food-service
+  - - ts-security-service
+    - ts-order-service
+  - - ts-ui-dashboard
+    - ts-route-service
+  - - ts-ui-dashboard
+    - ts-order-other-service
+  - - ts-ui-dashboard
+    - ts-travel2-service
+  - - ts-ui-dashboard
+    - ts-preserve-service
+  - - ts-ui-dashboard
+    - ts-auth-service
+  - - ts-ui-dashboard
+    - ts-travel-plan-service
+  - - ts-ui-dashboard
+    - ts-train-service
+  gt_caller_distribution:
+  - caller: ts-order-service
+    count: 2590
+  - caller: loadgenerator
+    count: 1111
+  - caller: ts-seat-service
+    count: 417
+  - caller: ts-ui-dashboard
+    count: 67
+  - caller: ts-inside-payment-service
+    count: 32
+trajectory_reasoning_snippets:
+- idx: 4
+  text: 'Now I have the schema information. Let me start by querying the abnormal metrics to understand error rates and latency for the 5 affected services. I''ll first check what metrics are available
+    and then calculate error rates and p95 latency.
+
+
+    '
+- idx: 6
+  text: 'I see these are mostly infrastructure metrics. Let me check for HTTP-related metrics like latency and error rates. Let me also look at the traces data which might have HTTP latency information.
+
+
+    '
+- idx: 8
+  text: 'Let me check the traces data for HTTP latency and error information, as traces typically contain span duration and status codes.
+
+
+    '
+- idx: 10
+  text: 'I can see the traces data. I notice that `loadgenerator` has some errors (4 Error status codes). Let me look more closely at the error traces and also check the logs for error patterns. Let me
+    first check the abnormal logs for error patterns by service.
+
+
+    '
+- idx: 12
+  text: 'I see there are ERROR level logs in several services. Let me look at the actual error messages to understand what''s happening. Let me check the ERROR logs for the services mentioned in the task
+    (ts-ui-dashboard, preserveservice, travelplanservice, travelservice, orderservice).
+
+
+    '
+- idx: 16
+  text: 'I see several services with errors. Let me look at the specific error messages for the services mentioned in the task. Let me check the error messages for ts-ui-dashboard, ts-preserve-service,
+    ts-order-service, and also look for ts-travel-service and ts-travel-plan-service errors.
+
+
+    '
+- idx: -1
+  text: "Based on my investigation, I have gathered strong evidence that **confirms and strengthens** the preliminary root cause graph. Here are my findings:\n\n## Evidence Summary\n\n### Root Cause: rabbitmq\
+    \ UNAVAILABLE (DNS Resolution Failure)\n\n**Key Evidence:**\n1. **DNS Resolution Failure**: Multiple ERROR logs from `ts-food-service` show:\n   - `java.net.UnknownHostException: ts-rabbitmq: Name or\
+    \ service not known`\n   - First occurrence: `2025-07-20T12:47:23.112000+00:00`\n\n2. **Connection Attempts**: Repeated logs showing services trying to connect to RabbitMQ:\n   - `ts-delivery-service`:\
+    \ \"Attempting to connect to: [ts-rabbitmq:5672]\" starting at 12:47:02.692\n   - `ts-notification-service`: Same pattern starting at 12:47:06.287\n   - `ts-food-service`: Same pattern starting at 12:47:23.105\n\
+    \n3. **Queue Declaration Failures**: \n   - `ts-delivery-service` and `ts-notification-service` show repeated \"Failed to check/redeclare auto-delete queue(s)\" errors\n\n### Fault Propagation Path\
+    \ (Confirmed)\n\n1. **rabbitmq → ts-food-service**: DNS failure prevents MQ connection, causing `UnknownHostException`\n2. **rabbitmq → ts-delivery-service**: Queue declaration failures\n3. **rabbitmq\
+    \ → ts-notification-service**: Queue declaration failures  \n4. **ts-food-service → ts-order-service**: Food order creation failures cascade to order service\n5. **ts-order-service → ts-preserve-service**:\
+    \ Order creation failures (\"Order already exists\" due to retries)\n6. **ts-preserve-service → ts-ui-dashboard**: 502 errors with \"dial tcp 10.102.32.107:8080: i/o timeout\"\n\n### High Latency Evidence\
+    \ (Traces)\n- `ts-preserve-service`: 2.77s duration (preserve endpoint)\n- `ts-food-service`: 1.1-2.0s duration (food service endpoints)\n- `ts-station-food-service`: 1.05s duration\n- `ts-travel-service`:\
+    \ 318ms duration\n- `ts-travel-plan-service`: 407ms duration\n- `ts-route-plan-service`: 295ms duration\n\n## Refined Causal Graph\n\nThe preliminary graph is **accurate and well-supported**. The evidence\
+    \ confirms:\n\n```json\n{\n  \"node"
+- idx: -1
+  text: "Based on my analysis, I have enough evidence to construct the causal graph. The root cause is the RabbitMQ message broker being unavailable, which causes cascading failures.\n\nLet me create the\
+    \ final output:\n\n```json\n{\n  \"nodes\": [\n    {\"component\": \"rabbitmq\", \"state\": [\"UNAVAILABLE\"], \"timestamp\": 1753015622000},\n    {\"component\": \"ts-food-service\", \"state\": [\"\
+    HIGH_ERROR_RATE\"], \"timestamp\": 1753015622677},\n    {\"component\": \"ts-delivery-service\", \"state\": [\"HIGH_ERROR_RATE\"], \"timestamp\": 1753015622692},\n    {\"component\": \"ts-notification-service\"\
+    , \"state\": [\"HIGH_ERROR_RATE\"], \"timestamp\": 1753015626287},\n    {\"component\": \"ts-order-service\", \"state\": [\"HIGH_ERROR_RATE\"], \"timestamp\": 1753015628517},\n    {\"component\": \"\
+    ts-preserve-service\", \"state\": [\"HIGH_ERROR_RATE\", \"HIGH_LATENCY\"], \"timestamp\": 1753015628523},\n    {\"component\": \"ts-ui-dashboard\", \"state\": [\"HIGH_LATENCY\", \"HIGH_ERROR_RATE\"\
+    ], \"timestamp\": 1753015631162},\n    {\"component\": \"ts-travel-plan-service\", \"state\": [\"HIGH_LATENCY\"], \"timestamp\": 1753015628000},\n    {\"component\": \"ts-travel-service\", \"state\"\
+    : [\"HIGH_LATENCY\"], \"timestamp\": 1753015628000},\n    {\"component\": \"ts-route-plan-service\", \"state\": [\"HIGH_LATENCY\"], \"timestamp\": 1753015628000}\n  ],\n  \"edges\": [\n    {\"source\"\
+    : \"rabbitmq\", \"target\": \"ts-food-service\"},\n    {\"source\": \"rabbitmq\", \"target\": \"ts-delivery-service\"},\n    {\"source\": \"rabbitmq\", \"target\": \"ts-notification-service\"},\n  \
+    \  {\"source\": \"ts-food-service\", \"target\": \"ts-order-service\"},\n    {\"source\": \"ts-delivery-service\", \"target\": \"ts-notification-service\"},\n    {\"source\": \"ts-order-service\", \"\
+    target\": \"ts-preserve-service\"},\n    {\"source\": \"ts-preserve-service\", \"target\": \"ts-travel-service\"},\n    {\"source\": \"ts-travel-service\", \"target\": \"ts-travel-plan-service\"},\n\
+    \    {\"source\": \"ts-travel-plan-service\", \"target\": \"ts-route-plan-service\"},\n    {\"source\": \"ts-preserve-service\", \"target\": \"ts-ui-dashboard\"},\n    {\"source\": \"ts-order-service\"\
+    , \"target\": \"ts-ui-dashboard\"}\n  ]"
+gt_required_capabilities:
+  gt_is_silent: false
+  gt_is_loudest: false
+  chronic_noise_present: true
+  chronic_noise_carriers:
+  - ts-food-service
+  - ts-delivery-service
+  - ts-notification-service
+  - ts-preserve-service
+  required_metric_layer: network/db
+  gt_path_is_edge_fault: true
+  gt_has_name_twin: true
+  name_twin_candidates:
+  - ts-user-service
+  - ts-assurance-service
+  - ts-security-service
+  - ts-notification-service
+  - ts-travel-service
+  - ts-cancel-service
+  - ts-station-food-service
+  - ts-route-plan-service
+  - ts-contacts-service
+  - ts-auth-service
+  - ts-config-service
+  - ts-inside-payment-service
+  - ts-travel2-service
+  - ts-preserve-service
+  - ts-basic-service
+  - ts-travel-plan-service
+  - ts-seat-service
+  - ts-consign-service
+  - ts-consign-price-service
+  - ts-delivery-service
+  - ts-price-service
+  - ts-verification-code-service
+  - ts-food-service
+  - ts-station-service
+  - ts-train-food-service
+  - ts-order-other-service
+  - ts-train-service
+  - ts-route-service
+  gt_diluted_across_spans: true
+path_alignment:
+  gt_touched_in_trajectory: true
+  gt_neighbors_touched:
+    ts-preserve-service: 1
+    ts-travel-plan-service: 1
+  gt_neighbors_from_causal_graph:
+  - loadgenerator
+  - ts-preserve-service
+  - ts-seat-service
+  - ts-security-service
+  - ts-travel-plan-service
+  - ts-travel-service
+  agent_focus_services:
+  - service: ts-food-service
+    count: 5
+  - service: ts-basic-service
+    count: 3
+  - service: ts-ui-dashboard
+    count: 2
+  - service: ts-notification-service
+    count: 2
+  - service: ts-travel-plan-service
+    count: 1
+  - service: rabbitmq
+    count: 1
+  - service: ts-delivery-service
+    count: 1
+  - service: ts-order-service
+    count: 1
+  - service: ts-preserve-service
+    count: 1
+  agent_predicted_rc_in_gt_neighborhood: false
+counterfactual:
+  PD1_baseline_contrast:
+    chronic_noise_in_data: true
+    predicted_rc_is_chronic_carrier: false
+    predicted_rc_error_ratios:
+      rabbitmq:
+        normal: 0
+        abnormal: 0
+    if_run_would_reveal: false
+  PD2_call_tree_build:
+    gt_is_upstream_of_agent_focus: true
+    if_run_would_surface_gt: true
+  PD3_fault_layer_metric_probe:
+    metric_family_if_probed: network/db
+    gt_metric_anomaly_exists_in_parquet: null
+  PD4_named_candidate_not_isolated:
+    if_isolated_predicted_rc_show_healthy:
+      rabbitmq: true
+  R_correct_heuristic_would_reach_gt:
+    if_loudness_applied: false
+    if_baseline_diff_applied: true
+    if_edge_direction_applied: true
+    if_name_twin_check_applied: true
+  D_obstacle_is_structural: true
+parquet_queries_run:
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_5bc86df8/abnormal_logs.parquet') WHERE level IN ('ERROR','SEVERE') GROUP BY
+    1 ORDER BY n DESC LIMIT 10
+  purpose: top_error_services_abnormal_logs
+  row_count: 6
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_5bc86df8/normal_logs.parquet') WHERE level IN ('ERROR','SEVERE') GROUP BY 1
+    ORDER BY n DESC LIMIT 10
+  purpose: top_error_services_normal_logs
+  row_count: 5
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_5bc86df8/abnormal_logs.parquet') WHERE level IN ('ERROR','SEVERE') AND service_name
+    IN ('ts-order-service','ts-ui-dashboard') GROUP BY 1
+  purpose: gt_service_abnormal_log_error_count
+  row_count: 2
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_5bc86df8/normal_logs.parquet') WHERE level IN ('ERROR','SEVERE') AND service_name
+    IN ('ts-order-service','ts-ui-dashboard') GROUP BY 1
+  purpose: gt_service_normal_log_error_count
+  row_count: 1
+- sql: SELECT service_name, "attr.status_code" as sc, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_5bc86df8/abnormal_traces.parquet') WHERE service_name
+    IN ('ts-order-service','ts-ui-dashboard') GROUP BY 1,2
+  purpose: gt_service_status_code_distribution
+  row_count: 2
+- sql: SELECT service_name, "attr.status_code" as sc, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_5bc86df8/abnormal_traces.parquet') WHERE "attr.status_code"
+    IN ('Error','ERROR') GROUP BY 1,2 ORDER BY n DESC LIMIT 5
+  purpose: top_error_span_services
+  row_count: 1
+- sql: SELECT service_name, AVG(duration)/1e6 AS avg_ms, MAX(duration)/1e6 AS max_ms, QUANTILE_CONT(duration, 0.95)/1e6 AS p95_ms, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_5bc86df8/abnormal_traces.parquet')
+    WHERE service_name IN ('ts-order-service','ts-ui-dashboard') GROUP BY 1
+  purpose: gt_latency_stats
+  row_count: 2
+- sql: SELECT DISTINCT service_name FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_5bc86df8/abnormal_traces.parquet')
+  purpose: all_abnormal_trace_services
+  row_count: 29
+counterfactual_queries_run:
+- sql: SELECT span_name, AVG(duration)/1e6 AS avg_ms, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_5bc86df8/abnormal_traces.parquet') WHERE service_name
+    IN ('ts-order-service','ts-ui-dashboard') GROUP BY 1 ORDER BY n DESC LIMIT 20
+  purpose: gt_span_name_breakdown
+  row_count: 20
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_5bc86df8/normal_logs.parquet') WHERE level IN ('ERROR','SEVERE') AND service_name
+    IN ('rabbitmq') GROUP BY 1
+  purpose: predicted_rc_normal_err
+  row_count: 0
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_5bc86df8/abnormal_logs.parquet') WHERE level IN ('ERROR','SEVERE') AND service_name
+    IN ('rabbitmq') GROUP BY 1
+  purpose: predicted_rc_abnormal_err
+  row_count: 0
+- sql: SELECT DISTINCT p.service_name, c.service_name FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_5bc86df8/abnormal_traces.parquet') c JOIN read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_5bc86df8/abnormal_traces.parquet')
+    p ON c.parent_span_id=p.span_id WHERE c.service_name IN ('ts-order-service','ts-ui-dashboard') OR p.service_name IN ('ts-order-service','ts-ui-dashboard') LIMIT 200
+  purpose: gt_parent_child_pairs
+  row_count: 24
+- sql: SELECT p.service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_5bc86df8/abnormal_traces.parquet') c JOIN read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_5bc86df8/abnormal_traces.parquet')
+    p ON c.parent_span_id=p.span_id WHERE c.service_name IN ('ts-order-service','ts-ui-dashboard') GROUP BY 1 ORDER BY n DESC LIMIT 5
+  purpose: gt_caller_distribution
+  row_count: 5
+classes_to_verify:
+- D3
+- PD_NamedCandidateNotIsolated
+- PD_NoBaselineContrast
+- U2_ChronicAmbientNoiseAnchor
+- aiq.PD_StageEndsWithoutCommitment

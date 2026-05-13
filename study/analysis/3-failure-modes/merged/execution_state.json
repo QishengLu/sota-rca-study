@@ -1,0 +1,17 @@
+{
+  "plan": "/home/nn/.claude/plans/1-case-2-3-modular-popcorn.md",
+  "scope": "Part 7 X-1..X-6",
+  "started_at": "2026-04-22",
+  "phases": {
+    "X-0_backup": {"status": "done", "note": "verify_verdicts.v1_baseline.jsonl + verify_mismatch_report.v1_baseline.md created"},
+    "X-1_taxonomy": {"status": "done", "files": ["D_taxonomy.md", "unified_R.md", "PD_taxonomy.md"], "completed_at": "2026-04-22"},
+    "X-2_adjudicator": {"status": "done", "files": ["RCAgentEval/scripts/failure_analysis/verify_adjudicate.py"], "completed_at": "2026-04-22", "changes": ["D1 threshold 10->5", "D1 zero-Error-status check added", "D5 cascade ratio 2x->1.5x + GT err floor >=10", "U1 top-5->top-10", "VERDICTS_PATH/STATE_PATH overridable via env vars"]},
+    "X-3_rerun_vc": {"status": "done", "outputs": ["verify_verdicts.v2.jsonl", "verify_mismatch_report.v2.md"], "completed_at": "2026-04-22", "v2_agree": "828/1972 (42.0%)"},
+    "X-4_relabel_queue": {"status": "done", "outputs": ["relabel_queue.v2.jsonl"], "completed_at": "2026-04-22", "queue_size": 933, "by_action": {"remove_label": 613, "skip_human": 218, "relabel_class": 102}},
+    "X-5_apply_relabels": {"status": "done", "outputs": ["applied_relabels.v3.jsonl", "verify_verdicts.v3.jsonl", "verify_mismatch_report.v3.md"], "completed_at": "2026-04-22", "v3_pool_size": 1359, "v3_agree": "840/1359 (61.8%)"},
+    "X-6_db_projection": {"status": "done", "completed_at": "2026-04-22", "outputs": ["D_projection.v3.jsonl", "PD_projection.v3.jsonl", "R_relabel_db_queue.v3.jsonl", "applied_db_r_updates.v3.jsonl", "verify_verdicts.v4.jsonl", "verify_mismatch_report.final.md"], "v4_agree": "840/1359 (61.8%)", "v4_agree_judged": "840/1148 (73.2%)", "v4_agree_mechanical": "840/876 (95.9%)", "db_updates": "110 rows across 4 exp_ids"}
+  },
+  "agree_history": {"v1_baseline_pct": 41.4, "v2_pct": 42.0, "v3_pct": 61.8, "v4_pct": 61.8, "v4_pct_judged_only": 73.2, "v4_pct_mechanical_only": 95.9},
+  "completed_at": "2026-04-22",
+  "logs": []
+}

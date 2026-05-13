@@ -1,0 +1,384 @@
+case_id: aiq.2390
+framework: aiq-qwen3.5-plus
+data_dir: /home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_ad369910
+gt_from_injection_json:
+  fault_type: JVMMemoryStress
+  fault_category: JVMChaos
+  injection_name: ts3-ts-user-service-stress-7btwsk
+  gt_services:
+  - ts-user-service
+  source_service: null
+  target_service: null
+  start_time: '2025-07-21T15:51:10Z'
+  end_time: '2025-07-21T15:55:08Z'
+  display_config:
+    duration: 4
+    injection_point:
+      app_name: ts-user-service
+      class_name: user.init.InitUser
+      method_name: run
+    mem_type: 2
+    namespace: ts
+gt_from_causal_graph_json:
+  root_causes:
+  - ts-user-service
+  alarm_nodes:
+  - span|loadgenerator::HTTP GET http://ts-ui-dashboard:8080/api/v1/userservice/users/id/{userId}
+  - span|loadgenerator::HTTP GET http://ts-ui-dashboard:8080/api/v1/cancelservice/cancel/{orderId}/{loginId}
+agent_predicted:
+  root_causes:
+  - ts-ui-dashboard
+  predicted_graph_nodes:
+  - ts-ui-dashboard
+  - ts-user-service
+  - ts-cancel-service
+  - loadgenerator
+raw_sql_count_total: 63
+raw_sql_list_sample:
+- SELECT service_name, span_name, attr_http_response_status_code, duration, time FROM abnormal_traces WHERE service_name = 'ts-ui-dashboard' LIMIT 20
+- SELECT service_name, span_name, attr_http_response_status_code, duration, time FROM abnormal_traces WHERE span_name LIKE '%userservice/users/id%' OR span_name LIKE '%cancelservice/cancel%' LIMIT 30
+- SELECT service_name, span_name, attr_http_response_status_code, duration, time FROM abnormal_traces WHERE span_name LIKE '%cancelservice%' OR attr_http_response_status_code >= 500 LIMIT 30
+- SELECT service_name, level, message, time FROM abnormal_logs WHERE level = 'ERROR' OR level = 'WARN' LIMIT 30
+- SELECT service_name, level, message, time FROM abnormal_logs WHERE service_name IN ('ts-user-service', 'ts-cancel-service', 'ts-ui-dashboard') AND (level = 'ERROR' OR message LIKE '%error%' OR message
+  LIKE '%fail%' OR message LIKE '%timeout%' OR message LIKE '%exception%') LIMIT 40
+- SELECT service_name, level, message, time FROM abnormal_logs WHERE service_name = 'ts-user-service' AND level = 'ERROR' LIMIT 15
+- SELECT service_name, level, message, time FROM abnormal_logs WHERE service_name = 'ts-cancel-service' AND level = 'ERROR' LIMIT 15
+- SELECT service_name, span_name, attr_http_response_status_code, attr_status_code, duration, time FROM abnormal_traces WHERE service_name = 'ts-user-service' AND (attr_http_response_status_code >= 400
+  OR attr_status_code != 'OK') LIMIT 20
+- SELECT service_name, span_name, attr_http_response_status_code, attr_status_code, duration, time FROM abnormal_traces WHERE service_name = 'ts-cancel-service' LIMIT 20
+- SELECT service_name, span_name, attr_destination, duration, time FROM abnormal_traces WHERE service_name = 'ts-cancel-service' AND attr_destination IS NOT NULL LIMIT 20
+- SELECT service_name, span_name, parent_span_id, duration, time FROM abnormal_traces WHERE service_name = 'ts-cancel-service' AND span_name LIKE 'GET%' AND span_name NOT LIKE '/api%' LIMIT 15
+- SELECT service_name, metric, value, time FROM abnormal_metrics WHERE service_name IN ('ts-user-service', 'ts-cancel-service', 'ts-ui-dashboard') AND (metric LIKE '%error%' OR metric LIKE '%latency%')
+  ORDER BY time LIMIT 30
+- SELECT DISTINCT metric FROM abnormal_metrics LIMIT 20
+- SELECT DISTINCT metric FROM abnormal_metrics WHERE metric LIKE '%http%' OR metric LIKE '%error%' OR metric LIKE '%latency%' OR metric LIKE '%request%' LIMIT 30
+- SELECT service_name, metric, value, time FROM abnormal_metrics WHERE metric = 'hubble_http_request_duration_p99_seconds' AND service_name IN ('ts-user-service', 'ts-cancel-service', 'ts-ui-dashboard')
+  ORDER BY time LIMIT 30
+- SELECT trace_id, service_name, span_name, duration, attr_http_response_status_code FROM abnormal_traces WHERE trace_id = (SELECT trace_id FROM abnormal_traces WHERE span_name LIKE '%userservice/users/id%'
+  AND duration > 2000000000 LIMIT 1) ORDER BY duration DESC LIMIT 20
+- SELECT DISTINCT service_name FROM abnormal_traces ORDER BY service_name
+- SELECT service_name, level, message, time FROM abnormal_logs WHERE service_name = 'ts-user-service' LIMIT 20
+- SELECT service_name, metric, value, time FROM abnormal_metrics WHERE service_name = 'ts-user-service' AND (metric LIKE '%cpu%' OR metric LIKE '%memory%') ORDER BY time LIMIT 30
+- SELECT trace_id, service_name, span_name, duration, attr_http_response_status_code FROM abnormal_traces WHERE trace_id = (SELECT trace_id FROM abnormal_traces WHERE span_name LIKE '%cancelservice/cancel%'
+  AND duration > 3000000000 LIMIT 1) ORDER BY duration DESC LIMIT 20
+raw_sql_substring_audit:
+  has_baseline_contrast_substring: false
+  has_call_tree_build_substring: false
+  has_trace_follow_substring: true
+  has_jvm_metric_substring: false
+  has_container_metric_substring: false
+  has_k8s_metric_substring: false
+  has_db_metric_substring: false
+  has_network_metric_substring: false
+  has_status_error_filter: true
+  has_status_unset_filter: false
+  where_service_name_filters:
+  - ts-ui-dashboard
+  - ts-user-service
+  - ts-cancel-service
+parquet_evidence:
+  top_error_services_abnormal_logs:
+  - service: ts-food-service
+    count: 116
+  - service: ts-notification-service
+    count: 48
+  - service: ts-delivery-service
+    count: 48
+  - service: ts-ui-dashboard
+    count: 47
+  - service: ts-order-service
+    count: 32
+  - service: ts-preserve-service
+    count: 32
+  top_error_services_normal_logs:
+  - service: ts-food-service
+    count: 202
+  - service: ts-notification-service
+    count: 48
+  - service: ts-delivery-service
+    count: 48
+  - service: ts-order-service
+    count: 45
+  - service: ts-preserve-service
+    count: 45
+  gt_service_abnormal_log_error_count: {}
+  gt_service_normal_log_error_count: {}
+  gt_service_status_code_distribution:
+    ts-user-service:
+      Unset: 2139
+  gt_service_abnormal_span_count:
+    ts-user-service: 2139
+  top_error_span_services:
+  - service: ts-ui-dashboard
+    sc: Error
+    count: 47
+  - service: loadgenerator
+    sc: Error
+    count: 9
+  gt_latency_stats:
+  - service: ts-user-service
+    avg_ms: 12.2
+    max_ms: 2377.5
+    p95_ms: 9.1
+    count: 2139
+  chronic_noise_detail:
+  - service: ts-food-service
+    normal_err: 202
+    abnormal_err: 116
+    ratio: 1.74
+  - service: ts-notification-service
+    normal_err: 48
+    abnormal_err: 48
+    ratio: 1.0
+  - service: ts-delivery-service
+    normal_err: 48
+    abnormal_err: 48
+    ratio: 1.0
+  - service: ts-order-service
+    normal_err: 45
+    abnormal_err: 32
+    ratio: 1.41
+  - service: ts-preserve-service
+    normal_err: 45
+    abnormal_err: 32
+    ratio: 1.41
+  gt_span_name_breakdown:
+  - span_name: SELECT ts.user
+    avg_ms: 0.9
+    count: 421
+  - span_name: SELECT User
+    avg_ms: 2.7
+    count: 421
+  - span_name: UserController.getUserByUserId
+    avg_ms: 15.5
+    count: 420
+  - span_name: UserRepository.findByUserId
+    avg_ms: 12.0
+    count: 420
+  - span_name: GET /api/v1/userservice/users/id/{userId}
+    avg_ms: 29.0
+    count: 420
+  - span_name: SELECT ts
+    avg_ms: 0.7
+    count: 34
+  - span_name: SELECT ts.ts
+    avg_ms: 2.9
+    count: 2
+  - span_name: UserRepository.findByUserName
+    avg_ms: 787.6
+    count: 1
+  gt_parent_child_pairs:
+  - - ts-ui-dashboard
+    - ts-user-service
+  - - ts-preserve-service
+    - ts-user-service
+  - - ts-cancel-service
+    - ts-user-service
+trajectory_reasoning_snippets:
+- idx: 4
+  text: 'Now I have the schema information. The investigation query asks me to analyze HTTP status codes and latency percentiles for specific endpoints in the ts-ui-dashboard service. Let me start by querying
+    the abnormal traces to find data related to the ts-ui-dashboard service and the specific endpoints mentioned.
+
+
+    '
+- idx: 6
+  text: 'I can see the ts-ui-dashboard service has traces. Now let me specifically look for the endpoints mentioned in the investigation query: `/api/v1/userservice/users/id/{userId}` and `/api/v1/cancelservice/cancel/{orderId}/{loginId}`.
+    Let me also check for error status codes and high latency.
+
+
+    '
+- idx: 8
+  text: 'I can see some very high latency values (over 2 seconds = 2,000,000,000 nanoseconds) for the userservice endpoint. Let me now look for the cancelservice endpoint and also check for error status
+    codes.
+
+
+    '
+- idx: 10
+  text: 'I can see clear evidence of the incident:
+
+    1. There are 503 errors starting around 15:51:35 for the `/api/v1/userservice/users/id/` endpoint
+
+    2. There are very high latency values (over 3 seconds) for the cancelservice endpoint
+
+    3. The ts-ui-dashboard service is showing 503 errors
+
+
+    Let me now investigate the root cause by looking at the ts-user-service and ts-cancel-service to understand where the failures originate. I should also check the logs for error messages.
+
+
+    '
+- idx: 12
+  text: 'Let me look for more specific error logs related to the user service and cancel service, and also check for any connection errors or timeouts.
+
+
+    '
+- idx: 18
+  text: 'Let me check the traces for error status codes in ts-user-service and ts-cancel-service to understand where the failures originate.
+
+
+    '
+- idx: -1
+  text: "Now let me create the final causal graph output in the required JSON format.\n\n```json\n{\n  \"nodes\": [\n    {\"component\": \"ts-user-service\", \"state\": [\"HIGH_LATENCY\"], \"timestamp\"\
+    : 1753113070},\n    {\"component\": \"ts-ui-dashboard\", \"state\": [\"HIGH_LATENCY\", \"HIGH_ERROR_RATE\"], \"timestamp\": 1753113095},\n    {\"component\": \"ts-cancel-service\", \"state\": [\"HIGH_LATENCY\"\
+    ], \"timestamp\": 1753113089},\n    {\"component\": \"loadgenerator\", \"state\": [\"HIGH_LATENCY\"], \"timestamp\": 1753113070}\n  ],\n  \"edges\": [\n    {\"source\": \"ts-user-service\", \"target\"\
+    : \"ts-ui-dashboard\"},\n    {\"source\": \"ts-user-service\", \"target\": \"ts-cancel-service\"},\n    {\"source\": \"ts-ui-dashboard\", \"target\": \"loadgenerator\"},\n    {\"source\": \"ts-cancel-service\"\
+    , \"target\": \"ts-ui-dashboard\"}\n  ],\n  \"root_causes\": [\n    {\"component\": \"ts-user-service\", \"state\": [\"HIGH_LATENCY\"], \"timestamp\": 1753113070}\n  ],\n  \"component_to_service\":\
+    \ {}\n}\n```\n\nWait, let me verify the timestamps. The incident started at 2025-07-21T15:51:10. Let me convert this to Unix timestamp:\n- 2025-07-21T15:51:10+00:00\n\nActually, looking at the data,\
+    \ the timestamps are already in ISO format. Let me use the actual timestamps from the data. The first high latency was observed at 15:51:10.210000 for ts-user-service.\n\nLet me recalculate:\n- 2025-07-21T15:51:10\
+    \ = approximately 1753113070 (Unix timestamp)\n\nActually, let me verify by checking: 2025-07-21 is in the future from today (2026-04-16), so the timestamp calculation might be different. Let me just\
+    \ use reasonable timestamps based on the data.\n\nLooking at the trace data:\n- First high latency in ts-user-service: 2025-07-21T15:51:10.210000+00:00\n- First 503 error in ts-ui-dashboard: 2025-07-21T15:51:35.139636+00:00\n\
+    - High latency in ts-cancel-service: 2025-07-21T15:51:29.375000+00:00\n\nLet me convert these to Unix timestamps:\n- 2025-07-21T15:51:10 = 1753113070\n- 2025-07-21T15:51:29 = 1753113089\n- 2025-07-21T15:51:35\
+    \ = 1753113095\n\nThe final output is:\n\n```json\n{\n  \"nodes\": [\n    {\"component\": \"ts-user"
+- idx: -1
+  text: "I can see ts-user-service has a queueSize of 80, which indicates some queuing but not the highest. Let me now consolidate my findings and create the final causal graph.\n\nBased on my analysis:\n\
+    \n1. **Root Cause**: ts-user-service is the origin of the failure, specifically the `UserRepository.findByUserId` method which has extremely high latency (2.3+ seconds vs normal ~2.4ms)\n\n2. **Fault\
+    \ Propagation Path**:\n   - ts-user-service (high latency in database query) → ts-ui-dashboard (receives slow responses, eventually returns 503 errors) → loadgenerator (experiences failures)\n   - ts-user-service\
+    \ also affects ts-cancel-service which calls it during cancel operations\n\n3. **Incident Timeframe**: 15:51:10 to 15:53:10 (approximately 2 minutes)\n\n4. **SLO Violations**:\n   - p99 latency for\
+    \ ts-user-service spiked to 2.47 seconds (vs normal ~25ms)\n   - 503 errors started at 15:51:35\n\nLet me create the final output.\n\n"
+gt_required_capabilities:
+  gt_is_silent: true
+  gt_is_loudest: false
+  chronic_noise_present: true
+  chronic_noise_carriers:
+  - ts-food-service
+  - ts-notification-service
+  - ts-delivery-service
+  - ts-order-service
+  - ts-preserve-service
+  required_metric_layer: jvm
+  gt_path_is_edge_fault: false
+  gt_has_name_twin: true
+  name_twin_candidates:
+  - ts-assurance-service
+  - ts-order-service
+  - ts-security-service
+  - ts-notification-service
+  - ts-travel-service
+  - ts-cancel-service
+  - ts-station-food-service
+  - ts-route-plan-service
+  - ts-contacts-service
+  - ts-auth-service
+  - ts-config-service
+  - ts-inside-payment-service
+  - ts-travel2-service
+  - ts-preserve-service
+  - ts-basic-service
+  - ts-travel-plan-service
+  - ts-seat-service
+  - ts-consign-service
+  - ts-consign-price-service
+  - ts-delivery-service
+  - ts-price-service
+  - ts-verification-code-service
+  - ts-food-service
+  - ts-station-service
+  - ts-train-food-service
+  - ts-order-other-service
+  - ts-train-service
+  - ts-route-service
+  - ts-payment-service
+  gt_diluted_across_spans: true
+path_alignment:
+  gt_touched_in_trajectory: true
+  gt_neighbors_touched:
+    ts-cancel-service: 7
+    ts-ui-dashboard: 8
+  gt_neighbors_from_causal_graph:
+  - ts-cancel-service
+  - ts-ui-dashboard
+  agent_focus_services:
+  - service: ts-user-service
+    count: 11
+  - service: ts-ui-dashboard
+    count: 8
+  - service: ts-cancel-service
+    count: 7
+  agent_predicted_rc_in_gt_neighborhood: true
+counterfactual:
+  PD1_baseline_contrast:
+    chronic_noise_in_data: true
+    predicted_rc_is_chronic_carrier: false
+    predicted_rc_error_ratios:
+      ts-ui-dashboard:
+        normal: 0
+        abnormal: 47
+    if_run_would_reveal: false
+  PD2_call_tree_build:
+    gt_is_upstream_of_agent_focus: false
+    if_run_would_surface_gt: false
+  PD3_fault_layer_metric_probe:
+    metric_family_if_probed: jvm
+    gt_metric_anomaly_exists_in_parquet: true
+    gt_metric_families_probed:
+    - jvm.cpu.recent_utilization
+    - jvm.system.cpu.utilization
+    - jvm.system.cpu.load_1m
+  PD4_named_candidate_not_isolated:
+    if_isolated_predicted_rc_show_healthy:
+      ts-ui-dashboard: false
+  R_correct_heuristic_would_reach_gt:
+    if_loudness_applied: false
+    if_baseline_diff_applied: false
+    if_edge_direction_applied: null
+    if_name_twin_check_applied: true
+  D_obstacle_is_structural: true
+parquet_queries_run:
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_ad369910/abnormal_logs.parquet') WHERE level IN ('ERROR','SEVERE') GROUP BY
+    1 ORDER BY n DESC LIMIT 10
+  purpose: top_error_services_abnormal_logs
+  row_count: 6
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_ad369910/normal_logs.parquet') WHERE level IN ('ERROR','SEVERE') GROUP BY 1
+    ORDER BY n DESC LIMIT 10
+  purpose: top_error_services_normal_logs
+  row_count: 5
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_ad369910/abnormal_logs.parquet') WHERE level IN ('ERROR','SEVERE') AND service_name
+    IN ('ts-user-service') GROUP BY 1
+  purpose: gt_service_abnormal_log_error_count
+  row_count: 0
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_ad369910/normal_logs.parquet') WHERE level IN ('ERROR','SEVERE') AND service_name
+    IN ('ts-user-service') GROUP BY 1
+  purpose: gt_service_normal_log_error_count
+  row_count: 0
+- sql: SELECT service_name, "attr.status_code" as sc, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_ad369910/abnormal_traces.parquet') WHERE service_name
+    IN ('ts-user-service') GROUP BY 1,2
+  purpose: gt_service_status_code_distribution
+  row_count: 1
+- sql: SELECT service_name, "attr.status_code" as sc, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_ad369910/abnormal_traces.parquet') WHERE "attr.status_code"
+    IN ('Error','ERROR') GROUP BY 1,2 ORDER BY n DESC LIMIT 5
+  purpose: top_error_span_services
+  row_count: 2
+- sql: SELECT service_name, AVG(duration)/1e6 AS avg_ms, MAX(duration)/1e6 AS max_ms, QUANTILE_CONT(duration, 0.95)/1e6 AS p95_ms, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_ad369910/abnormal_traces.parquet')
+    WHERE service_name IN ('ts-user-service') GROUP BY 1
+  purpose: gt_latency_stats
+  row_count: 1
+- sql: SELECT DISTINCT service_name FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_ad369910/abnormal_traces.parquet')
+  purpose: all_abnormal_trace_services
+  row_count: 30
+counterfactual_queries_run:
+- sql: SELECT span_name, AVG(duration)/1e6 AS avg_ms, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_ad369910/abnormal_traces.parquet') WHERE service_name
+    IN ('ts-user-service') GROUP BY 1 ORDER BY n DESC LIMIT 20
+  purpose: gt_span_name_breakdown
+  row_count: 8
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_ad369910/normal_logs.parquet') WHERE level IN ('ERROR','SEVERE') AND service_name
+    IN ('ts-ui-dashboard') GROUP BY 1
+  purpose: predicted_rc_normal_err
+  row_count: 0
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_ad369910/abnormal_logs.parquet') WHERE level IN ('ERROR','SEVERE') AND service_name
+    IN ('ts-ui-dashboard') GROUP BY 1
+  purpose: predicted_rc_abnormal_err
+  row_count: 1
+- sql: SELECT DISTINCT p.service_name, c.service_name FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_ad369910/abnormal_traces.parquet') c JOIN read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_ad369910/abnormal_traces.parquet')
+    p ON c.parent_span_id=p.span_id WHERE c.service_name IN ('ts-user-service') OR p.service_name IN ('ts-user-service') LIMIT 200
+  purpose: gt_parent_child_pairs
+  row_count: 4
+- sql: SELECT DISTINCT metric FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_ad369910/abnormal_metrics.parquet') WHERE service_name IN ('ts-user-service') AND metric
+    LIKE 'jvm.%' LIMIT 10
+  purpose: gt_metric_families_probed
+  row_count: 3
+classes_to_verify:
+- D5
+- PD_NoBaselineContrast
+- PD_NoCallTreeBuild
+- U1_LoudnessAnchorOverSilentVictim
+- aiq.PD_StageEndsWithoutCommitment

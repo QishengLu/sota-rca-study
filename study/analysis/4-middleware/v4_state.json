@@ -1,0 +1,135 @@
+{
+  "plan": "/home/nn/.claude/plans/agent-thinkdepthai-high-level-high-leve-quiet-cascade.md",
+  "scope": "Part D — D-0..D-8",
+  "started_at": "2026-04-22",
+  "phases": {
+    "D-0_principles": {
+      "status": "done",
+      "outputs": ["v4_principles.md"],
+      "completed_at": "2026-04-22",
+      "needs_review": true,
+      "revisions": [
+        {
+          "date": "2026-04-22",
+          "changes": [
+            "原则 4 新增「1 主问 + 2~3 次问」复合干预内容结构",
+            "原则 5 维度上限规则区分主问/次问（次问不计入上限）",
+            "原则 5 三层管线 LLM 选型：L1/L2/L3 用 shubiaobiao claude-opus-4-7；R-T 提取用纯代码",
+            "plan 文件 aiq 适配层结论前检查时机已锁定：在 reflect_on_graph 第二次循环结束、finalize_summary 之前介入；依据 aiq agent_runner.py 行 652 (num_reflections=2 固定循环) + 行 732-737 (LangGraph 无条件顺序拓扑) 确认 aiq 固定执行两轮反思"
+          ]
+        }
+      ]
+    },
+    "D-1_M1_M2_cards": {
+      "status": "done",
+      "outputs": ["v4_dimensions/README.md", "v4_dimensions/M1_loudness_anchor_selfcheck.md", "v4_dimensions/M2_chronic_noise_skepticism.md"],
+      "completed_at": "2026-04-22",
+      "needs_review": true,
+      "notes": "M1 和 M2 都通过自检 9/9。次问长度限制 1 句。M1 翻盘期望 ~31 case 跨 4 framework；M2 ~38 case。",
+      "revisions": [
+        {
+          "date": "2026-04-22",
+          "changes": [
+            "原则 4 干预内容结构修订：主问必有 + 0~3 次问（不强行复合）",
+            "次问触发条件：L2 对该维度 match_score ≥ 0.7 才加；< 0.7 即使主问卡片建议常见搭配也不加",
+            "L2 输出格式改为每维度独立 match_score；主问需 ≥ 0.7 才触发干预；次问取剩余 ≥ 0.7 维度（封顶 3）",
+            "M1/M2 卡片『次问触发条件』和『冲突维度 M7』段落重写明确条件性"
+          ]
+        }
+      ]
+    },
+    "D-2_M3_M4_M5_cards": {
+      "status": "done",
+      "outputs": ["v4_dimensions/M3_output_graph_internal_consistency.md", "v4_dimensions/M4_sibling_disambiguation.md", "v4_dimensions/M5_silence_neq_health.md"],
+      "completed_at": "2026-04-22",
+      "needs_review": true,
+      "notes": "M3/M4/M5 都通过自检 9/9。M3 标注审核风险点：'被另一个根因连累'/'问题来源' 措辞是否触红线。M4 翻盘期望最低（~7-9 case）。M5 主要在 thinkdepthai-qwen 翻盘 (~7 case)。aiq 上 M3 待 D-6 确认是否启用。"
+    },
+    "D-3_M6_M7_M8_cards": {
+      "status": "done",
+      "outputs": ["v4_dimensions/M6_baseline_contrast_reflex.md", "v4_dimensions/M7_layer_coverage_reflex.md", "v4_dimensions/M8_hypothesis_counterfactual.md"],
+      "completed_at": "2026-04-22",
+      "needs_review": true,
+      "notes": "M6/M7/M8 都通过自检 9/9。M6 触发率最高 (~316 case)；M7 已 GT 脱敏（不依赖 fault_category）；M8 关注 candidate 反事实检验。M6 + M2 / M7 + M1 / M8 + M1 都需要 L2 消歧规则。审核风险：M7 列出'容器/进程/网络/数据库'是否暗示答案；M8 用'故障源'词。"
+    },
+    "D-4_M9_M10_cards": {
+      "status": "done",
+      "outputs": ["v4_dimensions/M9_investigation_stagnation.md", "v4_dimensions/M10_premature_commitment.md"],
+      "completed_at": "2026-04-22",
+      "needs_review": true,
+      "notes": "M9 沿袭 v3 B1（最有效维度，14/14 全翻盘），并修了 v3 自循环 bug（trigger 排除 baseline 类 intent）。M10 是为 v3 'qpf<37 提前收敛' 42% case 设计的专项维度，依赖 framework P25 先验（v4 原则 2 已允许）。M9 vs M10 互斥。",
+      "revisions": [
+        {
+          "date": "2026-04-22",
+          "changes": [
+            "v4_principles.md 新增原则 7：维度按 check point 分配（主用阈值 0.7 / 备用阈值 0.85 二级机制）",
+            "原则 7 列出每个 framework 的中期 / 结论前 L2 评估池（含 framework-specific A1-A5, C2）",
+            "原则 7 与原则 4 协同：备用维度可在分数足够高时抢主问位置（避免 check point 屏蔽真正关键的失败模式）",
+            "v4_dimensions/README.md 矩阵增加'中期主/备 + 结论前主/备'列；增加 L2 评估池速查表"
+          ]
+        },
+        {
+          "date": "2026-04-22 (D-3 后修订)",
+          "changes": [
+            "原则 5：增加'两个独立上下文流'说明（agent qwen 上下文连续 vs opus-4.7 无状态调用）+ 跨 check point 状态对象 CaseInterventionState",
+            "原则 5：L2/L3 合并为单次 LLM 调用（v4 vs v3 关键差异）",
+            "原则 7：去掉打分阈值机制（不再用 0.7 / 0.85），改为 opus-4.7 自主判断 triggered/primary/secondary/intervention_text",
+            "新增'opus-4.7 调用接口设计'节：信息清单 A/B/C 三类（A 维度库 / B trajectory snapshot / C 上下文）+ JSON schema 输出格式",
+            "B3 (draft graph) 限定为'仅 aiq 在 conclusion 时给'（thinkdepthai/claudecode 在 conclusion 时拿不到结构化图）",
+            "M3 卡片 trigger 改为 reasoning 文本断言（不依赖结构化 graph，所有 framework 通用；aiq 时可叠加 graph orphans 检测两路 trigger）"
+          ]
+        }
+      ]
+    },
+    "D-5_thinkdepthai_adapter": {
+      "status": "done",
+      "outputs": ["v4_thinkdepthai_qwen3.5_plus.md"],
+      "completed_at": "2026-04-22",
+      "needs_review": true,
+      "notes": "thinkdepthai-qwen + thinkdepthai-sonnet 共用同一适配层。沿用 v3 三层管线 + L2/L3 合并。三个必修 v3 bug 列出（修复留 Phase 8）。中期检查触发时机暂留空，D-7.5 阶段三个 framework 统一决策。期望翻盘：~70-90 case 跨 156 failed case (45-58%)。"
+    },
+    "D-6_aiq_adapter": {
+      "status": "done",
+      "outputs": [
+        "v4_aiq_qwen3.5_plus/README.md",
+        "v4_aiq_qwen3.5_plus/A1_stage_commitment.md",
+        "v4_aiq_qwen3.5_plus/A2_refinement_without_new_probe.md",
+        "v4_aiq_qwen3.5_plus/A3_compress_drift_selfcheck.md",
+        "v4_aiq_qwen3.5_plus/A4_hub_fabrication_awareness.md",
+        "v4_aiq_qwen3.5_plus/A5_anti_flipflop_reflex.md"
+      ],
+      "completed_at": "2026-04-22",
+      "needs_review": true,
+      "notes": "aiq 适配层 + 5 张 A 卡。中期检查倾向候选 A（stage_0_main terminator 之后），D-7.5 统一定。结论前锁定 reflect 第 2 次循环后、finalize 前（已在 D-0 修订时锁定）。A1-A5 全部 9/9 自检通过。A5 GT 脱敏版去掉原 v1 T5 的'Correct'词汇。两处 RabbitMQ/food-service 具体服务名已改为更抽象表述（'某类基线噪声载体服务' / 'TrainTicket 环境中某些服务常年有基线错误'）。期望翻盘 ~50-60 case 跨 113 aiq failed case (44-53%)。"
+    },
+    "D-7_claudecode_adapter": {
+      "status": "done",
+      "outputs": [
+        "v4_claudecode_qwen3.5_plus/README.md",
+        "v4_claudecode_qwen3.5_plus/C2_layer_coverage_claudecode_variant.md"
+      ],
+      "completed_at": "2026-04-22",
+      "needs_review": true,
+      "notes": "claudecode 适配层 + C2 卡。C2 是 M7 在 claudecode 上的加强变体（阈值 6 vs 8 + T5 JVM-misread 提示）。原 C1 (GT-Targeted-WHERE) 已合并到 M8；原 C3 (JVM-vs-DB) 已并入 C2 变体提示（数据 4 case 过小）。中期检查倾向候选 C 取消（claudecode --resume 实现复杂）但 D-7.5 统一决策；结论前锁定 compress 调用前（最自然的注入窗口，compress 是独立 LLM 调用）。原则 4 严格合规：'故障源'/'源头'已全部清理（原干预文本中含'源头'，已改为'真正有问题的那一层'等）；README 里两处 'silent victim' 已改为 '信号静默的真实 GT' / '信号静默的服务'。C2 通过 9/9 自检。期望翻盘 ~35-45 case 跨 103 claudecode failed case (34-44%)。"
+    },
+    "D-7.5_mid_check_strategy": {
+      "status": "done",
+      "outputs": ["v4_mid_check_strategy.md"],
+      "completed_at": "2026-04-22",
+      "needs_review": true,
+      "notes": "三 framework 中期触发时机统一决策：thinkdepthai-qwen round=30, thinkdepthai-sonnet round=22（均候选 A，用 correct-case P25 作 anchor）；aiq = candidate A stage-变体（post_stage_0_main_terminator）；claudecode = candidate C 取消中期（总干预 0+1=1，简化实现避免 kill 进程风险）。依据是 meta.cost_metrics.effective_rounds 分布：thinkdepthai 的 failed 比 correct 长（介入窗口宽），aiq failed 与 correct 几乎重合（改用 stage 边界），claudecode failed/correct 相近但实现成本高。回填到三个适配层文档。原则 5 总干预次数上限修订为 '0 或 1 次中期 + 1 次结论前'（framework-specific）。"
+    },
+    "D-8_deprecate_old": {
+      "status": "done",
+      "outputs": [
+        "analysis/3-failure-modes/merged/middleware_rules/U1_LoudnessAnchorOverSilentVictim.md (deprecation stub)",
+        "analysis/3-failure-modes/merged/middleware_rules/U2_ChronicAmbientNoiseAnchor.md (deprecation stub)",
+        "analysis/3-failure-modes/merged/middleware_rules/U3_EdgeDirectionOrRegionEndpointError.md (deprecation stub)"
+      ],
+      "completed_at": "2026-04-22",
+      "needs_review": true,
+      "notes": "旧 U1/U2/U3 卡片（2026-04-17 版，含 SQL 模板 + 服务名硬编码 + upstream/downstream 方向词）重写为 deprecation stub：顶部大红字'⚠️ DEPRECATED'banner + 明确'重定向到'链接 + 为什么废弃（含违反原则 1-4 的具体清单）+ v4 对应替代对比表。原旧内容不在本文件保留（避免误当指南）；git 历史仍可查 2026-04-17 版原卡作为反面教材参照。U1→M1, U2→M2, U3→M3 三个重定向都链接到 v4_dimensions 对应卡。"
+    }
+  },
+  "audit_log": []
+}

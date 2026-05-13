@@ -1,0 +1,37 @@
+# Example Matrix — 完整矩阵实验配置
+# 合作者复制这个文件改一改就能跑自己的实验
+
+version: 1
+preset: full
+exp_id_template: "{framework}-{model_alias}-{subset_kind}"
+output_dir: results/matrix/{run_id}/
+
+# 选 framework (可单选可多选)
+frameworks: [thinkdepthai, aiq, taskweaver, openrca, claudecode, mabc]
+
+# 选 model (引用 configs/models/catalog.yaml 的 alias)
+models:
+  - alias: sonnet46
+  - alias: qwen36
+
+# 选样本子集
+subset:
+  kind: filter             # full | demo | filter | indices
+  filters:
+    fault_category: [HTTPFault, NetworkChaos, JVMChaos, PodChaos]
+    limit: 500             # 每 framework × model 跑 500 样本
+
+execution:
+  cell_concurrency: 2      # 同时跑几个 (framework × model) cell
+  rollout_concurrency_max: 5  # 每 cell 内 AIMD 并发上限
+  timeout_per_sample: 600
+  resume: true             # 中断后续跑
+  failure_tolerance: 0.2   # 单 cell 错误率 > 20% 终止该 cell
+  retry_failed_samples: 1  # 失败样本重试次数
+
+post:
+  auto_judge: true
+  auto_intent_classify: true
+  auto_failure_tag: false  # D×R 标注成本高, 默认关
+  refresh_dashboard_cache: true
+  cache_target: analysis_cache.json

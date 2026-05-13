@@ -1,0 +1,69 @@
+{
+  "dataset_index": 3114,
+  "tier": "stable",
+  "primary_theme": "T7_Business-Logic-Confabulation",
+  "case_name": "ts5-ts-preserve-service-pod-kill-5zcl7w",
+  "datapack": "data_cc31fa6c",
+  "fault_category": "PodChaos",
+  "fault_type": "PodKill",
+  "spl": 3,
+  "transition": "wrong->wrong",
+  "gt": {
+    "rc_service": [
+      "ts-preserve-service"
+    ],
+    "fault_category": "PodChaos",
+    "fault_type": "PodKill",
+    "spl": 3,
+    "n_svc": 4,
+    "n_edge": 3
+  },
+  "baseline": {
+    "predicted_rc": [
+      "ts-order-service"
+    ],
+    "n_qpf": 54,
+    "correct": false,
+    "reasoning_excerpts": [
+      "I now have the schema information for all 10 parquet files. Let me analyze what I have:\n\n**Available Data:**\n- Logs: service_name, level, message, trace_id, span_id, timestamps\n- Metrics: service_name, metric name, value, timestamps, k8s attributes\n- Metrics Histogram: distribution data for metrics\n- Metrics Sum: aggregated metric values\n- Traces: trace_id, span_id, parent_span_id, service_name, duration, status_code, HTTP attributes\n\n**Key columns for investigation:**\n- In traces: `attr_status_code` will show errors, `duration` for latency issues, `parent_span_id` for call chains\n- In logs: `",
+      "Looking at the trace data, I can see the call chain for the preserve endpoint:\n- loadgenerator → ts-ui-dashboard → ts-preserve-service → (calls to ts-order-service, ts-order-other-service, ts-security-service, ts-contacts-service, etc.)\n\nThe trace shows ts-preserve-service has very high duration (1125581809 ns = ~1.1 seconds for the main span). The errors in logs show \"Order already exists\" errors in ts-order-service, which then propagate to ts-preserve-service.\n\nHowever, I need to understand what's causing the SLO violations. The incident mentions the endpoint `http://ts-ui-dashboard:8080/api",
+      "Looking at the trace data, I can see that ts-travel-plan-service and ts-route-plan-service have very high latencies (up to 13 seconds and 9.9 seconds respectively). The trace shows:\n\n1. loadgenerator → ts-ui-dashboard → ts-travel-plan-service → ts-route-plan-service → ts-route-service, ts-travel-service, ts-travel2-service, ts-basic-service, ts-station-service\n\nThe high latency appears to be in ts-travel-plan-service and ts-route-plan-service. However, I need to understand what's causing this. Let me look at the logs for these services to see if there are any errors, and also check the call pa",
+      "Interesting! The traces with Error status (502 response) only show loadgenerator and ts-ui-dashboard, but no ts-preserve-service spans. This suggests that the request is failing before reaching ts-preserve-service, or the ts-preserve-service spans are not being recorded for these failed requests.\n\nThe 502 Bad Gateway error typically indicates that an upstream service (ts-ui-dashboard) is unable to get a valid response from a downstream service (ts-preserve-service). This could mean:\n1. ts-preserve-service is unavailable or timing out\n2. There's a connection issue between ts-ui-dashboard and ts",
+      "Now I have a clearer picture. Looking at the trace data for the preserve endpoint:\n\n**Normal flow (from normal_traces):**\n- loadgenerator → ts-ui-dashboard → ts-preserve-service → (calls to ts-order-service, ts-order-other-service, ts-security-service, ts-contacts-service, ts-travel-service, ts-basic-service, ts-station-service, etc.)\n\n**Key observations:**\n1. The failing traces (502 errors) only show loadgenerator and ts-ui-dashboard - no ts-preserve-service spans are recorded, meaning the request is failing before reaching ts-preserve-service.\n\n2. The successful traces show ts-preserve-servi",
+      "Comparing normal vs abnormal latency:\n\n**ts-preserve-service:**\n- Normal: avg 138ms, max 3.3s\n- Abnormal: avg 170ms, max 3.5s\n- Not a significant difference\n\n**ts-order-service:**\n- Normal: avg 5.7ms, max 2.2s\n- Abnormal: avg 6.7ms, max 3.2s\n- Not a significant difference\n\n**ts-travel-plan-service:**\n- Normal: avg 211ms, max 5.1s\n- Abnormal: avg 252ms, max 13.2s\n- Significant increase in max latency!\n\n**ts-route-plan-service:**\n- Normal: avg 187ms, max 4.4s\n- Abnormal: avg 220ms, max 9.9s\n- Significant increase in max latency!\n\nThe services with the most significant latency increases are ts-tr",
+      "Now I have a clearer picture of what's happening:\n\n**Key findings:**\n1. The 502 errors are happening at the loadgenerator level when calling ts-ui-dashboard\n2. ts-ui-dashboard returns 200 OK, but the loadgenerator receives 502 Bad Gateway\n3. The traces for failed requests only show loadgenerator and ts-ui-dashboard - no downstream services (ts-preserve-service, etc.)\n\nThis pattern suggests that ts-ui-dashboard is acting as a reverse proxy/gateway, and when it tries to forward the request to ts-preserve-service, it fails (ts-preserve-service is not responding or timing out). The 502 is generate",
+      "Now I can trace the call chain more clearly:\n\nFor trace d3b912d34e1a43662fbc9d65ac84cc98:\n- ts-preserve-service (POST) → ts-order-service (POST /api/v1/orderservice/order) → ts-order-service (OrderController.createNewOrder)\n\nThis confirms that ts-preserve-service calls ts-order-service to create orders. When ts-order-service fails with \"Order already exists\", it propagates back to ts-preserve-service.\n\n**Summary of findings:**\n\n1. **Root Cause Service**: ts-order-service\n   - Error: \"Order already exists\" - indicating duplicate order creation attempts\n   - This is the origin of the failure\n\n2."
+    ]
+  },
+  "v4": {
+    "predicted_rc": [
+      "ts-ui-dashboard"
+    ],
+    "n_qpf": 90,
+    "correct": false,
+    "interventions": [
+      {
+        "phase": "conclusion",
+        "primary": "M8",
+        "secondary": [
+          "M5"
+        ],
+        "round_at_inject": 75,
+        "intervention_text": "[Investigation Advisor — v4] phase=conclusion primary=M8 secondary=M5\n你即将提交结论。在最终 commit 前，做一次反例隔离：如果你的候选服务完全健康，你观察到的那些 502 错误还会发生吗？如果会，那它可能只是受连累者，而不是真正的源头。\n\n另外，你目前的推理里有一个值得注意的地方：你把某些服务排除在外，部分理由是它们'在正常和异常时段都有同样的错误'——这是一个合理的 baseline 对比。但对于你的候选服务本身，你有没有同样做过正向健康证据的确认？'没有出现在异常数据里'和'确实健康'是两件不同的事。你能列出至少一条候选服务在异常时段确实正常运行的正向证据吗？",
+        "agent_response_excerpt": "",
+        "post_intervention_tool_rounds": 15
+      }
+    ],
+    "n_interventions": 1,
+    "final_reasoning_excerpts": [
+      "**Analysis of Error Timeline:**\n\nLooking at the timestamps:\n- **ts-order-service** errors start at 10:25:43.392 (Order already exists)\n- **ts-preserve-service** errors start at 10:25:43.407 (Order already exist - downstream from order-service)\n- **ts-rabbitmq connection attempts** start at 10:24:59 (ts-notification-service, ts-delivery-service)\n- **ts-food-service UnknownHostException** starts at 10:25:41\n\n**Key Observations:**\n\n1. The \"Order already exists\" errors in ts-order-service and ts-preserve-service appear to be **symptoms**, not root causes. These are business logic errors that happe",
+      "**Critical Finding:**\n\nThe normal logs have the SAME error patterns as the abnormal logs:\n- ts-food-service has UnknownHostException: ts-rabbitmq errors (25 + 13 = 38 occurrences)\n- ts-delivery-service and ts-notification-service have \"Failed to check/redeclare auto-delete queue(s)\" errors (48 each)\n- ts-order-service and ts-preserve-service have \"Order already exists\" errors\n\nThis means these errors are NOT the distinguishing factor for the incident! The RabbitMQ DNS issue exists in both normal and abnormal conditions.\n\n**The real difference must be elsewhere.** Let me look at what's actually",
+      "**Major Finding: Container Restarts!**\n\nThe `ts-ticket-office-service` container has been restarting (value: 3.0 restarts). This is a critical finding!\n\nLet me analyze what this means:\n1. The ts-ticket-office-service is experiencing container restarts\n2. This could be causing the 502 errors if this service is in the call chain for the preserve endpoint\n3. When a container restarts, requests to that service will fail\n\nHowever, I need to verify:\n1. Is ts-ticket-office-service in the call chain for the preserve endpoint?\n2. What's causing the container to restart?\n\nLet me check if ts-ticket-offic",
+      "Let me reconsider the evidence:\n\n1. **502 errors at loadgenerator**: The loadgenerator is getting 502 Bad Gateway errors when calling ts-ui-dashboard\n2. **ts-ui-dashboard returns 200**: The ts-ui-dashboard span shows HTTP 200 response\n3. **Traces with 502 errors only have 2 spans**: loadgenerator and ts-ui-dashboard - no downstream services are being called\n4. **Successful traces have 194+ spans**: Full call chain through many services\n\nThis pattern suggests that:\n- When the request succeeds, ts-ui-dashboard calls downstream services (ts-preserve-service, etc.)\n- When the request fails with 50",
+      "**Key Insight:**\n\nLooking at the durations:\n- **Failed preserve requests (502)**: ~2 seconds (2,000,000 - 3,500,000 ms)\n- **Successful preserve requests (200)**: ~3.5 seconds (3,530,437,811 ns = 3.5 seconds)\n- **Other successful requests**: Can be much longer (up to 13 seconds for travelPlan endpoints)\n\nThe failed requests have shorter durations than successful ones, which suggests they're timing out or failing early.\n\nWait, I notice the duration is in different units:\n- Failed: 2043818 (microseconds? = ~2 seconds)\n- Successful: 3530437811 (nanoseconds? = ~3.5 seconds)\n\nActually looking at the",
+      "**Final Analysis:**\n\nBased on all the evidence collected:\n\n1. **The incident**: HTTP POST to ts-ui-dashboard:8080/api/v1/preserveservice/preserve is returning 502 errors\n\n2. **Error pattern**: \n   - 27 traces with 502 errors at loadgenerator\n   - All for the preserve endpoint\n   - ts-ui-dashboard span shows 200, but loadgenerator gets 502\n   - Failing traces only have 2 spans (no downstream calls)\n\n3. **Services with errors in logs**:\n   - ts-food-service: 225 errors (but these exist in normal too - RabbitMQ DNS issues)\n   - ts-order-service: 60 errors (Order already exists - business logic, a",
+      "I have completed the root cause analysis. The evidence clearly points to ts-ui-dashboard as the root cause service:\n\n1. The 502 errors are exclusively for the preserve endpoint at ts-ui-dashboard\n2. Failed traces show no downstream service calls, indicating ts-ui-dashboard is failing before it can call ts-preserve-service\n3. Other services with errors (ts-food-service with RabbitMQ DNS issues, ts-order-service/ts-preserve-service with \"Order already exists\" errors) have the same error patterns in normal conditions, so they are not the distinguishing factor\n\nThe fault propagation is:\n- ts-ui-da",
+      "**反例隔离分析：**\n\n用户提出了一个很好的问题：如果 ts-ui-dashboard 完全健康，502 错误还会发生吗？\n\n让我重新审视证据：\n\n1. **502 错误的特征**：\n   - 所有 502 错误的 trace 只包含 2 个服务：loadgenerator 和 ts-ui-dashboard\n   - 没有下游服务（ts-preserve-service, ts-order-service 等）被调用\n   - ts-ui-dashboard 的 span 显示 HTTP 200，但 loadgenerator 收到 502\n\n2. **关键观察**：\n   - ts-ui-dashboard 在 abnormal_logs 中没有任何日志（COUNT = 0）\n   - ts-ui-dashboard 在 normal_logs 中也没有任何日志（COUNT = 0）\n   - 这说明 ts-ui-dashboard 可能没有输出日志，或者日志级别不是 ERROR/WARN/INFO\n\n3. **ts-preserve-service 的健康证据**：\n   - k8s.deployment.available = 1.0（部署可用）\n   - 没有 HTTP 4xx/5xx 错误响应\n   - attr_status_code 都是 \"Unset\"（没有错误"
+    ]
+  }
+}

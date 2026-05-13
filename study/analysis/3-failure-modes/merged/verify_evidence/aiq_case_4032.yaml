@@ -1,0 +1,406 @@
+case_id: aiq.4032
+framework: aiq-qwen3.5-plus
+data_dir: /home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_41bc1156
+gt_from_injection_json:
+  fault_type: JVMMemoryStress
+  fault_category: JVMChaos
+  injection_name: ts2-ts-auth-service-stress-lq54b9
+  gt_services:
+  - ts-auth-service
+  source_service: null
+  target_service: null
+  start_time: '2025-08-18T20:24:40Z'
+  end_time: '2025-08-18T20:28:37Z'
+  display_config:
+    duration: 4
+    injection_point:
+      app_name: ts-auth-service
+      class_name: auth.controller.AuthController
+      method_name: getHello
+    mem_type: 1
+    namespace: ts
+gt_from_causal_graph_json:
+  root_causes:
+  - ts-auth-service
+  alarm_nodes:
+  - span|loadgenerator::HTTP POST http://ts-ui-dashboard:8080/api/v1/users/login
+agent_predicted:
+  root_causes:
+  - ts-ui-dashboard
+  predicted_graph_nodes:
+  - ts-ui-dashboard
+  - loadgenerator
+raw_sql_count_total: 63
+raw_sql_list_sample:
+- SELECT DISTINCT metric, service_name FROM abnormal_metrics LIMIT 50
+- SELECT DISTINCT metric FROM abnormal_metrics WHERE metric LIKE '%http%' OR metric LIKE '%request%' LIMIT 30
+- SELECT DISTINCT metric, service_name FROM abnormal_metrics_sum WHERE service_name = 'ts-ui-dashboard' LIMIT 30
+- SELECT service_name, span_name, attr_http_response_status_code, COUNT(*) as count FROM abnormal_traces WHERE service_name = 'ts-ui-dashboard' GROUP BY service_name, span_name, attr_http_response_status_code
+  LIMIT 50
+- SELECT service_name, span_name, attr_http_response_status_code, COUNT(*) as count FROM abnormal_traces WHERE span_name LIKE '%login%' OR span_name LIKE '%users%' GROUP BY service_name, span_name, attr_http_response_status_code
+  LIMIT 50
+- SELECT trace_id, span_id, parent_span_id, service_name, span_name, attr_status_code, attr_http_response_status_code, duration FROM abnormal_traces WHERE span_name = 'POST /api/v1/users/login' AND attr_http_response_status_code
+  = 503 LIMIT 20
+- SELECT trace_id, span_id, parent_span_id, service_name, span_name, attr_status_code, attr_http_response_status_code, duration FROM abnormal_traces WHERE trace_id = '7b02276f6bd49de0ac854b229565981c' ORDER
+  BY duration DESC LIMIT 30
+- SELECT trace_id, span_id, parent_span_id, service_name, span_name, attr_status_code, attr_http_response_status_code, duration FROM abnormal_traces WHERE trace_id = '7b02276f6bd49de0ac854b229565981c' ORDER
+  BY time ASC LIMIT 50
+- SELECT service_name, level, message, COUNT(*) as count FROM abnormal_logs WHERE service_name = 'ts-ui-dashboard' GROUP BY service_name, level, message ORDER BY count DESC LIMIT 30
+- SELECT service_name, level, message, COUNT(*) as count FROM abnormal_logs WHERE service_name = 'ts-ui-dashboard' AND level = 'ERROR' GROUP BY service_name, level, message ORDER BY count DESC LIMIT 10
+- SELECT DISTINCT service_name FROM abnormal_traces WHERE service_name != 'loadgenerator' AND service_name != 'ts-ui-dashboard' LIMIT 30
+- SELECT service_name, span_name, attr_status_code, attr_http_response_status_code, COUNT(*) as count FROM abnormal_traces WHERE service_name = 'ts-auth-service' GROUP BY service_name, span_name, attr_status_code,
+  attr_http_response_status_code LIMIT 30
+- SELECT metric, service_name, value, time FROM abnormal_metrics WHERE service_name = 'ts-ui-dashboard' AND metric LIKE '%http%' ORDER BY time DESC LIMIT 20
+- SELECT trace_id, span_id, parent_span_id, service_name, span_name, attr_status_code, attr_http_response_status_code FROM abnormal_traces WHERE trace_id IN (SELECT trace_id FROM abnormal_traces WHERE service_name
+  = 'ts-ui-dashboard' AND span_name = 'POST /api/v1/users/login' AND attr_http_response_status_code = 503 LIMIT 3) ORDER BY trace_id, time ASC LIMIT 50
+- SELECT DISTINCT parent_span_id, service_name FROM abnormal_traces WHERE parent_span_id IN (SELECT span_id FROM abnormal_traces WHERE service_name = 'ts-ui-dashboard') LIMIT 20
+- SELECT trace_id, span_id, parent_span_id, service_name, span_name, attr_status_code, attr_http_response_status_code, duration FROM abnormal_traces WHERE service_name = 'ts-auth-service' AND attr_status_code
+  = 'Error' LIMIT 20
+- SELECT service_name, attr_status_code, COUNT(*) as count FROM abnormal_traces WHERE attr_status_code = 'Error' GROUP BY service_name, attr_status_code ORDER BY count DESC LIMIT 20
+- SELECT service_name, level, SUBSTR(message, 1, 200) as msg_preview, COUNT(*) as count FROM abnormal_logs WHERE level = 'ERROR' GROUP BY service_name, level, SUBSTR(message, 1, 200) ORDER BY count DESC
+  LIMIT 15
+- SELECT time, service_name, level, SUBSTR(message, 1, 300) as msg_preview FROM abnormal_logs WHERE service_name = 'ts-ui-dashboard' AND level = 'ERROR' AND message LIKE '%login%' LIMIT 10
+- SELECT service_name, level, SUBSTR(message, 1, 200) as msg_preview, COUNT(*) as count FROM abnormal_logs WHERE service_name = 'ts-ui-dashboard' AND level = 'ERROR' GROUP BY service_name, level, SUBSTR(message,
+  1, 200) ORDER BY count DESC LIMIT 10
+raw_sql_substring_audit:
+  has_baseline_contrast_substring: false
+  has_call_tree_build_substring: false
+  has_trace_follow_substring: true
+  has_jvm_metric_substring: false
+  has_container_metric_substring: false
+  has_k8s_metric_substring: false
+  has_db_metric_substring: false
+  has_network_metric_substring: false
+  has_status_error_filter: true
+  has_status_unset_filter: false
+  where_service_name_filters:
+  - ts-ui-dashboard
+  - ts-auth-service
+parquet_evidence:
+  top_error_services_abnormal_logs:
+  - service: ts-food-service
+    count: 191
+  - service: ts-preserve-service
+    count: 63
+  - service: ts-order-service
+    count: 63
+  - service: ts-notification-service
+    count: 48
+  - service: ts-delivery-service
+    count: 47
+  - service: ts-ui-dashboard
+    count: 31
+  top_error_services_normal_logs:
+  - service: ts-food-service
+    count: 196
+  - service: ts-preserve-service
+    count: 51
+  - service: ts-order-service
+    count: 51
+  - service: ts-notification-service
+    count: 48
+  - service: ts-delivery-service
+    count: 48
+  - service: ts-inside-payment-service
+    count: 1
+  gt_service_abnormal_log_error_count: {}
+  gt_service_normal_log_error_count: {}
+  gt_service_status_code_distribution:
+    ts-auth-service:
+      Unset: 6399
+  gt_service_abnormal_span_count:
+    ts-auth-service: 6399
+  top_error_span_services:
+  - service: ts-ui-dashboard
+    sc: Error
+    count: 31
+  - service: loadgenerator
+    sc: Error
+    count: 6
+  gt_latency_stats:
+  - service: ts-auth-service
+    avg_ms: 22.9
+    max_ms: 3309.4
+    p95_ms: 98.2
+    count: 6399
+  chronic_noise_detail:
+  - service: ts-food-service
+    normal_err: 196
+    abnormal_err: 191
+    ratio: 1.03
+  - service: ts-preserve-service
+    normal_err: 51
+    abnormal_err: 63
+    ratio: 0.81
+  - service: ts-order-service
+    normal_err: 51
+    abnormal_err: 63
+    ratio: 0.81
+  - service: ts-notification-service
+    normal_err: 48
+    abnormal_err: 48
+    ratio: 1.0
+  - service: ts-delivery-service
+    normal_err: 48
+    abnormal_err: 47
+    ratio: 1.02
+  gt_span_name_breakdown:
+  - span_name: UserRepository.findByUsername
+    avg_ms: 2.0
+    count: 1274
+  - span_name: SELECT User
+    avg_ms: 1.3
+    count: 1274
+  - span_name: SELECT ts.auth_user
+    avg_ms: 0.5
+    count: 1274
+  - span_name: GET
+    avg_ms: 5.5
+    count: 636
+  - span_name: SELECT ts.user_roles
+    avg_ms: 0.8
+    count: 635
+  - span_name: UserController.getToken
+    avg_ms: 104.9
+    count: 634
+  - span_name: POST /api/v1/users/login
+    avg_ms: 111.7
+    count: 634
+  - span_name: SELECT ts
+    avg_ms: 0.7
+    count: 34
+  - span_name: SELECT ts.ts
+    avg_ms: 2.7
+    count: 2
+  - span_name: CREATE TABLE `ts`.`user_roles`
+    avg_ms: 0.6
+    count: 1
+  - span_name: ALTER table ts
+    avg_ms: 7.5
+    count: 1
+  gt_parent_child_pairs:
+  - - ts-ui-dashboard
+    - ts-auth-service
+  - - ts-auth-service
+    - ts-verification-code-service
+trajectory_reasoning_snippets:
+- idx: 4
+  text: 'I now have the schema information for all 10 files. The user is asking about querying http_metrics, but I notice there''s no file named `http_metrics.parquet`. Looking at the available files, I
+    see:
+
+    - `abnormal_metrics.parquet` and `normal_metrics.parquet` - these contain metric data with columns like `metric`, `value`, `service_name`
+
+    - `abnormal_metrics_histogram.parquet` and `normal_metrics_histogram.parquet` - these contain histogram data
+
+
+    The user wants to query for `ts-ui-dashboard` service with `http_target = ''/api/v1/users/login''`. Let me first check what metrics are available in the abnormal_metrics file to understand the data
+    structure better, and also look for HTTP-related metrics.
+
+
+    Let me start by exploring the abnormal_metrics data to understand what metrics are available and find HTTP-related data.
+
+
+    '
+- idx: 6
+  text: 'I see the metrics available. There''s `hubble_http_request_duration_p95_seconds` which is HTTP-related. Let me check for more HTTP-related metrics and also look for ts-ui-dashboard service specifically.
+
+
+    '
+- idx: 8
+  text: 'I see HTTP duration metrics but I don''t see HTTP status code metrics directly in the abnormal_metrics file. Let me check the abnormal_metrics_sum file which might have aggregated HTTP status codes,
+    and also check for ts-ui-dashboard service.
+
+
+    '
+- idx: 10
+  text: 'I found `hubble_http_requests_total` for ts-ui-dashboard. Let me also check the abnormal_traces file since it has `attr_http_response_status_code` which could give us HTTP status code information.
+    The user is asking about http_metrics but the data seems to be distributed across different files. Let me check the traces for ts-ui-dashboard and the login endpoint.
+
+
+    '
+- idx: 12
+  text: 'I don''t see the `/api/v1/users/login` endpoint in the results. Let me search specifically for login-related traces and also check for 5xx errors across all services.
+
+
+    '
+- idx: 14
+  text: 'I found important information. The `ts-ui-dashboard` service has:
+
+    - `POST /api/v1/users/login` with status code 503 (31 occurrences) - these are errors!
+
+    - `POST /api/v1/users/login` with status code 200 (644 occurrences) - successful
+
+
+    Also, `ts-auth-service` has `POST /api/v1/users/login` with status 200 (634 occurrences).
+
+
+    Let me investigate the 503 errors more closely and understand the trace propagation to find the root cause.
+
+
+    '
+- idx: -1
+  text: "## Refined Root Cause Analysis\n\nBased on my investigation, I have strengthened the evidence for the preliminary root cause graph. Here are the key findings:\n\n### Evidence Summary\n\n**1. Root\
+    \ Cause Service: ts-ui-dashboard**\n- **HIGH_ERROR_RATE**: 31 ERROR-level logs all showing HTTP 503 responses for `POST /api/v1/users/login`\n- **HIGH_LATENCY**: \n  - Metrics show p99 latency spikes\
+    \ up to 2.13 seconds\n  - Error traces show durations of ~3.5 seconds (3,500,000,000+ nanoseconds)\n- Only 2 services have errors in abnormal traces: `ts-ui-dashboard` and `loadgenerator`\n\n**2. Fault\
+    \ Propagation Path**\n- `loadgenerator` calls `ts-ui-dashboard` for login requests\n- When `ts-ui-dashboard` returns HTTP 503, `loadgenerator` experiences timeouts (20 second durations in traces)\n\
+    - The causal edge `ts-ui-dashboard → loadgenerator` correctly represents fault propagation (source of fault → affected service)\n\n**3. Log Evidence**\nError logs from ts-ui-dashboard show:\n```json\n\
+    {\"status\":503, \"duration\":3.509, \"uri\":\"/api/v1/users/login\", ...}\n```\nAll 31 errors are 503 Service Unavailable responses for the login endpoint.\n\n**4. Trace Evidence**\n- Successful traces:\
+    \ ts-ui-dashboard duration ~5.8 seconds, ts-auth-service ~2.5 seconds\n- Error traces: ts-ui-dashboard returns 503 with ~3.5 second duration, loadgenerator times out at 20 seconds\n\n### Refined Causal\
+    \ Graph\n\n```json\n{\n  \"nodes\": [\n    {\n      \"component\": \"ts-ui-dashboard\",\n      \"state\": [\"HIGH_ERROR_RATE\", \"HIGH_LATENCY\"],\n      \"timestamp\": 1755548707\n    },\n    {\n \
+    \     \"component\": \"loadgenerator\",\n      \"state\": [\"HIGH_ERROR_RATE\"],\n      \"timestamp\": 1755548707\n    }\n  ],\n  \"edges\": [\n    {\n      \"source\": \"ts-ui-dashboard\",\n      \"\
+    target\": \"loadgenerator\"\n    }\n  ],\n  \"root_causes\": [\n    {\n      \"component\": \"ts-ui-dashboard\",\n      \"state\": [\"HIGH_ERROR_RATE\", \"HIGH_LATENCY\"],\n      \"timestamp\": 1755548707\n\
+    \    }\n  ],\n  \"component_to_service\": {}\n}\n```\n\n### Strengthening Evidence Added\n\n1. **Confirmed error counts**: Only ts-"
+- idx: -1
+  text: "Based on my investigation, I have identified the root cause and fault propagation path. Let me provide the final output in the required JSON format.\n\n```json\n{\n  \"nodes\": [\n    {\"component\"\
+    : \"ts-ui-dashboard\", \"state\": [\"HIGH_ERROR_RATE\", \"HIGH_LATENCY\"], \"timestamp\": 1755548707},\n    {\"component\": \"loadgenerator\", \"state\": [\"HIGH_ERROR_RATE\"], \"timestamp\": 1755548707}\n\
+    \  ],\n  \"edges\": [\n    {\"source\": \"ts-ui-dashboard\", \"target\": \"loadgenerator\"}\n  ],\n  \"root_causes\": [\n    {\"component\": \"ts-ui-dashboard\", \"state\": [\"HIGH_ERROR_RATE\", \"\
+    HIGH_LATENCY\"], \"timestamp\": 1755548707}\n  ],\n  \"component_to_service\": {}\n}\n```\n\n**Summary of Findings:**\n\n**Root Cause Service**: `ts-ui-dashboard`\n\n**Fault Propagation Path**:\n```\n\
+    ts-ui-dashboard (503 errors, high latency) → loadgenerator (receives errors)\n```\n\n**Key Evidence**:\n1. **31 error spans** in ts-ui-dashboard with HTTP 503 status code for `/api/v1/users/login` endpoint\n\
+    2. **Failed traces** only contain loadgenerator and ts-ui-dashboard spans - no downstream service calls (ts-auth-service, ts-verification-code-service) are initiated\n3. **Successful traces** show the\
+    \ complete chain: loadgenerator → ts-ui-dashboard → ts-auth-service → ts-verification-code-service\n4. **High latency metrics** during the error period (up to 10 seconds p90, NaN values indicating metric\
+    \ collection issues)\n5. **Error concentration**: 29 errors in minute 20:25, 2 errors in minute 20:26\n6. **Downstream services healthy**: ts-auth-service and ts-verification-code-service have no error\
+    \ spans\n\nThe 503 (Service Unavailable) errors from ts-ui-dashboard indicate the service itself is experiencing issues that prevent it from processing login requests. The failure occurs before ts-ui-dashboard\
+    \ can call downstream services, suggesting an internal problem with ts-ui-dashboard rather than a propagated failure from another service."
+gt_required_capabilities:
+  gt_is_silent: true
+  gt_is_loudest: false
+  chronic_noise_present: true
+  chronic_noise_carriers:
+  - ts-food-service
+  - ts-preserve-service
+  - ts-order-service
+  - ts-notification-service
+  - ts-delivery-service
+  required_metric_layer: jvm
+  gt_path_is_edge_fault: false
+  gt_has_name_twin: true
+  name_twin_candidates:
+  - ts-user-service
+  - ts-assurance-service
+  - ts-order-service
+  - ts-security-service
+  - ts-notification-service
+  - ts-travel-service
+  - ts-cancel-service
+  - ts-station-food-service
+  - ts-route-plan-service
+  - ts-contacts-service
+  - ts-config-service
+  - ts-inside-payment-service
+  - ts-travel2-service
+  - ts-preserve-service
+  - ts-basic-service
+  - ts-travel-plan-service
+  - ts-seat-service
+  - ts-consign-service
+  - ts-consign-price-service
+  - ts-delivery-service
+  - ts-price-service
+  - ts-verification-code-service
+  - ts-food-service
+  - ts-station-service
+  - ts-train-food-service
+  - ts-order-other-service
+  - ts-train-service
+  - ts-route-service
+  - ts-payment-service
+  gt_diluted_across_spans: false
+path_alignment:
+  gt_touched_in_trajectory: true
+  gt_neighbors_touched:
+    ts-ui-dashboard: 23
+  gt_neighbors_from_causal_graph:
+  - ts-ui-dashboard
+  agent_focus_services:
+  - service: ts-ui-dashboard
+    count: 23
+  - service: ts-auth-service
+    count: 2
+  agent_predicted_rc_in_gt_neighborhood: true
+counterfactual:
+  PD1_baseline_contrast:
+    chronic_noise_in_data: true
+    predicted_rc_is_chronic_carrier: false
+    predicted_rc_error_ratios:
+      ts-ui-dashboard:
+        normal: 0
+        abnormal: 31
+    if_run_would_reveal: false
+  PD2_call_tree_build:
+    gt_is_upstream_of_agent_focus: true
+    if_run_would_surface_gt: true
+  PD3_fault_layer_metric_probe:
+    metric_family_if_probed: jvm
+    gt_metric_anomaly_exists_in_parquet: true
+    gt_metric_families_probed:
+    - jvm.cpu.recent_utilization
+    - jvm.system.cpu.load_1m
+    - jvm.system.cpu.utilization
+  PD4_named_candidate_not_isolated:
+    if_isolated_predicted_rc_show_healthy:
+      ts-ui-dashboard: false
+  R_correct_heuristic_would_reach_gt:
+    if_loudness_applied: false
+    if_baseline_diff_applied: false
+    if_edge_direction_applied: null
+    if_name_twin_check_applied: true
+  D_obstacle_is_structural: true
+parquet_queries_run:
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_41bc1156/abnormal_logs.parquet') WHERE level IN ('ERROR','SEVERE') GROUP BY
+    1 ORDER BY n DESC LIMIT 10
+  purpose: top_error_services_abnormal_logs
+  row_count: 6
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_41bc1156/normal_logs.parquet') WHERE level IN ('ERROR','SEVERE') GROUP BY 1
+    ORDER BY n DESC LIMIT 10
+  purpose: top_error_services_normal_logs
+  row_count: 6
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_41bc1156/abnormal_logs.parquet') WHERE level IN ('ERROR','SEVERE') AND service_name
+    IN ('ts-auth-service') GROUP BY 1
+  purpose: gt_service_abnormal_log_error_count
+  row_count: 0
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_41bc1156/normal_logs.parquet') WHERE level IN ('ERROR','SEVERE') AND service_name
+    IN ('ts-auth-service') GROUP BY 1
+  purpose: gt_service_normal_log_error_count
+  row_count: 0
+- sql: SELECT service_name, "attr.status_code" as sc, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_41bc1156/abnormal_traces.parquet') WHERE service_name
+    IN ('ts-auth-service') GROUP BY 1,2
+  purpose: gt_service_status_code_distribution
+  row_count: 1
+- sql: SELECT service_name, "attr.status_code" as sc, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_41bc1156/abnormal_traces.parquet') WHERE "attr.status_code"
+    IN ('Error','ERROR') GROUP BY 1,2 ORDER BY n DESC LIMIT 5
+  purpose: top_error_span_services
+  row_count: 2
+- sql: SELECT service_name, AVG(duration)/1e6 AS avg_ms, MAX(duration)/1e6 AS max_ms, QUANTILE_CONT(duration, 0.95)/1e6 AS p95_ms, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_41bc1156/abnormal_traces.parquet')
+    WHERE service_name IN ('ts-auth-service') GROUP BY 1
+  purpose: gt_latency_stats
+  row_count: 1
+- sql: SELECT DISTINCT service_name FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_41bc1156/abnormal_traces.parquet')
+  purpose: all_abnormal_trace_services
+  row_count: 30
+counterfactual_queries_run:
+- sql: SELECT span_name, AVG(duration)/1e6 AS avg_ms, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_41bc1156/abnormal_traces.parquet') WHERE service_name
+    IN ('ts-auth-service') GROUP BY 1 ORDER BY n DESC LIMIT 20
+  purpose: gt_span_name_breakdown
+  row_count: 11
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_41bc1156/normal_logs.parquet') WHERE level IN ('ERROR','SEVERE') AND service_name
+    IN ('ts-ui-dashboard') GROUP BY 1
+  purpose: predicted_rc_normal_err
+  row_count: 0
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_41bc1156/abnormal_logs.parquet') WHERE level IN ('ERROR','SEVERE') AND service_name
+    IN ('ts-ui-dashboard') GROUP BY 1
+  purpose: predicted_rc_abnormal_err
+  row_count: 1
+- sql: SELECT DISTINCT p.service_name, c.service_name FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_41bc1156/abnormal_traces.parquet') c JOIN read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_41bc1156/abnormal_traces.parquet')
+    p ON c.parent_span_id=p.span_id WHERE c.service_name IN ('ts-auth-service') OR p.service_name IN ('ts-auth-service') LIMIT 200
+  purpose: gt_parent_child_pairs
+  row_count: 3
+- sql: SELECT DISTINCT metric FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_41bc1156/abnormal_metrics.parquet') WHERE service_name IN ('ts-auth-service') AND metric
+    LIKE 'jvm.%' LIMIT 10
+  purpose: gt_metric_families_probed
+  row_count: 3
+classes_to_verify:
+- D5
+- PD_NoBaselineContrast
+- U1_LoudnessAnchorOverSilentVictim
+- aiq.PD_ReflectionStageWithoutNewProbe
+- aiq.PD_StageEndsWithoutCommitment

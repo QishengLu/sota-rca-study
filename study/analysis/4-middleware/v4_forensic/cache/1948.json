@@ -1,0 +1,78 @@
+{
+  "dataset_index": 1948,
+  "tier": "stable",
+  "primary_theme": "T3_Noise-Anchor",
+  "case_name": "ts3-ts-preserve-service-container-kill-k7k8g5",
+  "datapack": "data_b129f867",
+  "fault_category": "PodChaos",
+  "fault_type": "ContainerKill",
+  "spl": 3,
+  "transition": "wrong->wrong",
+  "gt": {
+    "rc_service": [
+      "ts-preserve-service"
+    ],
+    "fault_category": "PodChaos",
+    "fault_type": "ContainerKill",
+    "spl": 3,
+    "n_svc": 4,
+    "n_edge": 3
+  },
+  "baseline": {
+    "predicted_rc": [
+      "ts-delivery-service"
+    ],
+    "n_qpf": 43,
+    "correct": false,
+    "reasoning_excerpts": [
+      "I now have a complete picture of the available data:\n\n**Available Files:**\n- Logs: normal_logs (97,509 rows), abnormal_logs (62,497 rows)\n- Metrics: normal_metrics (72,500 rows), abnormal_metrics (72,480 rows)\n- Metrics Histogram: normal (3,051 rows), abnormal (2,914 rows)\n- Metrics Sum: normal (73,756 rows), abnormal (71,850 rows)\n- Traces: normal_traces (185,870 rows), abnormal_traces (118,030 rows)\n\n**Schema Understanding:**\n- Logs: time, trace_id, span_id, level, service_name, message, k8s attributes\n- Metrics: time, metric, value, service_name, various k8s and workload attributes\n- Traces",
+      "**Key Findings from Abnormal Logs:**\n\n1. **ERROR distribution by service:**\n   - ts-food-service: 202 errors (highest)\n   - ts-order-service: 80 errors\n   - ts-preserve-service: 80 errors\n   - ts-delivery-service: 48 errors\n   - ts-notification-service: 47 errors\n   - ts-ui-dashboard: 17 errors\n\n2. **Error patterns:**\n   - **ts-food-service** errors are mostly about \"Get the Get Food Request Failed\" and \"foodStoresListResult is null\" - these seem like downstream issues\n   - **ts-food-service** also has critical errors: \"send delivery info to mq error\" with \"UnknownHostException: ts-rabbitmq\" -",
+      "**Normal Call Chain Analysis:**\n\nFrom the normal trace, I can see the typical call flow for the preserve endpoint:\n1. loadgenerator → ts-ui-dashboard → ts-preserve-service\n2. ts-preserve-service calls multiple downstream services:\n   - ts-travel-service (trip_detail)\n   - ts-basic-service\n   - ts-security-service\n   - ts-order-service\n   - ts-order-other-service\n   - ts-seat-service\n\n**Current Issue:**\nThe abnormal traces for the failing requests only show loadgenerator and ts-ui-dashboard with Error status and HTTP 503. This suggests the requests are failing at the ts-ui-dashboard level befor",
+      "**Timeline Analysis:**\n\nLooking at the earliest errors in chronological order:\n\n1. **01:21:31.175** - ts-delivery-service: \"Failed to check/redeclare auto-delete queue(s).\" - **EARLIEST ERROR**\n2. **01:21:31.767** - ts-food-service: \"Get the Get Food Request Failed!\"\n3. **01:21:34.978** - ts-notification-service: \"Failed to check/redeclare auto-delete queue(s).\"\n4. **01:21:35.133** - ts-ui-dashboard: First HTTP 503 error on /api/v1/preserveservice/preserve\n5. **01:21:36.180** - ts-delivery-service: Queue error continues\n6. **01:21:36.988** - ts-ui-dashboard: Another 503 error\n...\n7. **01:22:08",
+      "**Critical Finding from Trace Analysis:**\n\nLooking at trace `7ba20f3bef6969f67ce770b3614b1438`:\n- **loadgenerator**: status \"Ok\" (the request was sent successfully)\n- **ts-ui-dashboard**: status \"Error\" with HTTP 503 (multiple spans showing errors)\n- **ts-preserve-service**: status \"Unset\" (no error status)\n- **ts-security-service, ts-order-service, ts-order-other-service**: all \"Unset\"\n\nThis is interesting - the ts-ui-dashboard shows Error status, but the downstream services (ts-preserve-service, etc.) show \"Unset\" status. This suggests that:\n1. The request reaches ts-preserve-service and dow",
+      "**Timeline of First Errors:**\n\n1. **01:21:31.175** - ts-delivery-service (EARLIEST)\n2. **01:21:31.767** - ts-food-service \n3. **01:21:34.978** - ts-notification-service\n4. **01:21:35.133** - ts-ui-dashboard (the incident endpoint starts failing)\n5. **01:22:08.945** - ts-preserve-service (much later)\n6. **01:22:08.953** - ts-order-service (much later)\n\n**Root Cause Analysis:**\n\nThe earliest errors are in:\n- **ts-delivery-service**: \"Failed to check/redeclare auto-delete queue(s)\" - RabbitMQ queue issue\n- **ts-food-service**: \"Get the Get Food Request Failed\" and later \"UnknownHostException: ts-",
+      "**Final Analysis:**\n\nBased on all the evidence collected:\n\n**Root Cause:**\nThe root cause is **ts-rabbitmq** (RabbitMQ message broker) being unavailable. This is evidenced by:\n1. ts-food-service logs showing \"UnknownHostException: ts-rabbitmq: Name or service not known\"\n2. ts-delivery-service and ts-notification-service showing \"Failed to check/redeclare auto-delete queue(s)\"\n\n**Timeline:**\n1. **01:21:31.175** - ts-delivery-service first reports RabbitMQ queue issues (EARLIEST)\n2. **01:21:31.767** - ts-food-service starts failing (also RabbitMQ related)\n3. **01:21:34.978** - ts-notification-se",
+      "**Final Verification Before Output:**\n\nI have gathered sufficient evidence to identify:\n\n1. **Root Cause**: ts-delivery-service (earliest error timestamp: 01:21:31.175)\n   - Error: \"Failed to check/redeclare auto-delete queue(s)\"\n   - This is caused by RabbitMQ (ts-rabbitmq) being unavailable\n\n2. **Fault Propagation Path**:\n   - ts-delivery-service → ts-notification-service (both RabbitMQ queue failures)\n   - ts-delivery-service → ts-food-service (RabbitMQ connection failure)\n   - ts-delivery-service/ts-food-service/ts-notification-service → ts-ui-dashboard (503 errors)\n   - ts-ui-dashboard → "
+    ]
+  },
+  "v4": {
+    "predicted_rc": [
+      "ts-ui-dashboard"
+    ],
+    "n_qpf": 50,
+    "correct": false,
+    "interventions": [
+      {
+        "phase": "mid",
+        "primary": "M6",
+        "secondary": [
+          "M5"
+        ],
+        "round_at_inject": 30,
+        "intervention_text": "[Investigation Advisor — v4] phase=mid primary=M6 secondary=M5\nYou've run a substantial number of queries across logs, traces, and metrics — but all of them have focused on the abnormal period. Notice that your baseline query count is still zero. Before drawing conclusions, consider: are the patterns you're seeing actually anomalous, or do they also appear during normal operation? A service showing many errors right now might be a chronic noisy neighbor rather than the incident's origin. Try running the same queries against the normal-period data and compare — the contrast might shift your candidate picture significantly.\n\nAlso worth keeping in mind: a service that doesn't appear prominently in your error rankings or trace data isn't necessarily healthy. It could simply be silent — stopped, unreachable, or not generating observable signals at all. Absence of evidence isn't evidence of absence here.",
+        "agent_response_excerpt": "The investigation advisor makes an excellent point. I've been analyzing only the abnormal data without comparing to the normal baseline. This is a critical gap. I need to:\n\n1. Compare error patterns between normal and abnormal periods\n2. Check if services showing errors in abnormal data also show similar errors in normal data\n3. Look for services that might be MISSING from abnormal data (could indicate they're down)\n\nLet me run comparative queries between normal and abnormal data to identify what's truly anomalous.",
+        "post_intervention_tool_rounds": 18
+      },
+      {
+        "phase": "conclusion",
+        "primary": "M8",
+        "secondary": [],
+        "round_at_inject": 48,
+        "intervention_text": "[Investigation Advisor — v4] phase=conclusion primary=M8\nYou've done solid baseline contrast work and identified one service as the only candidate with new errors in the abnormal period. Before you commit, do one counterfactual pass: if that candidate were completely healthy, would the symptoms you observed — the 503 responses, the trace error status codes, the reduced throughput — still occur? If yes, it may be a victim of something else rather than the origin. If no, your confidence is well-founded. Also worth a quick check: the call chain you traced goes through several services before reaching your candidate. Is it possible the 503 is being generated somewhere earlier in that chain and your candidate is simply the first place it becomes visible in the data you queried?",
+        "agent_response_excerpt": "The investigation advisor raises critical counterfactual questions. Let me analyze:\n\n**Counterfactual Analysis:**\n\n1. **If ts-ui-dashboard were healthy, would symptoms still occur?**\n   - The 503 errors are returned BY ts-ui-dashboard TO loadgenerator\n   - Downstream services (ts-preserve-service, ts-order-service, etc.) all return HTTP 200\n   - If ts-ui-dashboard were healthy, it would return 200s (like in normal period)\n   - **Conclusion**: Symptoms would NOT occur if ts-ui-dashboard were healthy → supports ts-ui-dashboard as root cause\n\n2. **Is the 503 generated earlier and ts-ui-dashboard is just where it becomes visible?**\n   - Trace flow: loadgenerator → ts-ui-dashboard → ts-preserve-service → ts-travel-service → ts-basic-service → ts-seat-service → ts-security-service → ts-order-ser",
+        "post_intervention_tool_rounds": 2
+      }
+    ],
+    "n_interventions": 2,
+    "final_reasoning_excerpts": [
+      "I now have a complete picture of the available data:\n\n**Available Files:**\n- Logs: normal_logs.parquet (97,509 rows), abnormal_logs.parquet (62,497 rows)\n- Metrics: normal_metrics.parquet (72,500 rows), abnormal_metrics.parquet (72,480 rows)\n- Metrics Histogram: normal_metrics_histogram.parquet (3,051 rows), abnormal_metrics_histogram.parquet (2,914 rows)\n- Metrics Sum: normal_metrics_sum.parquet (73,756 rows), abnormal_metrics_sum.parquet (71,850 rows)\n- Traces: normal_traces.parquet (185,870 rows), abnormal_traces.parquet (118,030 rows)\n\n**Schema Understanding:**\n- Logs: time, trace_id, span",
+      "**Key Findings from Abnormal Logs:**\n\n1. **Error Distribution by Service:**\n   - ts-food-service: 202 ERRORs (highest)\n   - ts-order-service: 80 ERRORs\n   - ts-preserve-service: 80 ERRORs\n   - ts-delivery-service: 48 ERRORs\n   - ts-notification-service: 47 ERRORs\n   - ts-ui-dashboard: 17 ERRORs\n\n2. **Error Messages Analysis:**\n   - **ts-food-service errors** are mostly about \"Get the Get Food Request Failed\" for various tripIds, and some about \"send delivery info to mq error\" with UnknownHostException for ts-rabbitmq\n   - **ts-delivery-service and ts-notification-service** errors are about \"Fa",
+      "**Key Findings from Traces:**\n\n1. **Error Status Distribution:**\n   - Only ts-ui-dashboard and loadgenerator show `attr_status_code = 'Error'`\n   - All other services show `attr_status_code = 'Unset'` (which typically means OK/success)\n   - ts-ui-dashboard returns HTTP 503 errors\n\n2. **Trace Analysis (trace_id: 13f0cda9fa043a3e19a36d9b3df632f9):**\n   - The trace shows a successful flow through many services (ts-preserve-service, ts-travel-service, ts-basic-service, ts-security-service, ts-seat-service, ts-order-service, etc.)\n   - All downstream services return HTTP 200\n   - Only ts-ui-dashboa",
+      "**Key Findings So Far:**\n\n1. **From Logs:**\n   - ts-food-service has the most errors (202), primarily:\n     - \"Get the Get Food Request Failed\" for various tripIds\n     - \"send delivery info to mq error\" with UnknownHostException: ts-rabbitmq\n   - ts-delivery-service and ts-notification-service have RabbitMQ queue issues\n   - ts-preserve-service and ts-order-service have \"Order already exists\" errors\n   - ts-ui-dashboard shows HTTP 503 errors\n\n2. **From Traces:**\n   - Only ts-ui-dashboard and loadgenerator show Error status codes\n   - The trace flow shows: loadgenerator → ts-ui-dashboard → ts-",
+      "The investigation advisor makes an excellent point. I've been analyzing only the abnormal data without comparing to the normal baseline. This is a critical gap. I need to:\n\n1. Compare error patterns between normal and abnormal periods\n2. Check if services showing errors in abnormal data also show similar errors in normal data\n3. Look for services that might be MISSING from abnormal data (could indicate they're down)\n\nLet me run comparative queries between normal and abnormal data to identify what's truly anomalous.",
+      "**Critical Comparison: Normal vs Abnormal Period**\n\n**Key Finding - Trace Status Codes:**\n- **Normal period**: NO services have `attr_status_code = 'Error'` (0 errors)\n- **Abnormal period**: Only `ts-ui-dashboard` (17 errors) and `loadgenerator` (2 errors) have `attr_status_code = 'Error'`\n\nThis is the smoking gun! In the normal period, ts-ui-dashboard has 0 errors. In the abnormal period, ts-ui-dashboard has 17 errors with HTTP 503 responses.\n\n**Error Comparison in Logs:**\n- **ts-food-service errors**: Normal=344, Abnormal=202 (actually FEWER errors in abnormal - this is chronic noise, not th",
+      "**Final Analysis:**\n\n**Container Restarts Comparison:**\n- **Normal period**: ts-ticket-office-service has 3 restarts\n- **Abnormal period**: ts-ticket-office-service has 3 restarts (same), ts-preserve-service has 1 restart (new)\n\nThe ts-preserve-service has 1 container restart in the abnormal period that wasn't in the normal period. However, this is a minor issue compared to the ts-ui-dashboard errors.\n\n**Key Evidence Summary:**\n\n1. **ts-ui-dashboard is the ONLY service with NEW errors in the abnormal period:**\n   - Normal: 0 ERROR logs, 0 trace errors\n   - Abnormal: 17 ERROR logs, 17 trace err",
+      "The investigation advisor raises critical counterfactual questions. Let me analyze:\n\n**Counterfactual Analysis:**\n\n1. **If ts-ui-dashboard were healthy, would symptoms still occur?**\n   - The 503 errors are returned BY ts-ui-dashboard TO loadgenerator\n   - Downstream services (ts-preserve-service, ts-order-service, etc.) all return HTTP 200\n   - If ts-ui-dashboard were healthy, it would return 200s (like in normal period)\n   - **Conclusion**: Symptoms would NOT occur if ts-ui-dashboard were healthy → supports ts-ui-dashboard as root cause\n\n2. **Is the 503 generated earlier and ts-ui-dashboard "
+    ]
+  }
+}

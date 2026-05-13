@@ -1,0 +1,461 @@
+case_id: qwen.1140
+framework: thinkdepthai-qwen3.5-plus
+data_dir: /home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-qwen3.5-plus/data_824b2096
+gt_from_injection_json:
+  fault_type: NetworkBandwidth
+  fault_category: NetworkChaos
+  injection_name: ts2-ts-food-service-bandwidth-b5qvk5
+  gt_services:
+  - ts-food-service
+  - ts-ui-dashboard
+  source_service: ts-food-service
+  target_service: ts-ui-dashboard
+  start_time: '2025-08-05T22:21:05Z'
+  end_time: '2025-08-05T22:25:05Z'
+  display_config:
+    buffer: 1925
+    direction: from
+    duration: 4
+    injection_point:
+      source_service: ts-food-service
+      target_service: ts-ui-dashboard
+    limit: 2596
+    namespace: ts
+    rate: 14664
+gt_from_causal_graph_json:
+  root_causes:
+  - ts-food-service
+  alarm_nodes:
+  - span|loadgenerator::HTTP POST http://ts-ui-dashboard:8080/api/v1/preserveservice/preserve
+agent_predicted:
+  root_causes:
+  - ts-consign-service
+  predicted_graph_nodes:
+  - ts-consign-service
+  - ts-ui-dashboard
+  - loadgenerator
+raw_sql_count_total: 25
+raw_sql_list_sample:
+- SELECT service_name, level, COUNT(*) as count FROM abnormal_logs GROUP BY service_name, level ORDER BY count DESC LIMIT 30
+- SELECT service_name, level, message, COUNT(*) as count FROM abnormal_logs WHERE level IN ('ERROR', 'SEVERE', 'FATAL') GROUP BY service_name, level, message ORDER BY count DESC LIMIT 30
+- SELECT service_name, attr_status_code, COUNT(*) as count FROM abnormal_traces GROUP BY service_name, attr_status_code ORDER BY count DESC LIMIT 30
+- SELECT service_name, attr_status_code, COUNT(*) as count FROM abnormal_traces WHERE attr_status_code = 'Error' GROUP BY service_name, attr_status_code ORDER BY count DESC LIMIT 20
+- SELECT parent_span_id, span_id, service_name, span_name, attr_status_code, duration FROM abnormal_traces WHERE service_name = 'ts-consign-service' AND attr_status_code = 'Error' LIMIT 20
+- SELECT service_name, span_id FROM abnormal_traces WHERE span_id IN ('fcfc0498932c1ad1', '00a99f671e1766db') LIMIT 10
+- SELECT trace_id, service_name, span_name, attr_status_code, duration, parent_span_id FROM abnormal_traces WHERE trace_id = (SELECT trace_id FROM abnormal_traces WHERE service_name = 'ts-consign-service'
+  AND attr_status_code = 'Error' LIMIT 1) ORDER BY duration DESC LIMIT 30
+- SELECT service_name, span_name, attr_status_code, COUNT(*) as count FROM abnormal_traces WHERE span_name LIKE '%preserve%' OR span_name LIKE '%Preserve%' GROUP BY service_name, span_name, attr_status_code
+  ORDER BY count DESC LIMIT 30
+- SELECT trace_id FROM abnormal_traces WHERE span_name = 'POST /api/v1/preserveservice/preserve' AND service_name = 'ts-preserve-service' LIMIT 5
+- SELECT service_name, span_name, attr_status_code, duration, parent_span_id FROM abnormal_traces WHERE trace_id = '646a0a80ef1f199f5b1e79f776aab40a' ORDER BY duration DESC LIMIT 30
+- SELECT service_name, span_name, attr_status_code, duration FROM abnormal_traces WHERE trace_id = '646a0a80ef1f199f5b1e79f776aab40a' AND attr_status_code = 'Error' LIMIT 20
+- SELECT DISTINCT trace_id FROM abnormal_traces WHERE service_name = 'ts-consign-service' AND attr_status_code = 'Error' LIMIT 5
+- SELECT service_name, span_name, attr_status_code, parent_span_id FROM abnormal_traces WHERE trace_id = 'e3a8ca51efd14d85338a8a61f4b216e6' ORDER BY parent_span_id, service_name LIMIT 40
+- SELECT service_name, span_id FROM abnormal_traces WHERE trace_id = 'e3a8ca51efd14d85338a8a61f4b216e6' AND span_id = '00a99f671e1766db' LIMIT 5
+- SELECT service_name, metric, value FROM abnormal_metrics WHERE metric LIKE '%error%' ORDER BY value DESC LIMIT 30
+- SELECT DISTINCT metric FROM abnormal_metrics LIMIT 30
+- SELECT service_name, metric, AVG(value) as avg_value FROM abnormal_metrics WHERE metric LIKE '%http%' OR metric LIKE '%request%' GROUP BY service_name, metric ORDER BY avg_value DESC LIMIT 30
+- SELECT service_name, metric, value FROM abnormal_metrics_sum WHERE metric LIKE '%error%' OR metric LIKE '%Error%' ORDER BY value DESC LIMIT 30
+- SELECT service_name, attr_status_code, COUNT(*) as count FROM normal_traces GROUP BY service_name, attr_status_code ORDER BY count DESC LIMIT 20
+- SELECT service_name, attr_status_code, COUNT(*) as count FROM normal_traces WHERE attr_status_code = 'Error' GROUP BY service_name, attr_status_code ORDER BY count DESC LIMIT 20
+raw_sql_substring_audit:
+  has_baseline_contrast_substring: false
+  has_call_tree_build_substring: false
+  has_trace_follow_substring: true
+  has_jvm_metric_substring: false
+  has_container_metric_substring: false
+  has_k8s_metric_substring: false
+  has_db_metric_substring: false
+  has_network_metric_substring: false
+  has_status_error_filter: true
+  has_status_unset_filter: false
+  where_service_name_filters:
+  - ts-consign-service
+  - ts-preserve-service
+  - ts-ui-dashboard
+parquet_evidence:
+  top_error_services_abnormal_logs:
+  - service: ts-consign-service
+    count: 176
+  - service: ts-food-service
+    count: 165
+  - service: ts-preserve-service
+    count: 82
+  - service: ts-order-service
+    count: 82
+  - service: ts-delivery-service
+    count: 48
+  - service: ts-notification-service
+    count: 48
+  - service: ts-ui-dashboard
+    count: 10
+  top_error_services_normal_logs:
+  - service: ts-food-service
+    count: 280
+  - service: ts-order-service
+    count: 92
+  - service: ts-preserve-service
+    count: 92
+  - service: ts-delivery-service
+    count: 48
+  - service: ts-notification-service
+    count: 47
+  gt_service_abnormal_log_error_count:
+    ts-ui-dashboard: 10
+    ts-food-service: 165
+  gt_service_normal_log_error_count:
+    ts-food-service: 280
+  gt_service_status_code_distribution:
+    ts-food-service:
+      Unset: 1091
+    ts-ui-dashboard:
+      Unset: 4215
+      Error: 12
+  gt_service_abnormal_span_count:
+    ts-food-service: 1091
+    ts-ui-dashboard: 4227
+  top_error_span_services:
+  - service: ts-consign-service
+    sc: Error
+    count: 528
+  - service: ts-ui-dashboard
+    sc: Error
+    count: 12
+  - service: loadgenerator
+    sc: Error
+    count: 2
+  gt_latency_stats:
+  - service: ts-ui-dashboard
+    avg_ms: 95.8
+    max_ms: 8515.2
+    p95_ms: 267.8
+    count: 4227
+  - service: ts-food-service
+    avg_ms: 26.3
+    max_ms: 3519.9
+    p95_ms: 65.1
+    count: 1091
+  chronic_noise_detail:
+  - service: ts-preserve-service
+    normal_err: 92
+    abnormal_err: 82
+    ratio: 1.12
+  - service: ts-order-service
+    normal_err: 92
+    abnormal_err: 82
+    ratio: 1.12
+  - service: ts-delivery-service
+    normal_err: 48
+    abnormal_err: 48
+    ratio: 1.0
+  - service: ts-notification-service
+    normal_err: 47
+    abnormal_err: 48
+    ratio: 0.98
+  gt_span_name_breakdown:
+  - span_name: GET /api/v1/userservice/users/id/4d2a46c7-71cb-4cf1-b5bb-b68406d9da6f
+    avg_ms: 13.2
+    count: 673
+  - span_name: POST /api/v1/users/login
+    avg_ms: 117.2
+    count: 672
+  - span_name: GET
+    avg_ms: 16.1
+    count: 352
+  - span_name: GET /api/v1/routeservice/routes
+    avg_ms: 40.0
+    count: 325
+  - span_name: POST /api/v1/orderservice/order/refresh
+    avg_ms: 26.8
+    count: 300
+  - span_name: POST /api/v1/orderOtherService/orderOther/refresh
+    avg_ms: 8.3
+    count: 300
+  - span_name: GET /api/v1/foodservice/foods/{date}/{startStation}/{endStation}/{tripId}
+    avg_ms: 50.9
+    count: 247
+  - span_name: GET /api/v1/contactservice/contacts/account/4d2a46c7-71cb-4cf1-b5bb-b68406d9da6f
+    avg_ms: 9.4
+    count: 247
+  - span_name: FoodController.getAllFood
+    avg_ms: 33.9
+    count: 247
+  - span_name: GET /api/v1/trainservice/trains
+    avg_ms: 11.8
+    count: 188
+  - span_name: POST
+    avg_ms: 15.3
+    count: 105
+  - span_name: POST /api/v1/travelservice/trips/left
+    avg_ms: 317.8
+    count: 99
+  - span_name: POST /api/v1/preserveservice/preserve
+    avg_ms: 532.6
+    count: 96
+  - span_name: GET /api/v1/assuranceservice/assurances/types
+    avg_ms: 6.4
+    count: 96
+  - span_name: POST /api/v1/travel2service/trips/left
+    avg_ms: 178.9
+    count: 89
+  - span_name: POST /api/v1/travelplanservice/travelPlan/quickest
+    avg_ms: 1092.9
+    count: 52
+  - span_name: GET /api/v1/consignservice/consigns/account/4d2a46c7-71cb-4cf1-b5bb-b68406d9da6f
+    avg_ms: 14.4
+    count: 48
+  - span_name: POST /api/v1/travelplanservice/travelPlan/cheapest
+    avg_ms: 776.6
+    count: 43
+  - span_name: GET /api/v1/foodservice/foods/2025-08-05/nanjing/shanghai/Z1236
+    avg_ms: 102.6
+    count: 42
+  - span_name: POST /api/v1/travelplanservice/travelPlan/minStation
+    avg_ms: 1013.8
+    count: 42
+  gt_parent_child_pairs:
+  - - ts-food-service
+    - ts-travel-service
+  - - ts-food-service
+    - ts-station-food-service
+  - - ts-ui-dashboard
+    - ts-cancel-service
+  - - loadgenerator
+    - ts-ui-dashboard
+  - - ts-ui-dashboard
+    - ts-contacts-service
+  - - ts-food-service
+    - ts-train-food-service
+  - - ts-ui-dashboard
+    - ts-consign-service
+  - - ts-ui-dashboard
+    - ts-order-service
+  - - ts-ui-dashboard
+    - ts-travel-service
+  - - ts-ui-dashboard
+    - ts-assurance-service
+  - - ts-ui-dashboard
+    - ts-inside-payment-service
+  - - ts-ui-dashboard
+    - ts-user-service
+  - - ts-ui-dashboard
+    - ts-verification-code-service
+  - - ts-ui-dashboard
+    - ts-food-service
+  - - ts-preserve-service
+    - ts-food-service
+  - - ts-ui-dashboard
+    - ts-route-service
+  - - ts-ui-dashboard
+    - ts-order-other-service
+  - - ts-ui-dashboard
+    - ts-travel2-service
+  - - ts-ui-dashboard
+    - ts-preserve-service
+  - - ts-ui-dashboard
+    - ts-auth-service
+  - - ts-ui-dashboard
+    - ts-travel-plan-service
+  - - ts-ui-dashboard
+    - ts-train-service
+  gt_caller_distribution:
+  - caller: loadgenerator
+    count: 4227
+  - caller: ts-food-service
+    count: 830
+  - caller: ts-ui-dashboard
+    count: 247
+  - caller: ts-preserve-service
+    count: 14
+trajectory_reasoning_snippets:
+- idx: 34
+  text: 'The preserve trace I looked at has no errors. Let me look at traces that have errors and find the ones related to ts-consign-service to understand the full propagation path.
+
+
+    '
+- idx: 40
+  text: 'Now I understand the call chain better. Let me check the metrics to see error rates and confirm the root cause.
+
+
+    '
+- idx: 54
+  text: 'In normal traces, there are NO errors at all. In abnormal traces, ts-consign-service has 528 errors. This confirms ts-consign-service is the source of the problem.
+
+
+    Let me now check the logs to see the timeline and confirm the root cause more clearly.
+
+
+    '
+- idx: 64
+  text: 'Now I have enough evidence to construct the final CausalGraph. Let me verify my conclusion one more time by checking if there are any other services that might be involved.
+
+
+    '
+- idx: 68
+  text: "Based on my comprehensive analysis of the telemetry data, I have identified the root cause and fault propagation path. Here is the final CausalGraph:\n\n```json\n{\n  \"nodes\": [\n    {\n    \
+    \  \"component\": \"ts-consign-service\",\n      \"state\": [\"HIGH_ERROR_RATE\"],\n      \"timestamp\": 1754432691290\n    },\n    {\n      \"component\": \"ts-ui-dashboard\",\n      \"state\": [\"\
+    HIGH_ERROR_RATE\"],\n      \"timestamp\": 1754432694252\n    },\n    {\n      \"component\": \"loadgenerator\",\n      \"state\": [\"HIGH_ERROR_RATE\"],\n      \"timestamp\": 1754432694000\n    }\n\
+    \  ],\n  \"edges\": [\n    {\n      \"source\": \"ts-consign-service\",\n      \"target\": \"ts-ui-dashboard\"\n    },\n    {\n      \"source\": \"ts-ui-dashboard\",\n      \"target\": \"loadgenerator\"\
+    \n    }\n  ],\n  \"root_causes\": [\n    {\n      \"component\": \"ts-consign-service\",\n      \"state\": [\"HIGH_ERROR_RATE\"],\n      \"timestamp\": 1754432691290\n    }\n  ],\n  \"component_to_service\"\
+    : {}\n}\n```\n\n## Investigation Summary\n\n**Root Cause Service**: `ts-consign-service`\n\n**Root Cause Details**: \n- Database integrity issue: `NonUniqueResultException: query did not return a unique\
+    \ result: 2`\n- The error occurs in `ConsignRepository.findByOrderId` when querying the `consign_record` table\n- A que"
+- idx: -1
+  text: "Based on my comprehensive analysis of the telemetry data, I have identified the root cause and fault propagation path. Here is the final CausalGraph:\n\n```json\n{\n  \"nodes\": [\n    {\n    \
+    \  \"component\": \"ts-consign-service\",\n      \"state\": [\"HIGH_ERROR_RATE\"],\n      \"timestamp\": 1754432691290\n    },\n    {\n      \"component\": \"ts-ui-dashboard\",\n      \"state\": [\"\
+    HIGH_ERROR_RATE\"],\n      \"timestamp\": 1754432694252\n    },\n    {\n      \"component\": \"loadgenerator\",\n      \"state\": [\"HIGH_ERROR_RATE\"],\n      \"timestamp\": 1754432694000\n    }\n\
+    \  ],\n  \"edges\": [\n    {\n      \"source\": \"ts-consign-service\",\n      \"target\": \"ts-ui-dashboard\"\n    },\n    {\n      \"source\": \"ts-ui-dashboard\",\n      \"target\": \"loadgenerator\"\
+    \n    }\n  ],\n  \"root_causes\": [\n    {\n      \"component\": \"ts-consign-service\",\n      \"state\": [\"HIGH_ERROR_RATE\"],\n      \"timestamp\": 1754432691290\n    }\n  ],\n  \"component_to_service\"\
+    : {}\n}\n```\n\n## Investigation Summary\n\n**Root Cause Service**: `ts-consign-service`\n\n**Root Cause Details**: \n- Database integrity issue: `NonUniqueResultException: query did not return a unique\
+    \ result: 2`\n- The error occurs in `ConsignRepository.findByOrderId` when querying the `consign_record` table\n- A query expected to return 1 unique record but returned 2 duplicate records\n- First\
+    \ error timestamp: 2025-08-05T22:24:51.290000+00:00\n\n**Fault Propagation Path**:\n1. **ts-consign-service** (origin) → Database query fails with NonUniqueResultException → 528 error traces, 176 SEVERE\
+    \ log entries\n2. **ts-ui-dashboard** (affected) → Receives errors from ts-consign-service → Returns HTTP 500 to clients → 12 error traces, 10 ERROR log entries\n3. **loadgenerator** (affected) → Receives\
+    \ HTTP 500 responses → 2 error traces\n\n**Evidence**:\n- ts-consign-service errors started ~3 seconds before ts-ui-dashboard errors\n- Only 3 services show Error status in traces, with ts-consign-service\
+    \ having 98% of all errors (528 out of 542)\n- Log messages confirm the root cause: \"query did not return a unique result: 2\""
+- idx: -1
+  text: 'Now I have enough evidence to construct the final CausalGraph. Let me verify my conclusion one more time by checking if there are any other services that might be involved.
+
+
+    '
+gt_required_capabilities:
+  gt_is_silent: false
+  gt_is_loudest: true
+  chronic_noise_present: true
+  chronic_noise_carriers:
+  - ts-preserve-service
+  - ts-order-service
+  - ts-delivery-service
+  - ts-notification-service
+  required_metric_layer: network/db
+  gt_path_is_edge_fault: true
+  gt_has_name_twin: true
+  name_twin_candidates:
+  - ts-user-service
+  - ts-assurance-service
+  - ts-order-service
+  - ts-security-service
+  - ts-notification-service
+  - ts-travel-service
+  - ts-cancel-service
+  - ts-station-food-service
+  - ts-route-plan-service
+  - ts-contacts-service
+  - ts-auth-service
+  - ts-config-service
+  - ts-inside-payment-service
+  - ts-travel2-service
+  - ts-preserve-service
+  - ts-basic-service
+  - ts-travel-plan-service
+  - ts-seat-service
+  - ts-consign-service
+  - ts-consign-price-service
+  - ts-delivery-service
+  - ts-price-service
+  - ts-verification-code-service
+  - ts-station-service
+  - ts-train-food-service
+  - ts-order-other-service
+  - ts-train-service
+  - ts-route-service
+  - ts-payment-service
+  gt_diluted_across_spans: false
+path_alignment:
+  gt_touched_in_trajectory: true
+  gt_neighbors_touched:
+    ts-preserve-service: 1
+  gt_neighbors_from_causal_graph:
+  - loadgenerator
+  - ts-preserve-service
+  agent_focus_services:
+  - service: ts-consign-service
+    count: 4
+  - service: ts-ui-dashboard
+    count: 3
+  - service: ts-preserve-service
+    count: 1
+  agent_predicted_rc_in_gt_neighborhood: false
+counterfactual:
+  PD1_baseline_contrast:
+    chronic_noise_in_data: true
+    predicted_rc_is_chronic_carrier: false
+    predicted_rc_error_ratios:
+      ts-consign-service:
+        normal: 0
+        abnormal: 176
+    if_run_would_reveal: false
+  PD2_call_tree_build:
+    gt_is_upstream_of_agent_focus: true
+    if_run_would_surface_gt: true
+  PD3_fault_layer_metric_probe:
+    metric_family_if_probed: network/db
+    gt_metric_anomaly_exists_in_parquet: null
+  PD4_named_candidate_not_isolated:
+    if_isolated_predicted_rc_show_healthy:
+      ts-consign-service: false
+  R_correct_heuristic_would_reach_gt:
+    if_loudness_applied: false
+    if_baseline_diff_applied: true
+    if_edge_direction_applied: false
+    if_name_twin_check_applied: true
+  D_obstacle_is_structural: true
+parquet_queries_run:
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-qwen3.5-plus/data_824b2096/abnormal_logs.parquet') WHERE level IN ('ERROR','SEVERE')
+    GROUP BY 1 ORDER BY n DESC LIMIT 10
+  purpose: top_error_services_abnormal_logs
+  row_count: 7
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-qwen3.5-plus/data_824b2096/normal_logs.parquet') WHERE level IN ('ERROR','SEVERE') GROUP
+    BY 1 ORDER BY n DESC LIMIT 10
+  purpose: top_error_services_normal_logs
+  row_count: 5
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-qwen3.5-plus/data_824b2096/abnormal_logs.parquet') WHERE level IN ('ERROR','SEVERE')
+    AND service_name IN ('ts-food-service','ts-ui-dashboard') GROUP BY 1
+  purpose: gt_service_abnormal_log_error_count
+  row_count: 2
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-qwen3.5-plus/data_824b2096/normal_logs.parquet') WHERE level IN ('ERROR','SEVERE') AND
+    service_name IN ('ts-food-service','ts-ui-dashboard') GROUP BY 1
+  purpose: gt_service_normal_log_error_count
+  row_count: 1
+- sql: SELECT service_name, "attr.status_code" as sc, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-qwen3.5-plus/data_824b2096/abnormal_traces.parquet') WHERE
+    service_name IN ('ts-food-service','ts-ui-dashboard') GROUP BY 1,2
+  purpose: gt_service_status_code_distribution
+  row_count: 3
+- sql: SELECT service_name, "attr.status_code" as sc, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-qwen3.5-plus/data_824b2096/abnormal_traces.parquet') WHERE
+    "attr.status_code" IN ('Error','ERROR') GROUP BY 1,2 ORDER BY n DESC LIMIT 5
+  purpose: top_error_span_services
+  row_count: 3
+- sql: SELECT service_name, AVG(duration)/1e6 AS avg_ms, MAX(duration)/1e6 AS max_ms, QUANTILE_CONT(duration, 0.95)/1e6 AS p95_ms, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-qwen3.5-plus/data_824b2096/abnormal_traces.parquet')
+    WHERE service_name IN ('ts-food-service','ts-ui-dashboard') GROUP BY 1
+  purpose: gt_latency_stats
+  row_count: 2
+- sql: SELECT DISTINCT service_name FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-qwen3.5-plus/data_824b2096/abnormal_traces.parquet')
+  purpose: all_abnormal_trace_services
+  row_count: 30
+counterfactual_queries_run:
+- sql: SELECT span_name, AVG(duration)/1e6 AS avg_ms, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-qwen3.5-plus/data_824b2096/abnormal_traces.parquet') WHERE
+    service_name IN ('ts-food-service','ts-ui-dashboard') GROUP BY 1 ORDER BY n DESC LIMIT 20
+  purpose: gt_span_name_breakdown
+  row_count: 20
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-qwen3.5-plus/data_824b2096/normal_logs.parquet') WHERE level IN ('ERROR','SEVERE') AND
+    service_name IN ('ts-consign-service') GROUP BY 1
+  purpose: predicted_rc_normal_err
+  row_count: 0
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-qwen3.5-plus/data_824b2096/abnormal_logs.parquet') WHERE level IN ('ERROR','SEVERE')
+    AND service_name IN ('ts-consign-service') GROUP BY 1
+  purpose: predicted_rc_abnormal_err
+  row_count: 1
+- sql: SELECT DISTINCT p.service_name, c.service_name FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-qwen3.5-plus/data_824b2096/abnormal_traces.parquet') c JOIN read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-qwen3.5-plus/data_824b2096/abnormal_traces.parquet')
+    p ON c.parent_span_id=p.span_id WHERE c.service_name IN ('ts-food-service','ts-ui-dashboard') OR p.service_name IN ('ts-food-service','ts-ui-dashboard') LIMIT 200
+  purpose: gt_parent_child_pairs
+  row_count: 23
+- sql: SELECT p.service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-qwen3.5-plus/data_824b2096/abnormal_traces.parquet') c JOIN read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-qwen3.5-plus/data_824b2096/abnormal_traces.parquet')
+    p ON c.parent_span_id=p.span_id WHERE c.service_name IN ('ts-food-service','ts-ui-dashboard') GROUP BY 1 ORDER BY n DESC LIMIT 5
+  purpose: gt_caller_distribution
+  row_count: 4
+classes_to_verify:
+- D2
+- PD_ErrorOnlyFilterBias
+- PD_NoBaselineContrast
+- PD_NoCallTreeBuild
+- PD_NoFaultLayerMetricProbe
+- U1_LoudnessAnchorOverSilentVictim
+- qwen.PD8_NoChronicityReasoning

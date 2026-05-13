@@ -1,0 +1,266 @@
+{
+  "seed": 20260422,
+  "total_distinct_cases": 122,
+  "total_class_slots": 153,
+  "per_axis_log": [
+    {
+      "axis": "D",
+      "class": "D1",
+      "requested": 5,
+      "available": 142,
+      "picked": 5
+    },
+    {
+      "axis": "D",
+      "class": "D2",
+      "requested": 5,
+      "available": 67,
+      "picked": 5
+    },
+    {
+      "axis": "D",
+      "class": "D3",
+      "requested": 5,
+      "available": 50,
+      "picked": 5
+    },
+    {
+      "axis": "D",
+      "class": "D7",
+      "requested": 5,
+      "available": 17,
+      "picked": 5
+    },
+    {
+      "axis": "D",
+      "class": "D4",
+      "requested": 5,
+      "available": 36,
+      "picked": 5
+    },
+    {
+      "axis": "D",
+      "class": "D5",
+      "requested": 5,
+      "available": 34,
+      "picked": 5
+    },
+    {
+      "axis": "D",
+      "class": "D6",
+      "requested": 5,
+      "available": 23,
+      "picked": 5
+    },
+    {
+      "axis": "R",
+      "class": "U1_LoudnessAnchorOverSilentVictim",
+      "requested": 5,
+      "available": 140,
+      "picked": 5
+    },
+    {
+      "axis": "R",
+      "class": "U4_NameTwinSiblingConfusion",
+      "requested": 5,
+      "available": 18,
+      "picked": 5
+    },
+    {
+      "axis": "R",
+      "class": "U3_EdgeDirectionOrRegionEndpointError",
+      "requested": 5,
+      "available": 48,
+      "picked": 5
+    },
+    {
+      "axis": "R",
+      "class": "U2_ChronicAmbientNoiseAnchor",
+      "requested": 5,
+      "available": 85,
+      "picked": 5
+    },
+    {
+      "axis": "R",
+      "class": "U5_SilenceReadAsHealthOrPaused",
+      "requested": 5,
+      "available": 17,
+      "picked": 5
+    },
+    {
+      "axis": "R_fw",
+      "class": "aiq.R_correct_then_reversed",
+      "requested": 3,
+      "available": 13,
+      "picked": 3
+    },
+    {
+      "axis": "R_fw",
+      "class": "aiq.R_hub_fabrication",
+      "requested": 3,
+      "available": 12,
+      "picked": 3
+    },
+    {
+      "axis": "R_fw",
+      "class": "aiq.R_compress_drift",
+      "requested": 3,
+      "available": 8,
+      "picked": 3
+    },
+    {
+      "axis": "R_fw",
+      "class": "sonnet.R_OscillationToCompromisePair",
+      "requested": 3,
+      "available": 4,
+      "picked": 3
+    },
+    {
+      "axis": "R_fw",
+      "class": "sonnet.R_NarrativeOverMatchedMagnitude",
+      "requested": 3,
+      "available": 3,
+      "picked": 3
+    },
+    {
+      "axis": "R_fw",
+      "class": "claudecode.R7_JVMSymptomMisreadAsDB",
+      "requested": 3,
+      "available": 4,
+      "picked": 3
+    },
+    {
+      "axis": "R_fw",
+      "class": "claudecode.R6_InfraLayerSkipped",
+      "requested": 3,
+      "available": 7,
+      "picked": 3
+    },
+    {
+      "axis": "R_fw",
+      "class": "qwen.R_E_PathOvershootPastInjection",
+      "requested": 3,
+      "available": 6,
+      "picked": 3
+    },
+    {
+      "axis": "R_fw",
+      "class": "qwen.R_F_QueryDesignBuriesSignal",
+      "requested": 3,
+      "available": 5,
+      "picked": 3
+    },
+    {
+      "axis": "PD",
+      "class": "PD_TraceFollowAbsent",
+      "requested": 5,
+      "available": 6,
+      "picked": 5
+    },
+    {
+      "axis": "PD",
+      "class": "PD_NamedCandidateNotIsolated",
+      "requested": 5,
+      "available": 81,
+      "picked": 5
+    },
+    {
+      "axis": "PD",
+      "class": "PD_MultiRCCompromise",
+      "requested": 5,
+      "available": 7,
+      "picked": 5
+    },
+    {
+      "axis": "PD",
+      "class": "PD_NoCallTreeBuild",
+      "requested": 5,
+      "available": 202,
+      "picked": 5
+    },
+    {
+      "axis": "PD",
+      "class": "PD_ErrorOnlyFilterBias",
+      "requested": 5,
+      "available": 73,
+      "picked": 5
+    },
+    {
+      "axis": "PD",
+      "class": "PD_LateExplorationDegenerate",
+      "requested": 5,
+      "available": 25,
+      "picked": 5
+    },
+    {
+      "axis": "PD",
+      "class": "PD_NoFaultLayerMetricProbe",
+      "requested": 5,
+      "available": 188,
+      "picked": 5
+    },
+    {
+      "axis": "PD",
+      "class": "PD_NoBaselineContrast",
+      "requested": 5,
+      "available": 316,
+      "picked": 5
+    },
+    {
+      "axis": "PD",
+      "class": "PD_SurveyWithoutDrill",
+      "requested": 5,
+      "available": 59,
+      "picked": 5
+    },
+    {
+      "axis": "PD_fw",
+      "class": "aiq.PD_StageEndsWithoutCommitment",
+      "requested": 3,
+      "available": 108,
+      "picked": 3
+    },
+    {
+      "axis": "PD_fw",
+      "class": "aiq.PD_ReflectionStageWithoutNewProbe",
+      "requested": 3,
+      "available": 48,
+      "picked": 3
+    },
+    {
+      "axis": "PD_fw",
+      "class": "aiq.PD_CompressOverwritesTerminator",
+      "requested": 3,
+      "available": 8,
+      "picked": 3
+    },
+    {
+      "axis": "PD_fw",
+      "class": "claudecode.PD4_GTServiceNotTargetedWithWhere",
+      "requested": 3,
+      "available": 63,
+      "picked": 3
+    },
+    {
+      "axis": "PD_fw",
+      "class": "sonnet.PD5_ThinkNarrationDominant",
+      "requested": 3,
+      "available": 23,
+      "picked": 3
+    },
+    {
+      "axis": "PD_fw",
+      "class": "qwen.PD8_NoChronicityReasoning",
+      "requested": 3,
+      "available": 8,
+      "picked": 3
+    },
+    {
+      "axis": "PD_fw",
+      "class": "qwen.PD6_ServiceAvgNoSpanMaxDrill",
+      "requested": 3,
+      "available": 18,
+      "picked": 3
+    }
+  ]
+}

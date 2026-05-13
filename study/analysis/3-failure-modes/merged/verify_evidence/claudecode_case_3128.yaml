@@ -1,0 +1,466 @@
+case_id: claudecode.3128
+framework: claudecode-qwen3.5-plus
+data_dir: /home/nn/SOTA-agents/RCAgentEval/eval-data/claudecode-qwen3.5-plus/data_dddbb600
+gt_from_injection_json:
+  fault_type: HTTPResponseDelay
+  fault_category: HTTPFault
+  injection_name: ts5-ts-preserve-service-response-delay-wrbsmb
+  gt_services:
+  - ts-preserve-service
+  - ts-security-service
+  source_service: null
+  target_service: null
+  start_time: '2025-08-11T22:22:44Z'
+  end_time: '2025-08-11T22:26:43Z'
+  display_config:
+    delay_duration: 4151
+    duration: 4
+    injection_point:
+      app_name: ts-preserve-service
+      method: GET
+      route: /api/v1/securityservice/securityConfigs/*
+      server_address: ts-security-service
+      server_port: '8080'
+    namespace: ts
+gt_from_causal_graph_json:
+  root_causes:
+  - ts-preserve-service
+  alarm_nodes:
+  - span|loadgenerator::HTTP POST http://ts-ui-dashboard:8080/api/v1/preserveservice/preserve
+  - span|loadgenerator::HTTP POST http://ts-ui-dashboard:8080/api/v1/travelplanservice/travelPlan/minStation
+  - span|loadgenerator::HTTP POST http://ts-ui-dashboard:8080/api/v1/travelservice/trips/left
+agent_predicted:
+  root_causes:
+  - ts-order-service
+  predicted_graph_nodes:
+  - ts-order-service
+  - ts-preserve-service
+  - ts-ui-dashboard
+  - loadgenerator
+raw_sql_count_total: 52
+raw_sql_list_sample:
+- SELECT * FROM 'normal_logs.parquet' LIMIT 0;"
+- SELECT * FROM 'normal_traces.parquet' LIMIT 0;"
+- SELECT * FROM 'normal_metrics.parquet' LIMIT 0;"
+- SELECT level, COUNT(*) as count FROM 'abnormal_logs.parquet' GROUP BY level ORDER BY count DESC;"
+- SELECT level, COUNT(*) as count FROM 'normal_logs.parquet' GROUP BY level ORDER BY count DESC;"
+- SELECT service_name, level, COUNT(*) as count FROM 'abnormal_logs.parquet' WHERE level='ERROR' GROUP BY service_name, level ORDER BY count DESC LIMIT 20;"
+- SELECT service_name, level, COUNT(*) as count FROM 'normal_logs.parquet' WHERE level='ERROR' GROUP BY service_name, level ORDER BY count DESC LIMIT 20;"
+- SELECT time, service_name, message FROM 'abnormal_logs.parquet' WHERE level='ERROR' OR level='SEVERE' ORDER BY time ASC LIMIT 30;"
+- SELECT message, COUNT(*) as count FROM 'abnormal_logs.parquet' WHERE level='ERROR' GROUP BY message ORDER BY count DESC LIMIT 15;"
+- SELECT DISTINCT service_name FROM 'abnormal_traces.parquet' ORDER BY service_name;"
+- SELECT DISTINCT metric FROM 'abnormal_metrics.parquet' ORDER BY metric;"
+- SELECT service_name, metric, AVG(value) as avg_value FROM 'abnormal_metrics.parquet' WHERE metric LIKE '%error%' GROUP BY service_name, metric ORDER BY avg_value DESC LIMIT 15;"
+- SELECT service_name, attr.status_code, COUNT(*) as count FROM 'abnormal_traces.parquet' GROUP BY service_name, attr.status_code ORDER BY service_name, attr.status_code;"
+- SELECT * FROM 'abnormal_traces.parquet' WHERE attr.status_code = 'ERROR' ORDER BY time ASC LIMIT 20;"
+- SELECT service_name, \"attr.status_code\", COUNT(*) as count FROM 'abnormal_traces.parquet' GROUP BY service_name, \"attr.status_code\" ORDER BY service_name;"
+- SELECT time, trace_id, span_id, \"parent_span_id\", service_name, span_name, \"attr.status_code\", duration FROM 'abnormal_traces.parquet' WHERE \"attr.status_code\" = 'Error' ORDER BY time ASC LIMIT
+  30;"
+- SELECT time, trace_id, span_id, \"parent_span_id\", service_name, span_name, \"attr.status_code\", duration FROM 'abnormal_traces.parquet' WHERE trace_id = 'c486313753cb8444f36a9e9b79a52b5f' ORDER BY
+  time ASC;"
+- SELECT time, trace_id, span_id, \"parent_span_id\", service_name, span_name, \"attr.status_code\", duration FROM 'abnormal_traces.parquet' WHERE trace_id = 'c486313753cb8444f36a9e9b79a52b5f' AND \"parent_span_id\"
+  = 'cdb5e712ebdf42dd' ORDER BY time ASC;"
+- SELECT \"attr.http.request.method\", \"attr.http.response.status_code\", service_name, span_name, COUNT(*) as count FROM 'abnormal_traces.parquet' WHERE \"attr.http.response.status_code\" >= 500 GROUP
+  BY \"attr.http.request.method\", \"attr.http.response.status_code\", service_name, span_name ORDER BY count DESC LIMIT 20;"
+- SELECT \"parent_span_id\", service_name, COUNT(*) as count FROM 'abnormal_traces.parquet' WHERE service_name NOT LIKE 'loadgenerator' AND service_name NOT LIKE 'ts-ui-dashboard' GROUP BY \"parent_span_id\",
+  service_name HAVING count > 10 ORDER BY count DESC LIMIT 30;"
+raw_sql_substring_audit:
+  has_baseline_contrast_substring: true
+  has_call_tree_build_substring: true
+  has_trace_follow_substring: true
+  has_jvm_metric_substring: false
+  has_container_metric_substring: false
+  has_k8s_metric_substring: true
+  has_db_metric_substring: false
+  has_network_metric_substring: false
+  has_status_error_filter: true
+  has_status_unset_filter: false
+  where_service_name_filters:
+  - ts-route-service
+  - ts-preserve-service
+  - ts-food-service
+  - ts-train-food-service
+  - ts-order-service
+  - ts-ui-dashboard
+  - ts-travel-service
+  - ts-travel-plan-service
+parquet_evidence:
+  top_error_services_abnormal_logs:
+  - service: ts-food-service
+    count: 119
+  - service: ts-preserve-service
+    count: 58
+  - service: ts-order-service
+    count: 52
+  - service: ts-delivery-service
+    count: 48
+  - service: ts-notification-service
+    count: 47
+  - service: ts-ui-dashboard
+    count: 10
+  top_error_services_normal_logs:
+  - service: ts-food-service
+    count: 333
+  - service: ts-preserve-service
+    count: 108
+  - service: ts-order-service
+    count: 108
+  - service: ts-delivery-service
+    count: 48
+  - service: ts-notification-service
+    count: 48
+  - service: ts-inside-payment-service
+    count: 1
+  gt_service_abnormal_log_error_count:
+    ts-preserve-service: 58
+  gt_service_normal_log_error_count:
+    ts-preserve-service: 108
+  gt_service_status_code_distribution:
+    ts-preserve-service:
+      Unset: 466
+      Error: 18
+    ts-security-service:
+      Unset: 597
+  gt_service_abnormal_span_count:
+    ts-preserve-service: 484
+    ts-security-service: 597
+  top_error_span_services:
+  - service: ts-preserve-service
+    sc: Error
+    count: 18
+  - service: loadgenerator
+    sc: Error
+    count: 8
+  - service: ts-ui-dashboard
+    sc: Error
+    count: 6
+  gt_latency_stats:
+  - service: ts-security-service
+    avg_ms: 27.5
+    max_ms: 3625.3
+    p95_ms: 21.6
+    count: 597
+  - service: ts-preserve-service
+    avg_ms: 1638.2
+    max_ms: 8147.2
+    p95_ms: 4531.0
+    count: 484
+  chronic_noise_detail:
+  - service: ts-food-service
+    normal_err: 333
+    abnormal_err: 119
+    ratio: 2.8
+  - service: ts-order-service
+    normal_err: 108
+    abnormal_err: 52
+    ratio: 2.08
+  - service: ts-delivery-service
+    normal_err: 48
+    abnormal_err: 48
+    ratio: 1.0
+  - service: ts-notification-service
+    normal_err: 48
+    abnormal_err: 47
+    ratio: 1.02
+  gt_span_name_breakdown:
+  - span_name: GET
+    avg_ms: 1051.6
+    count: 244
+  - span_name: POST
+    avg_ms: 52.0
+    count: 235
+  - span_name: SELECT SecurityConfig
+    avg_ms: 1.1
+    count: 120
+  - span_name: SELECT ts.security_config
+    avg_ms: 0.6
+    count: 120
+  - span_name: SecurityRepository.findByName
+    avg_ms: 1.2
+    count: 120
+  - span_name: GET /api/v1/securityservice/securityConfigs/{accountId}
+    avg_ms: 94.8
+    count: 59
+  - span_name: SecurityController.check
+    avg_ms: 91.9
+    count: 59
+  - span_name: PreserveController.preserve
+    avg_ms: 4482.4
+    count: 59
+  - span_name: POST /api/v1/preserveservice/preserve
+    avg_ms: 4485.3
+    count: 59
+  - span_name: BasicErrorController.error
+    avg_ms: 0.8
+    count: 6
+  gt_parent_child_pairs:
+  - - ts-security-service
+    - ts-order-other-service
+  - - ts-preserve-service
+    - ts-security-service
+  - - ts-preserve-service
+    - ts-contacts-service
+  - - ts-preserve-service
+    - ts-travel-service
+  - - ts-preserve-service
+    - ts-order-service
+  - - ts-preserve-service
+    - ts-assurance-service
+  - - ts-preserve-service
+    - ts-user-service
+  - - ts-security-service
+    - ts-order-service
+  - - ts-preserve-service
+    - ts-food-service
+  - - ts-ui-dashboard
+    - ts-preserve-service
+  - - ts-preserve-service
+    - ts-basic-service
+  - - ts-preserve-service
+    - ts-seat-service
+  gt_caller_distribution:
+  - caller: ts-security-service
+    count: 535
+  - caller: ts-preserve-service
+    count: 476
+  - caller: ts-ui-dashboard
+    count: 59
+trajectory_reasoning_snippets:
+- idx: 0
+  text: '[thinking] I need to start investigating this incident systematically. Let me first discover the available data files and understand their schemas before writing any SQL queries.
+
+    '
+- idx: 3
+  text: '[thinking] Good, I found all 10 parquet files. Now let me understand the schemas of each file type before writing any queries.'
+- idx: 10
+  text: '[thinking] Good, I now understand the schemas:
+
+    - Logs: time, trace_id, span_id, level, service_name, message, k8s attrs
+
+    - Traces: time, trace_id, span_id, parent_span_id, span_name, span_kind, service_name, duration, status_code, http attrs
+
+    - Metrics: time, metric, value, service_name, k8s attrs, workload attrs
+
+
+    Now let me start identifying anomalies by comparing normal vs abnormal data.'
+- idx: 11
+  text: 'Now let me identify anomalies by comparing normal vs abnormal data.
+
+
+    '
+- idx: 18
+  text: '[thinking] I found that in abnormal logs, there are errors in several services:
+
+    - ts-food-service: 119 errors (highest)
+
+    - ts-preserve-service: 52 errors
+
+    - ts-order-service: 52 errors
+
+    - ts-delivery-service: 48 errors
+
+    - ts-notification-service: 47 errors
+
+    - ts-ui-dashboard: 10 errors
+
+
+    Let me investigate these error logs more closely to understand what''s happening. I should also check the normal logs to compare error rates.
+
+    '
+- idx: 23
+  text: '[thinking] Interesting! The normal logs actually have MORE errors than the abnormal logs:
+
+    - Normal: ts-food-service 333, ts-order-service 108, ts-preserve-service 108
+
+    - Abnormal: ts-food-service 119, ts-order-service 52, ts-preserve-service 52
+
+
+    This suggests that error count alone isn''t the anomaly. Let me look at the actual error messages to understand what''s different. Let me also check traces and metrics for more clues.'
+- idx: -1
+  text: "Based on my comprehensive investigation, here is the Root Cause Analysis:\n\n## Summary of Findings\n\n**Root Cause Service**: `ts-order-service`\n\n**Evidence**:\n1. ts-order-service logs show\
+    \ \"Order already exists\" errors when creating orders\n2. HTTP 500 errors originate from ts-preserve-service (6 errors), which calls ts-order-service\n3. ts-order-service shows high CPU load (78.83\
+    \ 1-minute average) indicating stress\n4. ts-preserve-service latency spiked from 78s (normal) to 1638s (abnormal) - 21x increase\n5. All 18 HTTP 500 errors and 2 HTTP 502 errors trace back to order\
+    \ creation failures\n\n**Fault Propagation Path**:\n```\nts-order-service (Order creation fails)\n       ↓\nts-preserve-service (Receives order failure, returns HTTP 500)\n       ↓\nts-ui-dashboard\
+    \ (Receives preserve error, returns HTTP 500)\n       ↓\nloadgenerator (Receives dashboard error, shows Error status)\n```\n\n**Key Timeline**:\n- First errors appear at 22:22:44 with \"Order already\
+    \ exists\" messages\n- ts-preserve-service errors start at 22:22:46.111\n- ts-ui-dashboard errors follow 9ms later at 22:22:46.120\n\n```json\n{\n  \"nodes\": [\n    {\"component\": \"ts-order-service\"\
+    , \"state\": [\"HIGH_ERROR_RATE\", \"HIGH_CPU\"], \"timestamp\": 1723415764},\n    {\"component\": \"ts-preserve-service\", \"state\": [\"HIGH_ERROR_RATE\", \"HIGH_LATENCY\"], \"timestamp\": 1723415766},\n\
+    \    {\"component\": \"ts-ui-dashboard\", \"state\": [\"HIGH_ERROR_RATE\", \"HIGH_LATENCY\"], \"timestamp\": 1723415766},\n    {\"component\": \"loadgenerator\", \"state\": [\"HIGH_ERROR_RATE\"], \"\
+    timestamp\": 1723415766}\n  ],\n  \"edges\": [\n    {\"source\": \"ts-order-service\", \"target\": \"ts-preserve-service\"},\n    {\"source\": \"ts-preserve-service\", \"target\": \"ts-ui-dashboard\"\
+    },\n    {\"source\": \"ts-ui-dashboard\", \"target\": \"loadgenerator\"}\n  ],\n  \"root_causes\": [\n    {\"component\": \"ts-order-service\", \"state\": [\"HIGH_ERROR_RATE\", \"HIGH_CPU\"], \"timestamp\"\
+    : 1723415764}\n  ],\n  \"component_to_service\": {}\n}\n```"
+- idx: -1
+  text: '[thinking] Let me now produce the final JSON output with the root cause analysis.'
+gt_required_capabilities:
+  gt_is_silent: false
+  gt_is_loudest: true
+  chronic_noise_present: true
+  chronic_noise_carriers:
+  - ts-food-service
+  - ts-order-service
+  - ts-delivery-service
+  - ts-notification-service
+  required_metric_layer: none
+  gt_path_is_edge_fault: true
+  gt_has_name_twin: true
+  name_twin_candidates:
+  - ts-user-service
+  - ts-assurance-service
+  - ts-order-service
+  - ts-security-service
+  - ts-notification-service
+  - ts-travel-service
+  - ts-cancel-service
+  - ts-station-food-service
+  - ts-route-plan-service
+  - ts-contacts-service
+  - ts-auth-service
+  - ts-config-service
+  - ts-inside-payment-service
+  - ts-travel2-service
+  - ts-basic-service
+  - ts-travel-plan-service
+  - ts-seat-service
+  - ts-consign-service
+  - ts-consign-price-service
+  - ts-delivery-service
+  - ts-price-service
+  - ts-verification-code-service
+  - ts-food-service
+  - ts-station-service
+  - ts-train-food-service
+  - ts-order-other-service
+  - ts-train-service
+  - ts-route-service
+  - ts-payment-service
+  - ts-user-service
+  - ts-assurance-service
+  - ts-order-service
+  - ts-notification-service
+  - ts-travel-service
+  - ts-cancel-service
+  - ts-station-food-service
+  - ts-route-plan-service
+  - ts-contacts-service
+  - ts-auth-service
+  - ts-config-service
+  - ts-inside-payment-service
+  - ts-travel2-service
+  - ts-preserve-service
+  - ts-basic-service
+  - ts-travel-plan-service
+  - ts-seat-service
+  - ts-consign-service
+  - ts-consign-price-service
+  - ts-delivery-service
+  - ts-price-service
+  - ts-verification-code-service
+  - ts-food-service
+  - ts-station-service
+  - ts-train-food-service
+  - ts-order-other-service
+  - ts-train-service
+  - ts-route-service
+  - ts-payment-service
+  gt_diluted_across_spans: false
+path_alignment:
+  gt_touched_in_trajectory: true
+  gt_neighbors_touched:
+    ts-ui-dashboard: 2
+  gt_neighbors_from_causal_graph:
+  - ts-ui-dashboard
+  agent_focus_services:
+  - service: ts-preserve-service
+    count: 5
+  - service: ts-order-service
+    count: 4
+  - service: ts-route-service
+    count: 2
+  - service: ts-food-service
+    count: 2
+  - service: ts-ui-dashboard
+    count: 2
+  - service: ts-train-food-service
+    count: 1
+  agent_predicted_rc_in_gt_neighborhood: false
+counterfactual:
+  PD1_baseline_contrast:
+    chronic_noise_in_data: true
+    predicted_rc_is_chronic_carrier: true
+    predicted_rc_error_ratios:
+      ts-order-service:
+        normal: 108
+        abnormal: 52
+    if_run_would_reveal: true
+  PD2_call_tree_build:
+    gt_is_upstream_of_agent_focus: true
+    if_run_would_surface_gt: true
+  PD3_fault_layer_metric_probe:
+    metric_family_if_probed: none
+    gt_metric_anomaly_exists_in_parquet: null
+  PD4_named_candidate_not_isolated:
+    if_isolated_predicted_rc_show_healthy:
+      ts-order-service: false
+  R_correct_heuristic_would_reach_gt:
+    if_loudness_applied: false
+    if_baseline_diff_applied: true
+    if_edge_direction_applied: false
+    if_name_twin_check_applied: true
+  D_obstacle_is_structural: true
+parquet_queries_run:
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/claudecode-qwen3.5-plus/data_dddbb600/abnormal_logs.parquet') WHERE level IN ('ERROR','SEVERE') GROUP
+    BY 1 ORDER BY n DESC LIMIT 10
+  purpose: top_error_services_abnormal_logs
+  row_count: 6
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/claudecode-qwen3.5-plus/data_dddbb600/normal_logs.parquet') WHERE level IN ('ERROR','SEVERE') GROUP
+    BY 1 ORDER BY n DESC LIMIT 10
+  purpose: top_error_services_normal_logs
+  row_count: 6
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/claudecode-qwen3.5-plus/data_dddbb600/abnormal_logs.parquet') WHERE level IN ('ERROR','SEVERE') AND
+    service_name IN ('ts-preserve-service','ts-security-service') GROUP BY 1
+  purpose: gt_service_abnormal_log_error_count
+  row_count: 1
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/claudecode-qwen3.5-plus/data_dddbb600/normal_logs.parquet') WHERE level IN ('ERROR','SEVERE') AND
+    service_name IN ('ts-preserve-service','ts-security-service') GROUP BY 1
+  purpose: gt_service_normal_log_error_count
+  row_count: 1
+- sql: SELECT service_name, "attr.status_code" as sc, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/claudecode-qwen3.5-plus/data_dddbb600/abnormal_traces.parquet') WHERE service_name
+    IN ('ts-preserve-service','ts-security-service') GROUP BY 1,2
+  purpose: gt_service_status_code_distribution
+  row_count: 3
+- sql: SELECT service_name, "attr.status_code" as sc, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/claudecode-qwen3.5-plus/data_dddbb600/abnormal_traces.parquet') WHERE "attr.status_code"
+    IN ('Error','ERROR') GROUP BY 1,2 ORDER BY n DESC LIMIT 5
+  purpose: top_error_span_services
+  row_count: 3
+- sql: SELECT service_name, AVG(duration)/1e6 AS avg_ms, MAX(duration)/1e6 AS max_ms, QUANTILE_CONT(duration, 0.95)/1e6 AS p95_ms, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/claudecode-qwen3.5-plus/data_dddbb600/abnormal_traces.parquet')
+    WHERE service_name IN ('ts-preserve-service','ts-security-service') GROUP BY 1
+  purpose: gt_latency_stats
+  row_count: 2
+- sql: SELECT DISTINCT service_name FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/claudecode-qwen3.5-plus/data_dddbb600/abnormal_traces.parquet')
+  purpose: all_abnormal_trace_services
+  row_count: 30
+counterfactual_queries_run:
+- sql: SELECT span_name, AVG(duration)/1e6 AS avg_ms, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/claudecode-qwen3.5-plus/data_dddbb600/abnormal_traces.parquet') WHERE service_name
+    IN ('ts-preserve-service','ts-security-service') GROUP BY 1 ORDER BY n DESC LIMIT 20
+  purpose: gt_span_name_breakdown
+  row_count: 10
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/claudecode-qwen3.5-plus/data_dddbb600/normal_logs.parquet') WHERE level IN ('ERROR','SEVERE') AND
+    service_name IN ('ts-order-service') GROUP BY 1
+  purpose: predicted_rc_normal_err
+  row_count: 1
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/claudecode-qwen3.5-plus/data_dddbb600/abnormal_logs.parquet') WHERE level IN ('ERROR','SEVERE') AND
+    service_name IN ('ts-order-service') GROUP BY 1
+  purpose: predicted_rc_abnormal_err
+  row_count: 1
+- sql: SELECT DISTINCT p.service_name, c.service_name FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/claudecode-qwen3.5-plus/data_dddbb600/abnormal_traces.parquet') c JOIN read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/claudecode-qwen3.5-plus/data_dddbb600/abnormal_traces.parquet')
+    p ON c.parent_span_id=p.span_id WHERE c.service_name IN ('ts-preserve-service','ts-security-service') OR p.service_name IN ('ts-preserve-service','ts-security-service') LIMIT 200
+  purpose: gt_parent_child_pairs
+  row_count: 14
+- sql: SELECT p.service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/claudecode-qwen3.5-plus/data_dddbb600/abnormal_traces.parquet') c JOIN read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/claudecode-qwen3.5-plus/data_dddbb600/abnormal_traces.parquet')
+    p ON c.parent_span_id=p.span_id WHERE c.service_name IN ('ts-preserve-service','ts-security-service') GROUP BY 1 ORDER BY n DESC LIMIT 5
+  purpose: gt_caller_distribution
+  row_count: 3
+classes_to_verify:
+- D7
+- PD_NoBaselineContrast
+- U3_EdgeDirectionOrRegionEndpointError
+- claudecode.PD4_GTServiceNotTargetedWithWhere

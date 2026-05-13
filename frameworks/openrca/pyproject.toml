@@ -1,0 +1,27 @@
+[project]
+name = "openrca"
+version = "0.1.0"
+description = "OpenRCA adapter for SOTA-agents evaluation pipeline"
+requires-python = ">=3.10"
+dependencies = [
+    "anthropic>=0.39.0",
+    "ipython>=8.17.2",
+    "loguru>=0.7.2",
+    "nbformat>=5.10.4",
+    "openai>=1.54.3",
+    "pandas>=2.0.0",
+    "pyarrow>=14.0.0",
+    "pytz>=2022.7",
+    "pyyaml>=6.0.2",
+    "tiktoken>=0.7.0",
+    "protobuf>=5.28.3",
+    "python-dotenv>=1.0.0",
+]
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = []

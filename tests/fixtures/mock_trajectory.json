@@ -1,0 +1,76 @@
+{
+  "_comment": "Mock v3 Trajectory for offline analysis-module development. Single agent.",
+  "agent_trajectories": [
+    {
+      "trajectory_id": "main",
+      "agent_name": "thinkdepthai",
+      "system_prompt": "You are a Root Cause Analysis (RCA) expert...",
+      "sub_agent_call_id": null,
+      "turns": [
+        {
+          "messages": [
+            {"role": "user", "content": "# Incident Report — TrainTicket\nAn SLO violation has been detected..."},
+            {
+              "role": "assistant",
+              "content": "I'll start by listing the parquets.",
+              "tool_calls": [
+                {"id": "c1", "name": "list_tables_in_directory", "arguments": "{\"directory\": \".\"}"}
+              ]
+            },
+            {"role": "tool", "tool_call_id": "c1", "content": "abnormal_metrics.parquet, abnormal_traces.parquet, ..."}
+          ],
+          "token_count": 1200
+        },
+        {
+          "messages": [
+            {
+              "role": "assistant",
+              "content": "Now checking abnormal traces schema.",
+              "tool_calls": [
+                {"id": "c2", "name": "get_schema", "arguments": "{\"table_name\": \"abnormal_traces\"}"}
+              ]
+            },
+            {"role": "tool", "tool_call_id": "c2", "content": "time, trace_id, span_id, parent_span_id, ..."},
+            {
+              "role": "assistant",
+              "content": "Querying error rates by service.",
+              "tool_calls": [
+                {"id": "c3", "name": "query_parquet_files", "arguments": "{\"query\": \"SELECT service_name, COUNT(*) FROM abnormal_traces WHERE attr.status_code > 400 GROUP BY 1\"}"}
+              ]
+            },
+            {"role": "tool", "tool_call_id": "c3", "content": "ts-order-service: 1247 errors, ts-travel-service: 89 errors"},
+            {
+              "role": "assistant",
+              "content": "ts-order-service has the highest error rate. Now checking logs.",
+              "tool_calls": [
+                {"id": "c4", "name": "think_tool", "arguments": "{\"reasoning\": \"ts-order-service shows 14x more errors than baseline. Likely the root.\"}"}
+              ]
+            },
+            {"role": "tool", "tool_call_id": "c4", "content": "OK"}
+          ],
+          "token_count": 2800
+        },
+        {
+          "messages": [
+            {
+              "role": "assistant",
+              "content": "Final RCA: ts-order-service experienced http_500 errors caused by downstream ts-payment-service latency spike."
+            }
+          ],
+          "token_count": 600
+        }
+      ]
+    }
+  ],
+  "reward": null,
+  "correct": null,
+  "metadata": {
+    "cost_metrics": {
+      "total_tokens": 4600,
+      "effective_rounds": 3,
+      "token_source": "actual",
+      "model": "claude-sonnet-4-6"
+    },
+    "trace_id": "mock-trace-001"
+  }
+}

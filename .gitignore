@@ -1,0 +1,66 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+.venv-*/
+venv/
+ENV/
+env/
+*.egg-info/
+*.egg
+.eggs/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.tox/
+
+# uv
+uv.lock
+
+# Node / Frontend
+node_modules/
+dashboard/frontend/dist/
+dashboard/frontend/.vite/
+
+# Environment / secrets
+.env
+.env.local
+.env.*.local
+
+# Dataset (4.13 GB, must be downloaded by user)
+data/ops-lite/
+data/openrca2-lite-v3/
+~/.cache/sota-rca/
+
+# Experiment outputs
+results/
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+
+# Cache
+analysis_cache.json
+demo_cache.json
+transitions_cache.parquet
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+*~
+
+# Logs
+*.log
+logs/
+
+# Documentation builds
+docs/_build/
+site/

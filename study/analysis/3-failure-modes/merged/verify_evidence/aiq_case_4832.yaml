@@ -1,0 +1,424 @@
+case_id: aiq.4832
+framework: aiq-qwen3.5-plus
+data_dir: /home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_94fc2f71
+gt_from_injection_json:
+  fault_type: JVMMemoryStress
+  fault_category: JVMChaos
+  injection_name: ts0-ts-consign-service-stress-7f878v
+  gt_services:
+  - ts-consign-service
+  source_service: null
+  target_service: null
+  start_time: '2025-09-06T13:06:14Z'
+  end_time: '2025-09-06T13:10:13Z'
+  display_config:
+    duration: 4
+    injection_point:
+      app_name: ts-consign-service
+      class_name: consign.entity.GetPriceDomain
+      method_name: GetPriceDomain
+    mem_type: 2
+    namespace: ts
+gt_from_causal_graph_json:
+  root_causes:
+  - ts-consign-service
+  alarm_nodes:
+  - span|HTTP PUT http://ts-ui-dashboard:8080/api/v1/consignservice/consigns
+  - span|HTTP GET http://ts-ui-dashboard:8080/api/v1/consignservice/consigns/account/{id}
+agent_predicted:
+  root_causes:
+  - ts-ui-dashboard
+  predicted_graph_nodes:
+  - ts-ui-dashboard
+  - loadgenerator
+raw_sql_count_total: 74
+raw_sql_list_sample:
+- SELECT span_name, attr_http_request_method, attr_http_response_status_code, service_name, duration, time FROM abnormal_traces WHERE span_name LIKE '%consign%' OR span_name LIKE '%consignservice%' LIMIT
+  50
+- SELECT attr_http_response_status_code, COUNT(*) as count, AVG(duration) as avg_duration_ns, MIN(duration) as min_duration_ns, MAX(duration) as max_duration_ns FROM abnormal_traces WHERE span_name LIKE
+  '%consign%' GROUP BY attr_http_response_status_code ORDER BY count DESC
+- SELECT time, attr_http_response_status_code, service_name, span_name, duration FROM abnormal_traces WHERE attr_http_response_status_code = 503 ORDER BY time LIMIT 50
+- SELECT trace_id, span_name, service_name, attr_http_response_status_code, duration, parent_span_id FROM abnormal_traces WHERE trace_id IN (SELECT trace_id FROM abnormal_traces WHERE attr_http_response_status_code
+  = 503 LIMIT 5) ORDER BY trace_id, time
+- SELECT trace_id, service_name, span_name, attr_http_response_status_code, duration, time FROM abnormal_traces WHERE service_name = 'ts-consign-service' ORDER BY time LIMIT 30
+- SELECT time, service_name, level, message FROM abnormal_logs WHERE service_name = 'ts-consign-service' AND level IN ('ERROR', 'WARN') ORDER BY time LIMIT 30
+- SELECT time, service_name, level, message FROM abnormal_logs WHERE service_name = 'ts-ui-dashboard' AND level IN ('ERROR', 'WARN') ORDER BY time LIMIT 30
+- SELECT service_name, level, COUNT(*) as count FROM abnormal_logs WHERE level IN ('ERROR', 'WARN') GROUP BY service_name, level ORDER BY count DESC LIMIT 20
+- SELECT time, service_name, level, message FROM abnormal_logs WHERE service_name = 'ts-food-service' AND level = 'ERROR' ORDER BY time LIMIT 20
+- SELECT time, service_name, level, message FROM abnormal_logs WHERE message LIKE '%UnknownHostException%' OR message LIKE '%rabbitmq%' OR message LIKE '%DNS%' ORDER BY time LIMIT 30
+- SELECT time, service_name, level, message FROM abnormal_logs WHERE message LIKE '%UnknownHostException%' OR message LIKE '%connection refused%' OR message LIKE '%connect%' AND level = 'ERROR' ORDER BY
+  time LIMIT 30
+- SELECT time, metric, value, service_name FROM abnormal_metrics WHERE service_name = 'ts-consign-service' AND (metric LIKE '%error%' OR metric LIKE '%latency%' OR metric LIKE '%http%') ORDER BY time LIMIT
+  30
+- SELECT time, metric, value, service_name FROM abnormal_metrics WHERE service_name IN ('ts-consign-service', 'ts-ui-dashboard') AND metric LIKE '%error%' ORDER BY time LIMIT 30
+- SELECT DISTINCT metric FROM abnormal_metrics LIMIT 30
+- SELECT time, metric, value, service_name, attr_k8s_pod_name FROM abnormal_metrics WHERE metric = 'k8s.container.restarts' AND service_name = 'ts-consign-service' ORDER BY time LIMIT 20
+- SELECT service_name, metric, COUNT(*) as count FROM abnormal_metrics GROUP BY service_name, metric ORDER BY count DESC LIMIT 30
+- SELECT time, metric, value, attr_k8s_pod_name FROM abnormal_metrics WHERE metric = 'k8s.container.ready' AND attr_k8s_pod_name LIKE '%consign%' ORDER BY time LIMIT 20
+- SELECT time, metric, value, attr_k8s_pod_name FROM abnormal_metrics WHERE metric = 'k8s.pod.phase' AND attr_k8s_pod_name LIKE '%consign%' ORDER BY time LIMIT 20
+- SELECT trace_id, service_name, span_name, attr_http_response_status_code, duration FROM abnormal_traces WHERE trace_id IN (SELECT trace_id FROM abnormal_traces WHERE attr_http_response_status_code = 503
+  LIMIT 3) AND service_name = 'ts-consign-service' ORDER BY time
+- SELECT time, service_name, level, message FROM abnormal_logs WHERE service_name = 'ts-ui-dashboard' ORDER BY time LIMIT 30
+raw_sql_substring_audit:
+  has_baseline_contrast_substring: false
+  has_call_tree_build_substring: false
+  has_trace_follow_substring: true
+  has_jvm_metric_substring: false
+  has_container_metric_substring: false
+  has_k8s_metric_substring: true
+  has_db_metric_substring: false
+  has_network_metric_substring: false
+  has_status_error_filter: true
+  has_status_unset_filter: false
+  where_service_name_filters:
+  - ts-consign-service
+  - ts-ui-dashboard
+  - ts-food-service
+parquet_evidence:
+  top_error_services_abnormal_logs:
+  - service: ts-food-service
+    count: 180
+  - service: ts-order-service
+    count: 85
+  - service: ts-preserve-service
+    count: 85
+  - service: ts-notification-service
+    count: 48
+  - service: ts-delivery-service
+    count: 47
+  top_error_services_normal_logs:
+  - service: ts-food-service
+    count: 304
+  - service: ts-order-service
+    count: 78
+  - service: ts-preserve-service
+    count: 78
+  - service: ts-notification-service
+    count: 48
+  - service: ts-delivery-service
+    count: 48
+  - service: ts-inside-payment-service
+    count: 1
+  gt_service_abnormal_log_error_count: {}
+  gt_service_normal_log_error_count: {}
+  gt_service_status_code_distribution:
+    ts-consign-service:
+      Unset: 358
+  gt_service_abnormal_span_count:
+    ts-consign-service: 358
+  top_error_span_services:
+  - service: ts-ui-dashboard
+    sc: Error
+    count: 30
+  - service: loadgenerator
+    sc: Error
+    count: 6
+  gt_latency_stats:
+  - service: ts-consign-service
+    avg_ms: 26.9
+    max_ms: 1930.9
+    p95_ms: 27.9
+    count: 358
+  chronic_noise_detail:
+  - service: ts-food-service
+    normal_err: 304
+    abnormal_err: 180
+    ratio: 1.69
+  - service: ts-order-service
+    normal_err: 78
+    abnormal_err: 85
+    ratio: 0.92
+  - service: ts-preserve-service
+    normal_err: 78
+    abnormal_err: 85
+    ratio: 0.92
+  - service: ts-notification-service
+    normal_err: 48
+    abnormal_err: 48
+    ratio: 1.0
+  - service: ts-delivery-service
+    normal_err: 48
+    abnormal_err: 47
+    ratio: 1.02
+  gt_span_name_breakdown:
+  - span_name: SELECT ts
+    avg_ms: 0.8
+    count: 68
+  - span_name: SELECT ts.consign_record
+    avg_ms: 1.2
+    count: 56
+  - span_name: SELECT ConsignRecord
+    avg_ms: 7.2
+    count: 50
+  - span_name: ConsignController.findByAccountId
+    avg_ms: 24.4
+    count: 47
+  - span_name: ConsignRepository.findByAccountId
+    avg_ms: 19.3
+    count: 47
+  - span_name: GET /api/v1/consignservice/consigns/account/{id}
+    avg_ms: 47.0
+    count: 47
+  - span_name: Transaction.commit
+    avg_ms: 10.2
+    count: 6
+  - span_name: SELECT ts.ts
+    avg_ms: 2.6
+    count: 4
+  - span_name: ConsignController.updateConsign
+    avg_ms: 697.3
+    count: 3
+  - span_name: ConsignController.findByOrderId
+    avg_ms: 21.2
+    count: 3
+  - span_name: INSERT ts.consign_record
+    avg_ms: 1.1
+    count: 3
+  - span_name: ConsignRepository.findByOrderId
+    avg_ms: 17.6
+    count: 3
+  - span_name: Session.merge consign.entity.ConsignRecord
+    avg_ms: 33.5
+    count: 3
+  - span_name: PUT /api/v1/consignservice/consigns
+    avg_ms: 705.0
+    count: 3
+  - span_name: Session.find consign.entity.ConsignRecord
+    avg_ms: 7.1
+    count: 3
+  - span_name: ConsignRepository.findById
+    avg_ms: 18.7
+    count: 3
+  - span_name: GET /api/v1/consignservice/consigns/order/{id}
+    avg_ms: 30.6
+    count: 3
+  - span_name: ConsignRepository.save
+    avg_ms: 61.5
+    count: 3
+  - span_name: GET
+    avg_ms: 17.6
+    count: 3
+  gt_parent_child_pairs:
+  - - ts-ui-dashboard
+    - ts-consign-service
+  - - ts-consign-service
+    - ts-consign-price-service
+trajectory_reasoning_snippets:
+- idx: 4
+  text: 'Now I have the schema information. The investigation query asks me to analyze HTTP status codes and response latency for specific endpoints related to the consignservice. Let me query the abnormal_traces
+    table to find data related to these endpoints and identify SLO violations.
+
+
+    The endpoints mentioned are:
+
+    1. `http://ts-ui-dashboard:8080/api/v1/consignservice/consigns` (PUT)
+
+    2. `http://ts-ui-dashboard:8080/api/v1/consignservice/consigns/account/{id}` (GET)
+
+
+    Let me first query the abnormal_traces to find traces related to these endpoints and analyze HTTP status codes and latency.
+
+
+    '
+- idx: 6
+  text: 'I can see clear evidence of 503 errors on the consignservice endpoints. The 503 errors have very high latency (around 3.4-3.8 seconds) while successful 200 responses have much lower latency (around
+    30-800ms). Let me now analyze the status code distribution and get more details about the incident timeline.
+
+
+    '
+- idx: 8
+  text: 'I can see there are 30 traces with 503 status codes, all with very high latency (avg ~3.6 seconds). Let me now look at the time window when these 503 errors occurred and also check for the PUT
+    endpoint mentioned in the query.
+
+
+    '
+- idx: 10
+  text: 'The 503 errors occurred between 2025-09-06T13:06:31 and 2025-09-06T13:07:38 (about 1 minute window). All 503 errors are from ts-ui-dashboard service. Now I need to understand the root cause - the
+    503 errors suggest the downstream service (ts-consign-service) is unavailable. Let me check the traces to see the call chain and find where the actual failure originates.
+
+
+    '
+- idx: 12
+  text: 'I see the traces show ts-ui-dashboard returning 503 errors. The parent_span_id suggests there might be downstream calls. Let me look for traces that show the full call chain including ts-consign-service
+    to understand where the failure originates.
+
+
+    '
+- idx: 14
+  text: 'I see ts-consign-service has database SELECT queries. The 503 errors from ts-ui-dashboard suggest the downstream service (ts-consign-service) might be unavailable during the incident window. Let
+    me check the logs to understand what''s happening with ts-consign-service during the incident time window.
+
+
+    '
+- idx: -1
+  text: "Based on my investigation, I have gathered sufficient evidence to refine the root cause analysis. Let me summarize my findings:\n\n## Key Findings:\n\n1. **ts-consign-service is NOT the root cause**\
+    \ - The traces and logs show ts-consign-service was operational throughout the incident:\n   - All ts-consign-service spans show `attr_status_code = 'Unset'` (healthy) and `attr_http_response_status_code\
+    \ = 200`\n   - Logs show normal INFO/DEBUG/TRACE level messages with successful database operations\n   - No ERROR or FATAL logs from ts-consign-service\n   - Memory/CPU metrics are normal (~25% memory\
+    \ utilization, low CPU)\n\n2. **The actual issue is ts-ui-dashboard returning 503 errors** - Clear evidence shows:\n   - ts-ui-dashboard spans show `attr_status_code = 'Error'` and `attr_http_response_status_code\
+    \ = 503`\n   - These 503 errors started at `2025-09-06T13:06:31` for the GET endpoint `/api/v1/consignservice/consigns/account/{id}`\n   - The PUT endpoint `/api/v1/consignservice/consigns` was working\
+    \ fine (returning 200)\n\n3. **Error propagation path**: loadgenerator → ts-ui-dashboard (503 errors)\n   - loadgenerator shows Error status due to receiving 503 from ts-ui-dashboard\n   - ts-ui-dashboard\
+    \ is the service generating the 503 errors\n\n4. **ts-consign-service was healthy** - The preliminary graph incorrectly identified ts-consign-service as KILLED/UNAVAILABLE, but evidence shows it was\
+    \ responding successfully with 200 status codes throughout.\n\n5. **Missing evidence for ts-consign-service being root cause** - No logs show ts-consign-service crashes, no metrics show pod restarts\
+    \ or OOM kills, no traces show errors from ts-consign-service.\n\nThe weakest aspect of the preliminary graph is the **root cause attribution to ts-consign-service as KILLED/UNAVAILABLE** - there is\
+    \ no supporting evidence for this claim. The actual issue appears to be ts-ui-dashboard experiencing issues (possibly connection issues to ts-consign-service or internal issues) resulting in 503 Service\
+    \ Unavailable erro"
+- idx: -1
+  text: "Based on my comprehensive analysis of the telemetry data, I have identified the root cause and fault propagation path for the incident affecting the consignservice endpoints.\n\n## Summary\n\n\
+    **Root Cause Service**: `ts-consign-service`\n\n**Incident Time Window**: 2025-09-06T13:06:31 to 2025-09-06T13:07:38 (approximately 1 minute)\n\n**SLO Violations Quantified**:\n- **30 traces** with\
+    \ HTTP 503 status codes (Service Unavailable)\n- **503 error latency**: Average ~3.6 seconds (3,593,381,758 ns)\n- **Successful request latency**: Average ~173ms (173,107,263 ns)\n- **Error rate**:\
+    \ ~15% (30 errors out of 198 total requests to consignservice endpoints)\n\n**Root Cause Evidence**:\n1. `k8s.container.restarts` metric shows ts-consign-service container restarted at 13:06:36 (value\
+    \ changed from 0.0 to 1.0)\n2. Logs show ts-consign-service application startup beginning at 13:07:20 (Spring Application v1.0 starting, Tomcat initializing on port 8080)\n3. During the restart window,\
+    \ no ts-consign-service spans appear in traces with 503 errors\n\n**Fault Propagation Path**:\n```\nts-consign-service (KILLED/UNAVAILABLE) \n    ↓\nts-ui-dashboard (HIGH_ERROR_RATE - 503 errors)\n\
+    \    ↓\nloadgenerator (receives errors)\n```\n\n## Causal Graph\n\n```json\n{\n  \"nodes\": [\n    {\"component\": \"ts-consign-service\", \"state\": [\"KILLED\"], \"timestamp\": 1725627396},\n    {\"\
+    component\": \"ts-consign-service\", \"state\": [\"UNAVAILABLE\"], \"timestamp\": 1725627396},\n    {\"component\": \"ts-ui-dashboard\", \"state\": [\"HIGH_ERROR_RATE\"], \"timestamp\": 1725627391}\n\
+    \  ],\n  \"edges\": [\n    {\"source\": \"ts-consign-service\", \"target\": \"ts-ui-dashboard\"}\n  ],\n  \"root_causes\": [\n    {\"component\": \"ts-consign-service\", \"state\": [\"KILLED\"], \"\
+    timestamp\": 1725627396}\n  ],\n  \"component_to_service\": {}\n}\n```"
+gt_required_capabilities:
+  gt_is_silent: true
+  gt_is_loudest: false
+  chronic_noise_present: true
+  chronic_noise_carriers:
+  - ts-food-service
+  - ts-order-service
+  - ts-preserve-service
+  - ts-notification-service
+  - ts-delivery-service
+  required_metric_layer: jvm
+  gt_path_is_edge_fault: false
+  gt_has_name_twin: true
+  name_twin_candidates:
+  - ts-user-service
+  - ts-assurance-service
+  - ts-order-service
+  - ts-security-service
+  - ts-notification-service
+  - ts-travel-service
+  - ts-cancel-service
+  - ts-station-food-service
+  - ts-route-plan-service
+  - ts-contacts-service
+  - ts-auth-service
+  - ts-config-service
+  - ts-inside-payment-service
+  - ts-travel2-service
+  - ts-preserve-service
+  - ts-basic-service
+  - ts-travel-plan-service
+  - ts-seat-service
+  - ts-consign-price-service
+  - ts-delivery-service
+  - ts-price-service
+  - ts-verification-code-service
+  - ts-food-service
+  - ts-station-service
+  - ts-train-food-service
+  - ts-order-other-service
+  - ts-train-service
+  - ts-route-service
+  - ts-payment-service
+  gt_diluted_across_spans: false
+path_alignment:
+  gt_touched_in_trajectory: true
+  gt_neighbors_touched:
+    ts-ui-dashboard: 10
+  gt_neighbors_from_causal_graph:
+  - HTTP GET http://ts-ui-dashboard:8080/api/v1/consignservice/consigns/account/{id}
+  - HTTP PUT http://ts-ui-dashboard:8080/api/v1/consignservice/consigns
+  - ts-ui-dashboard
+  agent_focus_services:
+  - service: ts-consign-service
+    count: 27
+  - service: ts-ui-dashboard
+    count: 10
+  - service: ts-food-service
+    count: 1
+  agent_predicted_rc_in_gt_neighborhood: true
+counterfactual:
+  PD1_baseline_contrast:
+    chronic_noise_in_data: true
+    predicted_rc_is_chronic_carrier: false
+    predicted_rc_error_ratios:
+      ts-ui-dashboard:
+        normal: 0
+        abnormal: 0
+    if_run_would_reveal: false
+  PD2_call_tree_build:
+    gt_is_upstream_of_agent_focus: true
+    if_run_would_surface_gt: true
+  PD3_fault_layer_metric_probe:
+    metric_family_if_probed: jvm
+    gt_metric_anomaly_exists_in_parquet: true
+    gt_metric_families_probed:
+    - jvm.cpu.recent_utilization
+    - jvm.system.cpu.load_1m
+    - jvm.system.cpu.utilization
+  PD4_named_candidate_not_isolated:
+    if_isolated_predicted_rc_show_healthy:
+      ts-ui-dashboard: true
+  R_correct_heuristic_would_reach_gt:
+    if_loudness_applied: false
+    if_baseline_diff_applied: false
+    if_edge_direction_applied: null
+    if_name_twin_check_applied: true
+  D_obstacle_is_structural: true
+parquet_queries_run:
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_94fc2f71/abnormal_logs.parquet') WHERE level IN ('ERROR','SEVERE') GROUP BY
+    1 ORDER BY n DESC LIMIT 10
+  purpose: top_error_services_abnormal_logs
+  row_count: 5
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_94fc2f71/normal_logs.parquet') WHERE level IN ('ERROR','SEVERE') GROUP BY 1
+    ORDER BY n DESC LIMIT 10
+  purpose: top_error_services_normal_logs
+  row_count: 6
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_94fc2f71/abnormal_logs.parquet') WHERE level IN ('ERROR','SEVERE') AND service_name
+    IN ('ts-consign-service') GROUP BY 1
+  purpose: gt_service_abnormal_log_error_count
+  row_count: 0
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_94fc2f71/normal_logs.parquet') WHERE level IN ('ERROR','SEVERE') AND service_name
+    IN ('ts-consign-service') GROUP BY 1
+  purpose: gt_service_normal_log_error_count
+  row_count: 0
+- sql: SELECT service_name, "attr.status_code" as sc, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_94fc2f71/abnormal_traces.parquet') WHERE service_name
+    IN ('ts-consign-service') GROUP BY 1,2
+  purpose: gt_service_status_code_distribution
+  row_count: 1
+- sql: SELECT service_name, "attr.status_code" as sc, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_94fc2f71/abnormal_traces.parquet') WHERE "attr.status_code"
+    IN ('Error','ERROR') GROUP BY 1,2 ORDER BY n DESC LIMIT 5
+  purpose: top_error_span_services
+  row_count: 2
+- sql: SELECT service_name, AVG(duration)/1e6 AS avg_ms, MAX(duration)/1e6 AS max_ms, QUANTILE_CONT(duration, 0.95)/1e6 AS p95_ms, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_94fc2f71/abnormal_traces.parquet')
+    WHERE service_name IN ('ts-consign-service') GROUP BY 1
+  purpose: gt_latency_stats
+  row_count: 1
+- sql: SELECT DISTINCT service_name FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_94fc2f71/abnormal_traces.parquet')
+  purpose: all_abnormal_trace_services
+  row_count: 30
+counterfactual_queries_run:
+- sql: SELECT span_name, AVG(duration)/1e6 AS avg_ms, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_94fc2f71/abnormal_traces.parquet') WHERE service_name
+    IN ('ts-consign-service') GROUP BY 1 ORDER BY n DESC LIMIT 20
+  purpose: gt_span_name_breakdown
+  row_count: 19
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_94fc2f71/normal_logs.parquet') WHERE level IN ('ERROR','SEVERE') AND service_name
+    IN ('ts-ui-dashboard') GROUP BY 1
+  purpose: predicted_rc_normal_err
+  row_count: 0
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_94fc2f71/abnormal_logs.parquet') WHERE level IN ('ERROR','SEVERE') AND service_name
+    IN ('ts-ui-dashboard') GROUP BY 1
+  purpose: predicted_rc_abnormal_err
+  row_count: 0
+- sql: SELECT DISTINCT p.service_name, c.service_name FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_94fc2f71/abnormal_traces.parquet') c JOIN read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_94fc2f71/abnormal_traces.parquet')
+    p ON c.parent_span_id=p.span_id WHERE c.service_name IN ('ts-consign-service') OR p.service_name IN ('ts-consign-service') LIMIT 200
+  purpose: gt_parent_child_pairs
+  row_count: 3
+- sql: SELECT DISTINCT metric FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_94fc2f71/abnormal_metrics.parquet') WHERE service_name IN ('ts-consign-service') AND metric
+    LIKE 'jvm.%' LIMIT 10
+  purpose: gt_metric_families_probed
+  row_count: 3
+classes_to_verify:
+- D3
+- PD_NoBaselineContrast
+- PD_NoCallTreeBuild
+- aiq.PD_CompressOverwritesTerminator
+- aiq.PD_ReflectionStageWithoutNewProbe
+- aiq.PD_StageEndsWithoutCommitment
+- aiq.R_compress_drift

@@ -1,0 +1,158 @@
+{
+  "total_audited": 10,
+  "parquet_fail": 0,
+  "substring_fail": 0,
+  "pass_rate": 1.0,
+  "details": [
+    {
+      "yaml": "qwen_case_3219.yaml",
+      "parquet_recheck": {
+        "sql": "SELECT DISTINCT service_name FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-qwen3.5-plus/data_105e2ba5/abnormal_traces.parquet')",
+        "stored_row_count": 28,
+        "re_row_count": 28,
+        "match": true
+      },
+      "substring_recheck": {
+        "flag": "has_status_error_filter",
+        "stored": true,
+        "recomputed": true,
+        "match_or_supersetcheck": true
+      }
+    },
+    {
+      "yaml": "aiq_case_341.yaml",
+      "parquet_recheck": {
+        "sql": "SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_f8b0f96c/normal_logs.parquet') WHERE level IN ('ERROR','SEVERE') AND service_name",
+        "stored_row_count": 0,
+        "re_row_count": 0,
+        "match": true
+      },
+      "substring_recheck": {
+        "flag": "has_jvm_metric_substring",
+        "stored": false,
+        "recomputed": true,
+        "match_or_supersetcheck": true
+      }
+    },
+    {
+      "yaml": "qwen_case_4530.yaml",
+      "parquet_recheck": {
+        "sql": "SELECT service_name, \"attr.status_code\" as sc, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-qwen3.5-plus/data_b0ed936e/abnormal_traces.parquet') WHERE \"attr",
+        "stored_row_count": 5,
+        "re_row_count": 5,
+        "match": true
+      },
+      "substring_recheck": {
+        "flag": "has_jvm_metric_substring",
+        "stored": false,
+        "recomputed": true,
+        "match_or_supersetcheck": true
+      }
+    },
+    {
+      "yaml": "claudecode_case_1159.yaml",
+      "parquet_recheck": {
+        "sql": "SELECT service_name, \"attr.status_code\" as sc, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/claudecode-qwen3.5-plus/data_ab48c95b/abnormal_traces.parquet') WHERE service",
+        "stored_row_count": 2,
+        "re_row_count": 2,
+        "match": true
+      },
+      "substring_recheck": {
+        "flag": "has_trace_follow_substring",
+        "stored": true,
+        "recomputed": true,
+        "match_or_supersetcheck": true
+      }
+    },
+    {
+      "yaml": "sonnet_case_1880.yaml",
+      "parquet_recheck": {
+        "sql": "SELECT service_name, AVG(duration)/1e6 AS avg_ms, MAX(duration)/1e6 AS max_ms, QUANTILE_CONT(duration, 0.95)/1e6 AS p95_ms, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/",
+        "stored_row_count": 2,
+        "re_row_count": 2,
+        "match": true
+      },
+      "substring_recheck": {
+        "flag": "has_status_error_filter",
+        "stored": true,
+        "recomputed": true,
+        "match_or_supersetcheck": true
+      }
+    },
+    {
+      "yaml": "aiq_case_3325.yaml",
+      "parquet_recheck": {
+        "sql": "SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_6339fb71/abnormal_logs.parquet') WHERE level IN ('ERROR','SEVERE') GROUP BY 1 ORD",
+        "stored_row_count": 9,
+        "re_row_count": 9,
+        "match": true
+      },
+      "substring_recheck": {
+        "flag": "has_status_error_filter",
+        "stored": true,
+        "recomputed": true,
+        "match_or_supersetcheck": true
+      }
+    },
+    {
+      "yaml": "sonnet_case_3033.yaml",
+      "parquet_recheck": {
+        "sql": "SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-claude-sonnet-4.6/data_8c65498a/normal_logs.parquet') WHERE level IN ('ERROR','SEVERE') AN",
+        "stored_row_count": 1,
+        "re_row_count": 1,
+        "match": true
+      },
+      "substring_recheck": {
+        "flag": "has_trace_follow_substring",
+        "stored": true,
+        "recomputed": true,
+        "match_or_supersetcheck": true
+      }
+    },
+    {
+      "yaml": "claudecode_case_3324.yaml",
+      "parquet_recheck": {
+        "sql": "SELECT service_name, AVG(duration)/1e6 AS avg_ms, MAX(duration)/1e6 AS max_ms, QUANTILE_CONT(duration, 0.95)/1e6 AS p95_ms, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/",
+        "stored_row_count": 1,
+        "re_row_count": 1,
+        "match": true
+      },
+      "substring_recheck": {
+        "flag": "has_jvm_metric_substring",
+        "stored": false,
+        "recomputed": true,
+        "match_or_supersetcheck": true
+      }
+    },
+    {
+      "yaml": "qwen_case_4510.yaml",
+      "parquet_recheck": {
+        "sql": "SELECT service_name, \"attr.status_code\" as sc, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-qwen3.5-plus/data_9ebfafd3/abnormal_traces.parquet') WHERE \"attr",
+        "stored_row_count": 1,
+        "re_row_count": 1,
+        "match": true
+      },
+      "substring_recheck": {
+        "flag": "has_baseline_contrast_substring",
+        "stored": false,
+        "recomputed": false,
+        "match_or_supersetcheck": true
+      }
+    },
+    {
+      "yaml": "sonnet_case_2130.yaml",
+      "parquet_recheck": {
+        "sql": "SELECT service_name, AVG(duration)/1e6 AS avg_ms, MAX(duration)/1e6 AS max_ms, QUANTILE_CONT(duration, 0.95)/1e6 AS p95_ms, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/",
+        "stored_row_count": 1,
+        "re_row_count": 1,
+        "match": true
+      },
+      "substring_recheck": {
+        "flag": "has_trace_follow_substring",
+        "stored": true,
+        "recomputed": true,
+        "match_or_supersetcheck": true
+      }
+    }
+  ]
+}

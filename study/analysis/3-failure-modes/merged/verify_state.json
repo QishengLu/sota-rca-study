@@ -1,0 +1,9 @@
+{
+  "samples_generated_at": "2026-04-22T00:00:00",
+  "corpus": "full_failure_pool",
+  "v_b_progress": {"total": 372, "done": 372},
+  "v_e_passed": true,
+  "v_e_attempts": [{"timestamp": "2026-04-22T00:00:00", "pass_rate": 1.0, "rejected_batch_ids": []}],
+  "v_c_progress": {"total": 1972, "done": 1972, "last_case": null},
+  "v_d_generated_at": "2026-04-22T00:00:00"
+}

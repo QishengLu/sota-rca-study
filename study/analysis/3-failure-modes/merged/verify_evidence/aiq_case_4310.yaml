@@ -1,0 +1,394 @@
+case_id: aiq.4310
+framework: aiq-qwen3.5-plus
+data_dir: /home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_e9339166
+gt_from_injection_json:
+  fault_type: PodFailure
+  fault_category: PodChaos
+  injection_name: ts3-ts-payment-service-pod-failure-fnlgp6
+  gt_services:
+  - ts-payment-service
+  source_service: null
+  target_service: null
+  start_time: '2025-09-04T04:26:07Z'
+  end_time: '2025-09-04T04:30:07Z'
+  display_config:
+    duration: 4
+    injection_point:
+      app_name: ts-payment-service
+    namespace: ts
+gt_from_causal_graph_json:
+  root_causes:
+  - ts-payment-service
+  alarm_nodes:
+  - span|loadgenerator::HTTP POST http://ts-ui-dashboard:8080/api/v1/inside_pay_service/inside_payment
+agent_predicted:
+  root_causes:
+  - ts-inside-payment-service
+  predicted_graph_nodes:
+  - ts-inside-payment-service
+  - ts-ui-dashboard
+  - loadgenerator
+raw_sql_count_total: 70
+raw_sql_list_sample:
+- SELECT service_name, span_name, attr_http_response_status_code, duration, trace_id, parent_span_id, span_id, attr_status_code FROM abnormal_traces WHERE span_name LIKE '%inside_payment%' OR span_name
+  LIKE '%inside_pay_service%' LIMIT 50
+- SELECT service_name, span_name, attr_http_response_status_code, duration, trace_id FROM abnormal_traces WHERE span_name LIKE '%inside_payment%' OR span_name LIKE '%inside_pay_service%' LIMIT 20
+- SELECT service_name, span_name, attr_http_response_status_code, duration, parent_span_id, span_id FROM abnormal_traces WHERE trace_id = '68e4f6ed2a520790f688c8b557e6843d' ORDER BY duration DESC LIMIT
+  30
+- SELECT service_name, span_name, attr_http_response_status_code, duration, parent_span_id, span_id FROM abnormal_traces WHERE trace_id = '68e4f6ed2a520790f688c8b557e6843d' AND service_name != 'ts-inside-payment-service'
+  AND service_name != 'ts-ui-dashboard' AND service_name != 'loadgenerator' LIMIT 30
+- SELECT DISTINCT service_name FROM abnormal_traces LIMIT 30
+- SELECT service_name, span_name, attr_http_response_status_code, duration, parent_span_id, span_id, trace_id FROM abnormal_traces WHERE attr_http_response_status_code = 503 LIMIT 20
+- SELECT service_name, span_name, attr_http_response_status_code, duration, parent_span_id, span_id FROM abnormal_traces WHERE span_id IN ('2b5447dd18677417', 'ec0f264581d5bed4', '0d935c835f3b051e', 'b7d9f4049edf34a3',
+  'de6ea70d86ccfe5c') LIMIT 20
+- SELECT service_name, span_name, attr_http_response_status_code, duration, parent_span_id, span_id FROM abnormal_traces WHERE parent_span_id = 'f448beecc94f32db' LIMIT 10
+- SELECT service_name, level, message, time FROM abnormal_logs WHERE service_name = 'ts-inside-payment-service' AND level = 'ERROR' LIMIT 20
+- SELECT service_name, level, COUNT(*) as cnt FROM abnormal_logs GROUP BY service_name, level ORDER BY cnt DESC LIMIT 30
+- SELECT service_name, level, message, time FROM abnormal_logs WHERE service_name = 'ts-inside-payment-service' AND level = 'SEVERE' LIMIT 20
+- SELECT service_name, metric, value, time FROM abnormal_metrics WHERE metric LIKE '%error%' AND value > 0 ORDER BY time DESC LIMIT 30
+- SELECT DISTINCT metric FROM abnormal_metrics LIMIT 30
+- SELECT service_name, metric, value, time FROM abnormal_metrics WHERE metric LIKE '%http%' ORDER BY time DESC LIMIT 30
+- SELECT service_name, span_name, attr_http_response_status_code, duration FROM abnormal_traces WHERE service_name = 'ts-payment-service' LIMIT 20
+- SELECT service_name, span_name, attr_http_response_status_code, duration FROM normal_traces WHERE service_name = 'ts-payment-service' LIMIT 10
+- SELECT service_name, metric, value, time FROM abnormal_metrics WHERE service_name = 'ts-payment-service' LIMIT 20
+- SELECT service_name, metric, value, time FROM abnormal_metrics WHERE service_name = 'ts-payment-service' AND (metric LIKE '%ready%' OR metric LIKE '%available%' OR metric LIKE '%deployment%' OR metric
+  LIKE '%restart%') LIMIT 30
+- SELECT service_name, metric, value, time FROM abnormal_metrics WHERE service_name = 'ts-payment-service' AND metric = 'k8s.container.ready' LIMIT 10
+- SELECT service_name, metric, value, time FROM abnormal_metrics WHERE metric = 'k8s.container.ready' AND value = 0 LIMIT 20
+raw_sql_substring_audit:
+  has_baseline_contrast_substring: false
+  has_call_tree_build_substring: false
+  has_trace_follow_substring: true
+  has_jvm_metric_substring: false
+  has_container_metric_substring: false
+  has_k8s_metric_substring: true
+  has_db_metric_substring: false
+  has_network_metric_substring: false
+  has_status_error_filter: true
+  has_status_unset_filter: false
+  where_service_name_filters:
+  - ts-inside-payment-service
+  - ts-payment-service
+  - ts-ui-dashboard
+parquet_evidence:
+  top_error_services_abnormal_logs:
+  - service: ts-inside-payment-service
+    count: 503
+  - service: ts-notification-service
+    count: 48
+  - service: ts-delivery-service
+    count: 48
+  - service: ts-food-service
+    count: 20
+  - service: ts-order-service
+    count: 13
+  - service: ts-preserve-service
+    count: 13
+  top_error_services_normal_logs:
+  - service: ts-food-service
+    count: 334
+  - service: ts-preserve-service
+    count: 87
+  - service: ts-order-service
+    count: 87
+  - service: ts-notification-service
+    count: 48
+  - service: ts-delivery-service
+    count: 48
+  gt_service_abnormal_log_error_count: {}
+  gt_service_normal_log_error_count: {}
+  gt_service_status_code_distribution: {}
+  gt_service_abnormal_span_count: {}
+  top_error_span_services:
+  - service: ts-inside-payment-service
+    sc: Error
+    count: 1515
+  - service: ts-ui-dashboard
+    sc: Error
+    count: 21
+  - service: loadgenerator
+    sc: Error
+    count: 20
+  gt_latency_stats: []
+  chronic_noise_detail:
+  - service: ts-notification-service
+    normal_err: 48
+    abnormal_err: 48
+    ratio: 1.0
+  - service: ts-delivery-service
+    normal_err: 48
+    abnormal_err: 48
+    ratio: 1.0
+  - service: ts-food-service
+    normal_err: 334
+    abnormal_err: 20
+    ratio: 16.7
+  - service: ts-order-service
+    normal_err: 87
+    abnormal_err: 13
+    ratio: 6.69
+  - service: ts-preserve-service
+    normal_err: 87
+    abnormal_err: 13
+    ratio: 6.69
+  gt_span_name_breakdown: []
+  gt_parent_child_pairs: []
+trajectory_reasoning_snippets:
+- idx: 4
+  text: 'Now I have the schema information. Let me start by analyzing the abnormal traces for the endpoint ''/api/v1/inside_pay_service/inside_payment'' to identify downstream service dependencies with
+    elevated error rates or latency spikes.
+
+
+    First, let me query the abnormal traces to find traces related to the specific endpoint and understand the service call chain.
+
+
+    '
+- idx: 6
+  text: 'Let me reduce the limit and select only necessary columns.
+
+
+    '
+- idx: 8
+  text: 'I can see that the `ts-inside-payment-service` is returning 500 errors for the `/api/v1/inside_pay_service/inside_payment` endpoint. The durations are very high (400-600ms for the service, and
+    9-20 seconds for the UI dashboard). Let me now trace the full call chain for one of these trace IDs to understand the downstream dependencies.
+
+
+    '
+- idx: 10
+  text: 'I can see the trace structure. The call chain is:
+
+    1. `loadgenerator` → `ts-ui-dashboard` → `ts-inside-payment-service`
+
+
+    The `ts-inside-payment-service` is returning 500 errors, and there are also 503 errors on some "POST" spans. I need to find out what downstream service the `ts-inside-payment-service` is calling that''s
+    causing the 503 errors. Let me look for spans with parent_span_id that match the span_ids of the failing spans to find the downstream dependencies.
+
+
+    '
+- idx: 12
+  text: 'I see `ts-order-service` is also involved. Let me look for all unique services in the abnormal traces related to this endpoint to understand the full dependency chain. Also, I need to find which
+    service is returning 503 errors that the `ts-inside-payment-service` is calling.
+
+
+    '
+- idx: 14
+  text: 'Let me look at the spans that have 503 status codes to identify which service is failing and causing the cascade.
+
+
+    '
+- idx: -1
+  text: 'Based on my investigation, I''ve identified the **weakest aspect** of the preliminary root cause graph:
+
+
+    ## Weakest Aspect: ts-payment-service marked as "UNAVAILABLE"
+
+
+    The preliminary graph claims `ts-payment-service` has state `UNAVAILABLE` with timestamp 1725422767, but my evidence **contradicts** this:
+
+
+    ### Evidence Against ts-payment-service Being UNAVAILABLE:
+
+    1. **Deployment Availability Metric**: `k8s.deployment.available` for ts-payment-service consistently shows value `1.0` throughout the entire incident period (04:26:16 to 04:30:06)
+
+    2. **No Abnormal Logs**: Zero log entries found for ts-payment-service in abnormal_logs.parquet
+
+    3. **No Error Traces**: Zero error traces found for ts-payment-service in abnormal_traces.parquet
+
+
+    ### Strong Evidence Found for Other Services:
+
+
+    **ts-inside-payment-service (HIGH_ERROR_RATE - Well Supported):**
+
+    - 503 SEVERE level logs with consistent error message: *"503 Service Unavailable: upstream connect error or disconnect/reset before headers...Connection refused"*
+
+    - 1,515 Error status traces vs 4,038 Unset traces
+
+    - HTTP 500 and 503 response codes in traces
+
+    - High duration spans (400-600+ ms)
+
+
+    **ts-ui-dashboard (HIGH_ERROR_RATE - Moderately Supported):**
+
+    - 21 Error status traces vs 656 Unset traces
+
+    - Errors propagate downstream from ts-inside-payment-service
+
+
+    **Call Chain Confirmed via Traces:**
+
+    ```
+
+    loadgenerator → ts-ui-dashboard → ts-inside-payment-service → [upstream POST failing with 503]
+
+    ```
+
+
+    ### Refined Conclusion:
+
+
+    The error messages from ts-inside-payment-service clearly indicate it''s trying to reach an **upstream service** that returns "Connection refused". While ts-payment-service is the logical upstream target
+    based on the service naming and the preliminary graph, the direct evidence for ts-payment-service being the root cause is **thin**.
+
+
+    The deployment shows as available, but this doesn''t rule out:
+
+    - Network policies blocking traffic between services
+
+    - Pod-level connectivity issues not reflected in deployment metri'
+- idx: -1
+  text: "Now I have enough evidence to construct the final causal graph. Let me output the result.\n\n```json\n{\n  \"nodes\": [\n    {\"component\": \"ts-payment-service\", \"state\": [\"UNAVAILABLE\"\
+    ], \"timestamp\": 1725422767},\n    {\"component\": \"ts-inside-payment-service\", \"state\": [\"HIGH_ERROR_RATE\"], \"timestamp\": 1725422772},\n    {\"component\": \"ts-ui-dashboard\", \"state\":\
+    \ [\"HIGH_ERROR_RATE\"], \"timestamp\": 1725422780},\n    {\"component\": \"loadgenerator\", \"state\": [\"HIGH_ERROR_RATE\"], \"timestamp\": 1725422800}\n  ],\n  \"edges\": [\n    {\"source\": \"ts-payment-service\"\
+    , \"target\": \"ts-inside-payment-service\"},\n    {\"source\": \"ts-inside-payment-service\", \"target\": \"ts-ui-dashboard\"},\n    {\"source\": \"ts-ui-dashboard\", \"target\": \"loadgenerator\"\
+    }\n  ],\n  \"root_causes\": [\n    {\"component\": \"ts-payment-service\", \"state\": [\"UNAVAILABLE\"], \"timestamp\": 1725422767}\n  ],\n  \"component_to_service\": {}\n}\n```"
+gt_required_capabilities:
+  gt_is_silent: true
+  gt_is_loudest: false
+  chronic_noise_present: true
+  chronic_noise_carriers:
+  - ts-notification-service
+  - ts-delivery-service
+  - ts-food-service
+  - ts-order-service
+  - ts-preserve-service
+  required_metric_layer: k8s/container
+  gt_path_is_edge_fault: false
+  gt_has_name_twin: true
+  name_twin_candidates:
+  - ts-user-service
+  - ts-assurance-service
+  - ts-order-service
+  - ts-security-service
+  - ts-notification-service
+  - ts-travel-service
+  - ts-station-food-service
+  - ts-route-plan-service
+  - ts-contacts-service
+  - ts-auth-service
+  - ts-config-service
+  - ts-inside-payment-service
+  - ts-travel2-service
+  - ts-preserve-service
+  - ts-basic-service
+  - ts-travel-plan-service
+  - ts-seat-service
+  - ts-consign-service
+  - ts-consign-price-service
+  - ts-delivery-service
+  - ts-price-service
+  - ts-verification-code-service
+  - ts-food-service
+  - ts-station-service
+  - ts-train-food-service
+  - ts-order-other-service
+  - ts-train-service
+  - ts-route-service
+  gt_diluted_across_spans: false
+path_alignment:
+  gt_touched_in_trajectory: true
+  gt_neighbors_touched:
+    ts-inside-payment-service: 18
+  gt_neighbors_from_causal_graph:
+  - ts-inside-payment-service
+  agent_focus_services:
+  - service: ts-inside-payment-service
+    count: 18
+  - service: ts-payment-service
+    count: 14
+  agent_predicted_rc_in_gt_neighborhood: true
+counterfactual:
+  PD1_baseline_contrast:
+    chronic_noise_in_data: true
+    predicted_rc_is_chronic_carrier: false
+    predicted_rc_error_ratios:
+      ts-inside-payment-service:
+        normal: 0
+        abnormal: 503
+    if_run_would_reveal: false
+  PD2_call_tree_build:
+    gt_is_upstream_of_agent_focus: false
+    if_run_would_surface_gt: false
+  PD3_fault_layer_metric_probe:
+    metric_family_if_probed: k8s/container
+    gt_metric_anomaly_exists_in_parquet: true
+    gt_metric_families_probed:
+    - k8s.pod.memory.working_set
+    - k8s.pod.filesystem.available
+    - k8s.pod.filesystem.capacity
+    - k8s.pod.memory.node.utilization
+    - k8s.pod.memory.page_faults
+    - k8s.deployment.desired
+    - k8s.pod.memory.rss
+    - k8s.pod.memory.available
+    - k8s.pod.cpu.node.utilization
+    - k8s.pod.memory.major_page_faults
+  PD4_named_candidate_not_isolated:
+    if_isolated_predicted_rc_show_healthy:
+      ts-inside-payment-service: false
+  R_correct_heuristic_would_reach_gt:
+    if_loudness_applied: false
+    if_baseline_diff_applied: false
+    if_edge_direction_applied: null
+    if_name_twin_check_applied: true
+  D_obstacle_is_structural: true
+parquet_queries_run:
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_e9339166/abnormal_logs.parquet') WHERE level IN ('ERROR','SEVERE') GROUP BY
+    1 ORDER BY n DESC LIMIT 10
+  purpose: top_error_services_abnormal_logs
+  row_count: 6
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_e9339166/normal_logs.parquet') WHERE level IN ('ERROR','SEVERE') GROUP BY 1
+    ORDER BY n DESC LIMIT 10
+  purpose: top_error_services_normal_logs
+  row_count: 5
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_e9339166/abnormal_logs.parquet') WHERE level IN ('ERROR','SEVERE') AND service_name
+    IN ('ts-payment-service') GROUP BY 1
+  purpose: gt_service_abnormal_log_error_count
+  row_count: 0
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_e9339166/normal_logs.parquet') WHERE level IN ('ERROR','SEVERE') AND service_name
+    IN ('ts-payment-service') GROUP BY 1
+  purpose: gt_service_normal_log_error_count
+  row_count: 0
+- sql: SELECT service_name, "attr.status_code" as sc, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_e9339166/abnormal_traces.parquet') WHERE service_name
+    IN ('ts-payment-service') GROUP BY 1,2
+  purpose: gt_service_status_code_distribution
+  row_count: 0
+- sql: SELECT service_name, "attr.status_code" as sc, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_e9339166/abnormal_traces.parquet') WHERE "attr.status_code"
+    IN ('Error','ERROR') GROUP BY 1,2 ORDER BY n DESC LIMIT 5
+  purpose: top_error_span_services
+  row_count: 3
+- sql: SELECT service_name, AVG(duration)/1e6 AS avg_ms, MAX(duration)/1e6 AS max_ms, QUANTILE_CONT(duration, 0.95)/1e6 AS p95_ms, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_e9339166/abnormal_traces.parquet')
+    WHERE service_name IN ('ts-payment-service') GROUP BY 1
+  purpose: gt_latency_stats
+  row_count: 0
+- sql: SELECT DISTINCT service_name FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_e9339166/abnormal_traces.parquet')
+  purpose: all_abnormal_trace_services
+  row_count: 28
+counterfactual_queries_run:
+- sql: SELECT span_name, AVG(duration)/1e6 AS avg_ms, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_e9339166/abnormal_traces.parquet') WHERE service_name
+    IN ('ts-payment-service') GROUP BY 1 ORDER BY n DESC LIMIT 20
+  purpose: gt_span_name_breakdown
+  row_count: 0
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_e9339166/normal_logs.parquet') WHERE level IN ('ERROR','SEVERE') AND service_name
+    IN ('ts-inside-payment-service') GROUP BY 1
+  purpose: predicted_rc_normal_err
+  row_count: 0
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_e9339166/abnormal_logs.parquet') WHERE level IN ('ERROR','SEVERE') AND service_name
+    IN ('ts-inside-payment-service') GROUP BY 1
+  purpose: predicted_rc_abnormal_err
+  row_count: 1
+- sql: SELECT DISTINCT p.service_name, c.service_name FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_e9339166/abnormal_traces.parquet') c JOIN read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_e9339166/abnormal_traces.parquet')
+    p ON c.parent_span_id=p.span_id WHERE c.service_name IN ('ts-payment-service') OR p.service_name IN ('ts-payment-service') LIMIT 200
+  purpose: gt_parent_child_pairs
+  row_count: 0
+- sql: SELECT DISTINCT metric FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_e9339166/abnormal_metrics.parquet') WHERE service_name IN ('ts-payment-service') AND metric
+    LIKE 'k8s.%' LIMIT 10
+  purpose: gt_metric_families_probed
+  row_count: 10
+classes_to_verify:
+- D6
+- PD_NamedCandidateNotIsolated
+- PD_NoBaselineContrast
+- U4_NameTwinSiblingConfusion
+- aiq.PD_StageEndsWithoutCommitment

@@ -1,0 +1,93 @@
+{
+  "_comment": "Mock v3 Trajectory for multi-agent (mabc-like). Main agent dispatches 2 sub-agents.",
+  "agent_trajectories": [
+    {
+      "trajectory_id": "main",
+      "agent_name": "ProcessScheduler",
+      "system_prompt": "You orchestrate 6 specialized expert sub-agents...",
+      "sub_agent_call_id": null,
+      "turns": [
+        {
+          "messages": [
+            {"role": "user", "content": "# Incident Report — TrainTicket\n..."},
+            {
+              "role": "assistant",
+              "content": "I'll dispatch DataDetective and DependencyExplorer in parallel.",
+              "sub_agent_calls": [
+                {"id": "task_1", "name": "DataDetective", "instructions": "Identify which service experienced the SLO breach first."},
+                {"id": "task_2", "name": "DependencyExplorer", "instructions": "Map the call graph between abnormal services."}
+              ]
+            },
+            {"role": "sub_agent", "sub_agent_call_id": "task_1", "content": "Finished: ts-order-service breach at T+0:00:14"},
+            {"role": "sub_agent", "sub_agent_call_id": "task_2", "content": "Finished: ts-order → ts-payment → ts-auth"}
+          ],
+          "token_count": 800
+        },
+        {
+          "messages": [
+            {
+              "role": "assistant",
+              "content": "Both experts converge on ts-order-service as the root.\nFinal answer: { root_cause: 'ts-order-service', causal_edges: [...] }"
+            }
+          ],
+          "token_count": 400
+        }
+      ]
+    },
+    {
+      "trajectory_id": "task_1",
+      "agent_name": "DataDetective",
+      "system_prompt": "You investigate raw telemetry...",
+      "sub_agent_call_id": "task_1",
+      "turns": [
+        {
+          "messages": [
+            {"role": "user", "content": "Identify which service experienced the SLO breach first."},
+            {
+              "role": "assistant",
+              "content": "Checking time-series of error counts.",
+              "tool_calls": [
+                {"id": "c1", "name": "query_parquet_files", "arguments": "{\"query\": \"SELECT MIN(time), service_name FROM abnormal_traces WHERE attr.status_code > 400 GROUP BY 2 ORDER BY 1\"}"}
+              ]
+            },
+            {"role": "tool", "tool_call_id": "c1", "content": "ts-order-service: 2026-04-01T00:00:14"}
+          ],
+          "token_count": 1100
+        }
+      ]
+    },
+    {
+      "trajectory_id": "task_2",
+      "agent_name": "DependencyExplorer",
+      "system_prompt": "You analyze service call graphs...",
+      "sub_agent_call_id": "task_2",
+      "turns": [
+        {
+          "messages": [
+            {"role": "user", "content": "Map the call graph between abnormal services."},
+            {
+              "role": "assistant",
+              "content": "Walking parent_span_id chains.",
+              "tool_calls": [
+                {"id": "c1", "name": "query_parquet_files", "arguments": "{\"query\": \"SELECT span_name, parent_span_id FROM abnormal_traces\"}"}
+              ]
+            },
+            {"role": "tool", "tool_call_id": "c1", "content": "ts-order → ts-payment → ts-auth"}
+          ],
+          "token_count": 900
+        }
+      ]
+    }
+  ],
+  "reward": null,
+  "correct": null,
+  "metadata": {
+    "cost_metrics": {
+      "total_tokens": 3200,
+      "effective_rounds": 3,
+      "token_source": "actual",
+      "model": "claude-sonnet-4-6"
+    },
+    "trace_id": "mock-trace-mabc-001"
+  }
+}

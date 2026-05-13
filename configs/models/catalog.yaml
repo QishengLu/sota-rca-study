@@ -1,0 +1,113 @@
+# Model Catalog — 8+ base models 预置
+# 合作者切 model 只改一个 --model <alias> 命令行参数, 不改任何代码.
+# 新增 model: append 一个条目 → 立刻可用.
+#
+# Fields:
+#   alias        : matrix.yaml / CLI 使用的简称
+#   name         : 实际 model name (传给 LLM API)
+#   api_format   : openai | anthropic | google (决定 LangChain wrapper)
+#   base_url     : provider endpoint
+#   api_key_env  : 从环境变量名读 key (空时使用 UTU_LLM_API_KEY)
+#   pricing      : 估算 cost 用 (USD/M tokens), 可选
+#   notes        : 注释
+
+models:
+  # ============== Anthropic ==============
+  - alias: sonnet46
+    name: claude-sonnet-4-6
+    api_format: anthropic
+    base_url: https://api.shubiaobiao.cn/v1
+    api_key_env: SHUBIAOBIAO_API_KEY
+    pricing: { input: 3.0, output: 15.0 }
+    notes: Anthropic Claude Sonnet 4.6 via shubiaobiao proxy
+
+  - alias: opus47
+    name: claude-opus-4-7
+    api_format: anthropic
+    base_url: https://api.shubiaobiao.cn/v1
+    api_key_env: SHUBIAOBIAO_API_KEY
+    pricing: { input: 15.0, output: 75.0 }
+    notes: Anthropic Claude Opus 4.7 (top-tier reasoning)
+
+  - alias: haiku45
+    name: claude-haiku-4-5-20251001
+    api_format: anthropic
+    base_url: https://api.shubiaobiao.cn/v1
+    api_key_env: SHUBIAOBIAO_API_KEY
+    pricing: { input: 1.0, output: 5.0 }
+    notes: Anthropic Claude Haiku 4.5 (fast / cheap)
+
+  # ============== Google ==============
+  - alias: gemini31pro
+    name: gemini-3.1-pro
+    api_format: google
+    base_url: https://generativelanguage.googleapis.com/v1
+    api_key_env: GOOGLE_API_KEY
+    pricing: { input: 1.25, output: 5.0 }
+    notes: Google Gemini 3.1 Pro
+
+  # ============== OpenAI ==============
+  - alias: gpt45
+    name: gpt-4.5
+    api_format: openai
+    base_url: https://api.openai.com/v1
+    api_key_env: OPENAI_API_KEY
+    pricing: { input: 5.0, output: 15.0 }
+    notes: OpenAI GPT-4.5
+
+  - alias: gpt4o
+    name: gpt-4o-2024-11-20
+    api_format: openai
+    base_url: https://api.openai.com/v1
+    api_key_env: OPENAI_API_KEY
+    pricing: { input: 2.5, output: 10.0 }
+    notes: OpenAI GPT-4o
+
+  - alias: o1
+    name: o1-2024-12-17
+    api_format: openai
+    base_url: https://api.openai.com/v1
+    api_key_env: OPENAI_API_KEY
+    pricing: { input: 15.0, output: 60.0 }
+    notes: OpenAI o1 (reasoning)
+
+  # ============== Chinese providers ==============
+  - alias: qwen36
+    name: qwen3.6-plus
+    api_format: openai
+    base_url: https://dashscope.aliyuncs.com/compatible-mode/v1
+    api_key_env: DASHSCOPE_API_KEY
+    pricing: { input: 0.6, output: 1.8 }
+    notes: 阿里云通义千问 3.6 Plus
+
+  - alias: qwen35
+    name: qwen3.5-plus
+    api_format: openai
+    base_url: https://dashscope.aliyuncs.com/compatible-mode/v1
+    api_key_env: DASHSCOPE_API_KEY
+    pricing: { input: 0.5, output: 1.5 }
+    notes: 阿里云通义千问 3.5 Plus (legacy 实验对比用)
+
+  - alias: glm51
+    name: glm-5.1
+    api_format: openai
+    base_url: https://open.bigmodel.cn/api/paas/v4
+    api_key_env: ZHIPU_API_KEY
+    pricing: { input: 0.7, output: 2.0 }
+    notes: 智谱 GLM-5.1
+
+  - alias: kimi-k2
+    name: kimi-k2-0905-preview
+    api_format: openai
+    base_url: https://api.moonshot.cn/v1
+    api_key_env: MOONSHOT_API_KEY
+    pricing: { input: 2.0, output: 10.0 }
+    notes: Moonshot Kimi K2 (legacy 实验对比用)
+
+  - alias: deepseek-v3
+    name: deepseek-chat
+    api_format: openai
+    base_url: https://api.deepseek.com/v1
+    api_key_env: DEEPSEEK_API_KEY
+    pricing: { input: 0.27, output: 1.1 }
+    notes: DeepSeek V3 (cost-effective)

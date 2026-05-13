@@ -1,0 +1,37 @@
+# Full Matrix — 论文级别全量评测
+# 6 framework × 多 model × 500 samples
+# 预算估算: ~$30-50 (取决于 model 组合)
+
+version: 1
+preset: full
+exp_id_template: "{framework}-{model_alias}-full"
+output_dir: results/matrix/{run_id}/
+
+frameworks: [thinkdepthai, aiq, taskweaver, openrca, claudecode, mabc]
+
+models:
+  - alias: sonnet46
+  - alias: qwen36
+  # 取消注释加更多 model:
+  # - alias: opus47
+  # - alias: gpt45
+  # - alias: gemini31pro
+
+subset:
+  kind: full
+  limit: 500
+
+execution:
+  cell_concurrency: 3
+  rollout_concurrency_max: 5
+  timeout_per_sample: 600
+  resume: true
+  failure_tolerance: 0.15
+  retry_failed_samples: 2
+
+post:
+  auto_judge: true
+  auto_intent_classify: true
+  auto_failure_tag: true
+  refresh_dashboard_cache: true
+  cache_target: analysis_cache.json

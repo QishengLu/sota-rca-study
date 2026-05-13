@@ -1,0 +1,477 @@
+case_id: aiq.2597
+framework: aiq-qwen3.5-plus
+data_dir: /home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_16d82b8e
+gt_from_injection_json:
+  fault_type: HTTPRequestDelay
+  fault_category: HTTPFault
+  injection_name: ts4-ts-preserve-service-request-delay-lb48d2
+  gt_services:
+  - ts-preserve-service
+  - ts-seat-service
+  source_service: null
+  target_service: null
+  start_time: '2025-07-22T17:49:59Z'
+  end_time: '2025-07-22T17:53:59Z'
+  display_config:
+    delay_duration: 3308
+    duration: 4
+    injection_point:
+      app_name: ts-preserve-service
+      method: POST
+      route: /api/v1/seatservice/seats
+      server_address: ts-seat-service
+      server_port: '8080'
+    namespace: ts
+gt_from_causal_graph_json:
+  root_causes:
+  - ts-preserve-service
+  alarm_nodes:
+  - span|loadgenerator::HTTP POST http://ts-ui-dashboard:8080/api/v1/preserveservice/preserve
+agent_predicted:
+  root_causes:
+  - ts-order-service
+  predicted_graph_nodes:
+  - ts-order-service
+  - ts-preserve-service
+  - ts-ui-dashboard
+  - loadgenerator
+raw_sql_count_total: 40
+raw_sql_list_sample:
+- SELECT service_name, span_name, attr_http_response_status_code, duration, attr_status_code, COUNT(*) as count FROM abnormal_traces WHERE service_name = 'ts-ui-dashboard' GROUP BY service_name, span_name,
+  attr_http_response_status_code, duration, attr_status_code LIMIT 50
+- SELECT service_name, span_name, attr_http_response_status_code, attr_status_code, duration, time FROM abnormal_traces WHERE span_name LIKE '%preserveservice/preserve%' OR (service_name = 'ts-ui-dashboard'
+  AND attr_http_response_status_code >= 500) ORDER BY time LIMIT 100
+- SELECT service_name, span_name, attr_http_response_status_code, attr_status_code, duration FROM abnormal_traces WHERE span_name LIKE '%preserveservice/preserve%' OR (service_name = 'ts-ui-dashboard' AND
+  attr_http_response_status_code >= 500) LIMIT 50
+- SELECT service_name, level, message, time FROM abnormal_logs WHERE service_name = 'ts-preserve-service' AND level IN ('ERROR', 'WARN') LIMIT 50
+- SELECT service_name, span_name, parent_span_id, attr_status_code, attr_http_response_status_code, duration FROM abnormal_traces WHERE trace_id IN (SELECT trace_id FROM abnormal_traces WHERE service_name
+  = 'ts-preserve-service' AND attr_http_response_status_code = 500 LIMIT 5) LIMIT 100
+- SELECT service_name, span_name, attr_status_code, attr_http_response_status_code, duration FROM abnormal_traces WHERE trace_id IN (SELECT trace_id FROM abnormal_traces WHERE service_name = 'ts-preserve-service'
+  AND attr_http_response_status_code = 500 LIMIT 3) LIMIT 50
+- SELECT service_name, level, message, time FROM abnormal_logs WHERE service_name = 'ts-order-service' AND level IN ('ERROR', 'WARN') LIMIT 30
+- SELECT service_name, metric, value, time FROM abnormal_metrics WHERE service_name IN ('ts-preserve-service', 'ts-ui-dashboard', 'ts-order-service') AND (metric LIKE '%error%' OR metric LIKE '%latency%')
+  ORDER BY time LIMIT 50
+- SELECT DISTINCT metric FROM abnormal_metrics WHERE service_name = 'ts-preserve-service' LIMIT 20
+- SELECT DISTINCT metric FROM abnormal_metrics LIMIT 30
+- SELECT service_name, attr_http_response_status_code, COUNT(*) as cnt FROM abnormal_traces WHERE attr_http_response_status_code >= 500 GROUP BY service_name, attr_http_response_status_code ORDER BY cnt
+  DESC LIMIT 20
+- SELECT trace_id, service_name, span_name, attr_http_request_method, attr_http_response_status_code, duration, parent_span_id, time FROM abnormal_traces WHERE span_name LIKE '%preserve%' OR service_name
+  LIKE '%preserve%' ORDER BY time ASC LIMIT 50
+- SELECT trace_id, service_name, span_name, attr_http_request_method, attr_http_response_status_code, duration, parent_span_id, time FROM abnormal_traces WHERE span_name LIKE '%preserve%' OR service_name
+  LIKE '%preserve%' ORDER BY time ASC LIMIT 50
+- SELECT service_name, span_name, attr_http_response_status_code, COUNT(*) as cnt FROM abnormal_traces WHERE service_name LIKE '%preserve%' GROUP BY service_name, span_name, attr_http_response_status_code
+  ORDER BY cnt DESC LIMIT 30
+- SELECT service_name, attr_http_response_status_code, COUNT(*) as cnt FROM abnormal_traces WHERE attr_http_response_status_code >= 500 GROUP BY service_name, attr_http_response_status_code ORDER BY cnt
+  DESC LIMIT 30
+- SELECT service_name, attr_http_response_status_code, COUNT(*) as cnt FROM abnormal_traces GROUP BY service_name, attr_http_response_status_code ORDER BY cnt DESC LIMIT 40
+- SELECT service_name, level, COUNT(*) as cnt FROM abnormal_logs GROUP BY service_name, level ORDER BY cnt DESC LIMIT 30
+- SELECT service_name, level, message, COUNT(*) as cnt FROM abnormal_logs WHERE level = 'ERROR' GROUP BY service_name, level, message ORDER BY cnt DESC LIMIT 30
+- SELECT trace_id, service_name, span_name, duration, attr_status_code, parent_span_id FROM abnormal_traces WHERE trace_id = '1394a8db2e29c1f21a432b45d21ee21c' ORDER BY time ASC LIMIT 30
+- SELECT service_name, COUNT(*) as total, SUM(CASE WHEN attr_status_code = 'Error' THEN 1 ELSE 0 END) as errors FROM abnormal_traces GROUP BY service_name HAVING errors > 0 ORDER BY errors DESC LIMIT 20
+raw_sql_substring_audit:
+  has_baseline_contrast_substring: false
+  has_call_tree_build_substring: false
+  has_trace_follow_substring: true
+  has_jvm_metric_substring: false
+  has_container_metric_substring: false
+  has_k8s_metric_substring: false
+  has_db_metric_substring: false
+  has_network_metric_substring: false
+  has_status_error_filter: true
+  has_status_unset_filter: false
+  where_service_name_filters:
+  - ts-ui-dashboard
+  - ts-preserve-service
+  - ts-order-service
+  - loadgenerator
+parquet_evidence:
+  top_error_services_abnormal_logs:
+  - service: ts-food-service
+    count: 156
+  - service: ts-preserve-service
+    count: 55
+  - service: ts-order-service
+    count: 49
+  - service: ts-delivery-service
+    count: 32
+  - service: ts-notification-service
+    count: 32
+  - service: ts-ui-dashboard
+    count: 10
+  top_error_services_normal_logs:
+  - service: ts-food-service
+    count: 228
+  - service: ts-order-service
+    count: 69
+  - service: ts-preserve-service
+    count: 69
+  - service: ts-delivery-service
+    count: 33
+  - service: ts-notification-service
+    count: 32
+  gt_service_abnormal_log_error_count:
+    ts-preserve-service: 55
+  gt_service_normal_log_error_count:
+    ts-preserve-service: 69
+  gt_service_status_code_distribution:
+    ts-preserve-service:
+      Error: 21
+      Unset: 584
+    ts-seat-service:
+      Unset: 6158
+  gt_service_abnormal_span_count:
+    ts-preserve-service: 605
+    ts-seat-service: 6158
+  top_error_span_services:
+  - service: ts-preserve-service
+    sc: Error
+    count: 21
+  - service: loadgenerator
+    sc: Error
+    count: 8
+  - service: ts-ui-dashboard
+    sc: Error
+    count: 6
+  gt_latency_stats:
+  - service: ts-seat-service
+    avg_ms: 11.6
+    max_ms: 1808.3
+    p95_ms: 15.5
+    count: 6158
+  - service: ts-preserve-service
+    avg_ms: 1275.7
+    max_ms: 6476.2
+    p95_ms: 3925.4
+    count: 605
+  chronic_noise_detail:
+  - service: ts-food-service
+    normal_err: 228
+    abnormal_err: 156
+    ratio: 1.46
+  - service: ts-order-service
+    normal_err: 69
+    abnormal_err: 49
+    ratio: 1.41
+  - service: ts-delivery-service
+    normal_err: 33
+    abnormal_err: 32
+    ratio: 1.03
+  - service: ts-notification-service
+    normal_err: 32
+    abnormal_err: 32
+    ratio: 1.0
+  gt_span_name_breakdown:
+  - span_name: POST
+    avg_ms: 142.6
+    count: 1845
+  - span_name: GET
+    avg_ms: 7.3
+    count: 1660
+  - span_name: POST /api/v1/seatservice/seats/left_tickets
+    avg_ms: 18.6
+    count: 1490
+  - span_name: SeatController.getLeftTicketOfInterval
+    avg_ms: 16.3
+    count: 1490
+  - span_name: POST /api/v1/preserveservice/preserve
+    avg_ms: 3681.1
+    count: 70
+  - span_name: PreserveController.preserve
+    avg_ms: 3677.9
+    count: 70
+  - span_name: SeatController.create
+    avg_ms: 7.5
+    count: 66
+  - span_name: POST /api/v1/seatservice/seats
+    avg_ms: 9.4
+    count: 66
+  - span_name: BasicErrorController.error
+    avg_ms: 1.0
+    count: 6
+  gt_parent_child_pairs:
+  - - ts-seat-service
+    - ts-config-service
+  - - ts-preserve-service
+    - ts-security-service
+  - - ts-preserve-service
+    - ts-contacts-service
+  - - ts-preserve-service
+    - ts-travel-service
+  - - ts-preserve-service
+    - ts-order-service
+  - - ts-preserve-service
+    - ts-assurance-service
+  - - ts-seat-service
+    - ts-order-service
+  - - ts-travel-plan-service
+    - ts-seat-service
+  - - ts-preserve-service
+    - ts-user-service
+  - - ts-preserve-service
+    - ts-food-service
+  - - ts-travel2-service
+    - ts-seat-service
+  - - ts-ui-dashboard
+    - ts-preserve-service
+  - - ts-preserve-service
+    - ts-basic-service
+  - - ts-preserve-service
+    - ts-seat-service
+  - - ts-seat-service
+    - ts-order-other-service
+  - - ts-travel-service
+    - ts-seat-service
+  gt_caller_distribution:
+  - caller: ts-seat-service
+    count: 4602
+  - caller: ts-travel-service
+    count: 612
+  - caller: ts-preserve-service
+    count: 601
+  - caller: ts-travel-plan-service
+    count: 474
+  - caller: ts-travel2-service
+    count: 404
+trajectory_reasoning_snippets:
+- idx: 4
+  text: 'Now I have the schema information. The user wants to investigate the `ts-ui-dashboard` service and the HTTP path `/api/v1/preserveservice/preserve`. Let me query the abnormal traces and logs to
+    find evidence related to this service and path.
+
+
+    First, let me check the abnormal traces for the ts-ui-dashboard service and look for the specific HTTP path.
+
+
+    '
+- idx: 6
+  text: 'I see the traces for ts-ui-dashboard. I notice there''s a `POST /api/v1/preserveservice/preserve` entry. Let me now look for error status codes (5xx) specifically for this path and service, and
+    also check the logs for errors.
+
+
+    '
+- idx: 8
+  text: 'Let me reduce the limit and focus on specific columns.
+
+
+    '
+- idx: 10
+  text: 'This is very revealing! I can see the error propagation pattern:
+
+
+    1. `ts-preserve-service` is returning 500 errors with very high latency (61ms to 3.4+ seconds)
+
+    2. `ts-ui-dashboard` receives these errors and also returns 500 errors
+
+    3. `loadgenerator` sees 500/502 errors from ts-ui-dashboard
+
+
+    The root cause appears to be `ts-preserve-service`. Let me now check the logs for ts-preserve-service to understand what''s causing the 500 errors, and also look at the trace relationships to confirm
+    the propagation path.
+
+
+    '
+- idx: 12
+  text: 'Excellent! I found the root cause. The `ts-preserve-service` is failing with "Order already exist" errors when trying to create orders. This is causing 500 errors which then propagate to `ts-ui-dashboard`
+    and finally to `loadgenerator`.
+
+
+    Let me now check the traces to understand the full call chain and see which service ts-preserve-service calls that might be causing the "Order already exist" issue. I should also look at the metrics
+    to confirm the error rates and latency.
+
+
+    '
+- idx: 16
+  text: 'I can see the trace shows the call chain. The `ts-preserve-service` is calling `ts-order-service` (via POST with 200 status) and other services. The error "Order already exist" suggests that when
+    ts-preserve-service tries to create an order through ts-order-service, it fails because the order already exists.
+
+
+    Let me check the logs for ts-order-service to see if there are related errors, and also look at the metrics to understand the error rates better.
+
+
+    '
+- idx: -1
+  text: "Based on my comprehensive analysis of the telemetry data, I have identified the root cause and fault propagation path. Here is the final causal graph:\n\n```json\n{\n  \"nodes\": [\n    {\"component\"\
+    : \"ts-order-service\", \"state\": [\"HIGH_ERROR_RATE\"], \"timestamp\": \"2025-07-22T17:50:11.959000+00:00\"},\n    {\"component\": \"ts-preserve-service\", \"state\": [\"HIGH_ERROR_RATE\"], \"timestamp\"\
+    : \"2025-07-22T17:50:11.915000+00:00\"},\n    {\"component\": \"ts-ui-dashboard\", \"state\": [\"HIGH_ERROR_RATE\"], \"timestamp\": \"2025-07-22T17:50:11.915000+00:00\"},\n    {\"component\": \"loadgenerator\"\
+    , \"state\": [\"HIGH_ERROR_RATE\"], \"timestamp\": \"2025-07-22T17:50:11.915000+00:00\"}\n  ],\n  \"edges\": [\n    {\"source\": \"ts-order-service\", \"target\": \"ts-preserve-service\"},\n    {\"\
+    source\": \"ts-preserve-service\", \"target\": \"ts-ui-dashboard\"},\n    {\"source\": \"ts-ui-dashboard\", \"target\": \"loadgenerator\"}\n  ],\n  \"root_causes\": [\n    {\"component\": \"ts-order-service\"\
+    , \"state\": [\"HIGH_ERROR_RATE\"], \"timestamp\": \"2025-07-22T17:50:11.959000+00:00\"}\n  ],\n  \"component_to_service\": {}\n}\n```\n\n## Summary of Findings\n\n**Root Cause**: `ts-order-service`\
+    \ is the origin of the failure. The service logs show repeated \"Order already exists\" errors when attempting to create orders, indicating a data integrity or idempotency issue.\n\n**Fault Propagation\
+    \ Path**:\n1. **ts-order-service** (Root Cause) → Fails to create orders due to \"Order already exists\" condition\n2. **ts-preserve-service** → Calls ts-order-service, receives failures, logs \"Create\
+    \ Order Fail\" errors, returns HTTP 500\n3. **ts-ui-dashboard** → Receives 500 errors from ts-preserve-service, propagates 500 errors upstream\n4. **loadgenerator** → Receives 500/502 errors from ts-ui-dashboard\
+    \ (end user impact)\n\n**Key Evidence**:\n- ts-order-service logs: `[create][Order Create Fail][Order already exists][OrderId: xxx]`\n- ts-preserve-service logs: `[preserve][Step 4][Do Order][Create\
+    \ Order Fail][OrderId: xxx, Reason: Order already exist]`\n- Trace data shows 500 errors: ts-preserve-service "
+- idx: -1
+  text: "Now I have all the evidence I need. Let me construct the final causal graph JSON output.\n\nBased on my analysis:\n\n1. **Root Cause**: `ts-order-service` - The service fails to create orders because\
+    \ \"Order already exists\"\n2. **Propagation**: \n   - `ts-order-service` → `ts-preserve-service` → `ts-ui-dashboard` → `loadgenerator`\n\nThe causal graph should show:\n- `ts-order-service` as the\
+    \ root cause with HIGH_ERROR_RATE state\n- `ts-preserve-service` with HIGH_ERROR_RATE (receiving errors from ts-order-service)\n- `ts-ui-dashboard` with HIGH_ERROR_RATE (receiving errors from ts-preserve-service)\n\
+    - `loadgenerator` as the affected client\n\n"
+gt_required_capabilities:
+  gt_is_silent: false
+  gt_is_loudest: true
+  chronic_noise_present: true
+  chronic_noise_carriers:
+  - ts-food-service
+  - ts-order-service
+  - ts-delivery-service
+  - ts-notification-service
+  required_metric_layer: none
+  gt_path_is_edge_fault: true
+  gt_has_name_twin: true
+  name_twin_candidates:
+  - ts-user-service
+  - ts-assurance-service
+  - ts-order-service
+  - ts-security-service
+  - ts-notification-service
+  - ts-travel-service
+  - ts-cancel-service
+  - ts-station-food-service
+  - ts-route-plan-service
+  - ts-contacts-service
+  - ts-auth-service
+  - ts-config-service
+  - ts-inside-payment-service
+  - ts-travel2-service
+  - ts-basic-service
+  - ts-travel-plan-service
+  - ts-seat-service
+  - ts-consign-service
+  - ts-consign-price-service
+  - ts-delivery-service
+  - ts-price-service
+  - ts-verification-code-service
+  - ts-food-service
+  - ts-station-service
+  - ts-train-food-service
+  - ts-order-other-service
+  - ts-train-service
+  - ts-route-service
+  - ts-payment-service
+  - ts-user-service
+  - ts-assurance-service
+  - ts-order-service
+  - ts-security-service
+  - ts-notification-service
+  - ts-travel-service
+  - ts-cancel-service
+  - ts-station-food-service
+  - ts-route-plan-service
+  - ts-contacts-service
+  - ts-auth-service
+  - ts-config-service
+  - ts-inside-payment-service
+  - ts-travel2-service
+  - ts-preserve-service
+  - ts-basic-service
+  - ts-travel-plan-service
+  - ts-consign-service
+  - ts-consign-price-service
+  - ts-delivery-service
+  - ts-price-service
+  - ts-verification-code-service
+  - ts-food-service
+  - ts-station-service
+  - ts-train-food-service
+  - ts-order-other-service
+  - ts-train-service
+  - ts-route-service
+  - ts-payment-service
+  gt_diluted_across_spans: false
+path_alignment:
+  gt_touched_in_trajectory: true
+  gt_neighbors_touched:
+    ts-ui-dashboard: 3
+  gt_neighbors_from_causal_graph:
+  - ts-ui-dashboard
+  agent_focus_services:
+  - service: ts-preserve-service
+    count: 5
+  - service: ts-ui-dashboard
+    count: 3
+  - service: ts-order-service
+    count: 3
+  agent_predicted_rc_in_gt_neighborhood: false
+counterfactual:
+  PD1_baseline_contrast:
+    chronic_noise_in_data: true
+    predicted_rc_is_chronic_carrier: true
+    predicted_rc_error_ratios:
+      ts-order-service:
+        normal: 69
+        abnormal: 49
+    if_run_would_reveal: true
+  PD2_call_tree_build:
+    gt_is_upstream_of_agent_focus: true
+    if_run_would_surface_gt: true
+  PD3_fault_layer_metric_probe:
+    metric_family_if_probed: none
+    gt_metric_anomaly_exists_in_parquet: null
+  PD4_named_candidate_not_isolated:
+    if_isolated_predicted_rc_show_healthy:
+      ts-order-service: false
+  R_correct_heuristic_would_reach_gt:
+    if_loudness_applied: false
+    if_baseline_diff_applied: true
+    if_edge_direction_applied: false
+    if_name_twin_check_applied: true
+  D_obstacle_is_structural: true
+parquet_queries_run:
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_16d82b8e/abnormal_logs.parquet') WHERE level IN ('ERROR','SEVERE') GROUP BY
+    1 ORDER BY n DESC LIMIT 10
+  purpose: top_error_services_abnormal_logs
+  row_count: 6
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_16d82b8e/normal_logs.parquet') WHERE level IN ('ERROR','SEVERE') GROUP BY 1
+    ORDER BY n DESC LIMIT 10
+  purpose: top_error_services_normal_logs
+  row_count: 5
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_16d82b8e/abnormal_logs.parquet') WHERE level IN ('ERROR','SEVERE') AND service_name
+    IN ('ts-preserve-service','ts-seat-service') GROUP BY 1
+  purpose: gt_service_abnormal_log_error_count
+  row_count: 1
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_16d82b8e/normal_logs.parquet') WHERE level IN ('ERROR','SEVERE') AND service_name
+    IN ('ts-preserve-service','ts-seat-service') GROUP BY 1
+  purpose: gt_service_normal_log_error_count
+  row_count: 1
+- sql: SELECT service_name, "attr.status_code" as sc, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_16d82b8e/abnormal_traces.parquet') WHERE service_name
+    IN ('ts-preserve-service','ts-seat-service') GROUP BY 1,2
+  purpose: gt_service_status_code_distribution
+  row_count: 3
+- sql: SELECT service_name, "attr.status_code" as sc, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_16d82b8e/abnormal_traces.parquet') WHERE "attr.status_code"
+    IN ('Error','ERROR') GROUP BY 1,2 ORDER BY n DESC LIMIT 5
+  purpose: top_error_span_services
+  row_count: 3
+- sql: SELECT service_name, AVG(duration)/1e6 AS avg_ms, MAX(duration)/1e6 AS max_ms, QUANTILE_CONT(duration, 0.95)/1e6 AS p95_ms, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_16d82b8e/abnormal_traces.parquet')
+    WHERE service_name IN ('ts-preserve-service','ts-seat-service') GROUP BY 1
+  purpose: gt_latency_stats
+  row_count: 2
+- sql: SELECT DISTINCT service_name FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_16d82b8e/abnormal_traces.parquet')
+  purpose: all_abnormal_trace_services
+  row_count: 30
+counterfactual_queries_run:
+- sql: SELECT span_name, AVG(duration)/1e6 AS avg_ms, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_16d82b8e/abnormal_traces.parquet') WHERE service_name
+    IN ('ts-preserve-service','ts-seat-service') GROUP BY 1 ORDER BY n DESC LIMIT 20
+  purpose: gt_span_name_breakdown
+  row_count: 9
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_16d82b8e/normal_logs.parquet') WHERE level IN ('ERROR','SEVERE') AND service_name
+    IN ('ts-order-service') GROUP BY 1
+  purpose: predicted_rc_normal_err
+  row_count: 1
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_16d82b8e/abnormal_logs.parquet') WHERE level IN ('ERROR','SEVERE') AND service_name
+    IN ('ts-order-service') GROUP BY 1
+  purpose: predicted_rc_abnormal_err
+  row_count: 1
+- sql: SELECT DISTINCT p.service_name, c.service_name FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_16d82b8e/abnormal_traces.parquet') c JOIN read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_16d82b8e/abnormal_traces.parquet')
+    p ON c.parent_span_id=p.span_id WHERE c.service_name IN ('ts-preserve-service','ts-seat-service') OR p.service_name IN ('ts-preserve-service','ts-seat-service') LIMIT 200
+  purpose: gt_parent_child_pairs
+  row_count: 18
+- sql: SELECT p.service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_16d82b8e/abnormal_traces.parquet') c JOIN read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_16d82b8e/abnormal_traces.parquet')
+    p ON c.parent_span_id=p.span_id WHERE c.service_name IN ('ts-preserve-service','ts-seat-service') GROUP BY 1 ORDER BY n DESC LIMIT 5
+  purpose: gt_caller_distribution
+  row_count: 5
+classes_to_verify:
+- D2
+- PD_NoBaselineContrast
+- PD_NoCallTreeBuild
+- PD_SurveyWithoutDrill
+- U1_LoudnessAnchorOverSilentVictim
+- aiq.PD_StageEndsWithoutCommitment

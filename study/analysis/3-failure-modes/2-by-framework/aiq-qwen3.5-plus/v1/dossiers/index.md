@@ -1,0 +1,125 @@
+# Dossier index — aiq-qwen3.5-plus (v1)
+
+- total failed cases: 113
+
+**Final stage status distribution:**
+
+- one_truncated: 52
+- two_truncated: 43
+- all_concluded: 18
+
+| dataset_index | fault_category | fault_type | n_svc | spl | rounds | terminators | status | file |
+|---|---|---|---|---|---|---|---|---|
+| 99 | JVMChaos | JVMMemoryStress | 5 | 4 | 53 | 3 | all_concluded | [case_99.md](case_99.md) |
+| 130 | NetworkChaos | NetworkCorrupt | 10 | 3 | 44 | 3 | all_concluded | [case_130.md](case_130.md) |
+| 156 | JVMChaos | JVMMemoryStress | 13 | 4 | 60 | 2 | one_truncated | [case_156.md](case_156.md) |
+| 247 | JVMChaos | JVMMemoryStress | 4 | 3 | 62 | 2 | one_truncated | [case_247.md](case_247.md) |
+| 281 | JVMChaos | JVMMemoryStress | 5 | 4 | 40 | 3 | all_concluded | [case_281.md](case_281.md) |
+| 283 | NetworkChaos | NetworkBandwidth | 9 | 4 | 58 | 3 | all_concluded | [case_283.md](case_283.md) |
+| 315 | HTTPFault | HTTPResponseDelay | 3 | 2 | 56 | 2 | one_truncated | [case_315.md](case_315.md) |
+| 323 | NetworkChaos | TimeSkew | 3 | 2 | 41 | 2 | one_truncated | [case_323.md](case_323.md) |
+| 339 | JVMChaos | JVMMySQLLatency | 6 | 3 | 52 | 2 | one_truncated | [case_339.md](case_339.md) |
+| 341 | PodChaos | PodFailure | 7 | 3 | 61 | 1 | two_truncated | [case_341.md](case_341.md) |
+| 572 | HTTPFault | HTTPResponsePatchBody | 4 | 3 | 36 | 2 | one_truncated | [case_572.md](case_572.md) |
+| 601 | NetworkChaos | NetworkDelay | 12 | 3 | 51 | 3 | all_concluded | [case_601.md](case_601.md) |
+| 603 | JVMChaos | JVMException | 6 | 4 | 44 | 2 | one_truncated | [case_603.md](case_603.md) |
+| 710 | JVMChaos | JVMMemoryStress | 5 | 4 | 55 | 1 | two_truncated | [case_710.md](case_710.md) |
+| 741 | PodChaos | PodFailure | 9 | 5 | 55 | 1 | two_truncated | [case_741.md](case_741.md) |
+| 784 | JVMChaos | JVMMemoryStress | 5 | 4 | 32 | 2 | one_truncated | [case_784.md](case_784.md) |
+| 804 | PodChaos | PodFailure | 10 | 4 | 73 | 2 | one_truncated | [case_804.md](case_804.md) |
+| 807 | JVMChaos | JVMMemoryStress | 4 | 3 | 50 | 1 | two_truncated | [case_807.md](case_807.md) |
+| 860 | HTTPFault | HTTPResponseReplaceBody | 7 | 2 | 50 | 2 | one_truncated | [case_860.md](case_860.md) |
+| 885 | JVMChaos | JVMLatency | 6 | 3 | 56 | 3 | all_concluded | [case_885.md](case_885.md) |
+| 1114 | JVMChaos | JVMMemoryStress | 10 | 5 | 75 | 2 | one_truncated | [case_1114.md](case_1114.md) |
+| 1140 | NetworkChaos | NetworkBandwidth | 4 | 3 | 53 | 2 | one_truncated | [case_1140.md](case_1140.md) |
+| 1143 | PodChaos | ContainerKill | 5 | 3 | 43 | 1 | two_truncated | [case_1143.md](case_1143.md) |
+| 1159 | HTTPFault | HTTPResponseDelay | 4 | 2 | 61 | 2 | one_truncated | [case_1159.md](case_1159.md) |
+| 1195 | JVMChaos | JVMMemoryStress | 9 | 4 | 78 | 1 | two_truncated | [case_1195.md](case_1195.md) |
+| 1218 | JVMChaos | JVMMemoryStress | 12 | 4 | 78 | 1 | two_truncated | [case_1218.md](case_1218.md) |
+| 1371 | PodChaos | ContainerKill | 9 | 4 | 67 | 1 | two_truncated | [case_1371.md](case_1371.md) |
+| 1394 | JVMChaos | JVMMemoryStress | 9 | 4 | 55 | 2 | one_truncated | [case_1394.md](case_1394.md) |
+| 1421 | NetworkChaos | DNSRandom | 9 | 4 | 38 | 1 | two_truncated | [case_1421.md](case_1421.md) |
+| 1459 | JVMChaos | JVMMemoryStress | 10 | 4 | 57 | 3 | all_concluded | [case_1459.md](case_1459.md) |
+| 1484 | HTTPFault | HTTPResponseDelay | 3 | 2 | 60 | 2 | one_truncated | [case_1484.md](case_1484.md) |
+| 1495 | JVMChaos | JVMMemoryStress | 4 | 3 | 66 | 1 | two_truncated | [case_1495.md](case_1495.md) |
+| 1504 | NetworkChaos | NetworkDelay | 7 | 2 | 49 | 2 | one_truncated | [case_1504.md](case_1504.md) |
+| 1562 | PodChaos | PodFailure | 6 | 3 | 66 | 2 | one_truncated | [case_1562.md](case_1562.md) |
+| 1814 | JVMChaos | JVMMemoryStress | 9 | 4 | 74 | 2 | one_truncated | [case_1814.md](case_1814.md) |
+| 1860 | JVMChaos | JVMMemoryStress | 4 | 3 | 54 | 2 | one_truncated | [case_1860.md](case_1860.md) |
+| 1862 | PodChaos | ContainerKill | 5 | 3 | 47 | 1 | two_truncated | [case_1862.md](case_1862.md) |
+| 1880 | HTTPFault | HTTPResponseReplaceBody | 4 | 2 | 46 | 1 | two_truncated | [case_1880.md](case_1880.md) |
+| 1886 | PodChaos | ContainerKill | 5 | 3 | 55 | 1 | two_truncated | [case_1886.md](case_1886.md) |
+| 1917 | PodChaos | ContainerKill | 11 | 4 | 65 | 3 | all_concluded | [case_1917.md](case_1917.md) |
+| 1934 | PodChaos | PodFailure | 13 | 4 | 54 | 1 | two_truncated | [case_1934.md](case_1934.md) |
+| 2130 | JVMChaos | JVMReturn | 10 | 5 | 51 | 1 | two_truncated | [case_2130.md](case_2130.md) |
+| 2211 | PodChaos | ContainerKill | 7 | 3 | 46 | 3 | all_concluded | [case_2211.md](case_2211.md) |
+| 2231 | HTTPFault | HTTPRequestDelay | 7 | 2 | 50 | 2 | one_truncated | [case_2231.md](case_2231.md) |
+| 2237 | HTTPFault | HTTPRequestReplacePath | 7 | 2 | 47 | 3 | all_concluded | [case_2237.md](case_2237.md) |
+| 2253 | JVMChaos | JVMMemoryStress | 6 | 3 | 62 | 2 | one_truncated | [case_2253.md](case_2253.md) |
+| 2258 | PodChaos | ContainerKill | 6 | 3 | 53 | 3 | all_concluded | [case_2258.md](case_2258.md) |
+| 2283 | HTTPFault | HTTPRequestReplacePath | 5 | 4 | 59 | 2 | one_truncated | [case_2283.md](case_2283.md) |
+| 2390 | JVMChaos | JVMMemoryStress | 5 | 3 | 59 | 1 | two_truncated | [case_2390.md](case_2390.md) |
+| 2479 | PodChaos | ContainerKill | 10 | 5 | 48 | 1 | two_truncated | [case_2479.md](case_2479.md) |
+| 2584 | NetworkChaos | NetworkBandwidth | 3 | 2 | 52 | 2 | one_truncated | [case_2584.md](case_2584.md) |
+| 2585 | PodChaos | ContainerKill | 4 | 3 | 73 | 1 | two_truncated | [case_2585.md](case_2585.md) |
+| 2597 | HTTPFault | HTTPRequestDelay | 3 | 2 | 35 | 1 | two_truncated | [case_2597.md](case_2597.md) |
+| 2678 | NetworkChaos | NetworkBandwidth | 8 | 3 | 41 | 2 | one_truncated | [case_2678.md](case_2678.md) |
+| 2697 | JVMChaos | JVMMemoryStress | 9 | 4 | 62 | 1 | two_truncated | [case_2697.md](case_2697.md) |
+| 2700 | NetworkChaos | NetworkCorrupt | 4 | 3 | 58 | 1 | two_truncated | [case_2700.md](case_2700.md) |
+| 2713 | JVMChaos | JVMMemoryStress | 5 | 4 | 38 | 3 | all_concluded | [case_2713.md](case_2713.md) |
+| 2715 | NetworkChaos | NetworkBandwidth | 9 | 4 | 38 | 2 | one_truncated | [case_2715.md](case_2715.md) |
+| 2752 | HTTPFault | HTTPRequestAbort | 3 | 2 | 47 | 2 | one_truncated | [case_2752.md](case_2752.md) |
+| 2761 | HTTPFault | HTTPResponseDelay | 3 | 2 | 77 | 2 | one_truncated | [case_2761.md](case_2761.md) |
+| 2769 | JVMChaos | JVMMemoryStress | 4 | 3 | 59 | 2 | one_truncated | [case_2769.md](case_2769.md) |
+| 2836 | HTTPFault | HTTPResponseReplaceBody | 5 | 2 | 50 | 2 | one_truncated | [case_2836.md](case_2836.md) |
+| 2988 | JVMChaos | JVMCPUStress | 9 | 4 | 64 | 1 | two_truncated | [case_2988.md](case_2988.md) |
+| 3008 | NetworkChaos | NetworkCorrupt | 4 | 3 | 56 | 3 | all_concluded | [case_3008.md](case_3008.md) |
+| 3053 | JVMChaos | JVMMemoryStress | 11 | 4 | 46 | 1 | two_truncated | [case_3053.md](case_3053.md) |
+| 3059 | NetworkChaos | NetworkCorrupt | 10 | 3 | 64 | 2 | one_truncated | [case_3059.md](case_3059.md) |
+| 3076 | NetworkChaos | NetworkPartition | 10 | 3 | 55 | 1 | two_truncated | [case_3076.md](case_3076.md) |
+| 3114 | PodChaos | PodKill | 4 | 3 | 69 | 1 | two_truncated | [case_3114.md](case_3114.md) |
+| 3125 | HTTPFault | HTTPResponseDelay | 3 | 2 | 76 | 2 | one_truncated | [case_3125.md](case_3125.md) |
+| 3128 | HTTPFault | HTTPResponseDelay | 3 | 2 | 39 | 2 | one_truncated | [case_3128.md](case_3128.md) |
+| 3222 | NetworkChaos | NetworkLoss | 7 | 3 | 35 | 1 | two_truncated | [case_3222.md](case_3222.md) |
+| 3266 | PodChaos | ContainerKill | 10 | 4 | 45 | 1 | two_truncated | [case_3266.md](case_3266.md) |
+| 3278 | NetworkChaos | NetworkBandwidth | 3 | 2 | 68 | 3 | all_concluded | [case_3278.md](case_3278.md) |
+| 3284 | NetworkChaos | NetworkDelay | 3 | 2 | 47 | 3 | all_concluded | [case_3284.md](case_3284.md) |
+| 3325 | PodChaos | ContainerKill | 7 | 3 | 49 | 1 | two_truncated | [case_3325.md](case_3325.md) |
+| 3465 | NetworkChaos | NetworkCorrupt | 8 | 3 | 76 | 2 | one_truncated | [case_3465.md](case_3465.md) |
+| 3556 | JVMChaos | JVMMemoryStress | 6 | 3 | 52 | 2 | one_truncated | [case_3556.md](case_3556.md) |
+| 3600 | JVMChaos | JVMMemoryStress | 9 | 5 | 44 | 2 | one_truncated | [case_3600.md](case_3600.md) |
+| 3622 | NetworkChaos | NetworkDelay | 12 | 3 | 45 | 2 | one_truncated | [case_3622.md](case_3622.md) |
+| 3673 | PodChaos | ContainerKill | 4 | 2 | 34 | 2 | one_truncated | [case_3673.md](case_3673.md) |
+| 3700 | JVMChaos | JVMMemoryStress | 9 | 5 | 69 | 1 | two_truncated | [case_3700.md](case_3700.md) |
+| 3716 | JVMChaos | JVMMemoryStress | 5 | 3 | 51 | 1 | two_truncated | [case_3716.md](case_3716.md) |
+| 3760 | JVMChaos | JVMMemoryStress | 9 | 5 | 75 | 2 | one_truncated | [case_3760.md](case_3760.md) |
+| 3776 | PodChaos | PodFailure | 9 | 4 | 54 | 1 | two_truncated | [case_3776.md](case_3776.md) |
+| 3868 | JVMChaos | JVMLatency | 10 | 5 | 51 | 1 | two_truncated | [case_3868.md](case_3868.md) |
+| 3878 | NetworkChaos | TimeSkew | 3 | 2 | 53 | 1 | two_truncated | [case_3878.md](case_3878.md) |
+| 3920 | JVMChaos | JVMMemoryStress | 5 | 4 | 59 | 2 | one_truncated | [case_3920.md](case_3920.md) |
+| 3955 | PodChaos | PodFailure | 5 | 4 | 64 | 1 | two_truncated | [case_3955.md](case_3955.md) |
+| 3966 | PodChaos | ContainerKill | 5 | 4 | 58 | 2 | one_truncated | [case_3966.md](case_3966.md) |
+| 4032 | JVMChaos | JVMMemoryStress | 4 | 3 | 53 | 2 | one_truncated | [case_4032.md](case_4032.md) |
+| 4054 | PodChaos | ContainerKill | 5 | 4 | 67 | 2 | one_truncated | [case_4054.md](case_4054.md) |
+| 4073 | PodChaos | ContainerKill | 4 | 3 | 63 | 1 | two_truncated | [case_4073.md](case_4073.md) |
+| 4081 | PodChaos | ContainerKill | 11 | 4 | 65 | 1 | two_truncated | [case_4081.md](case_4081.md) |
+| 4229 | NetworkChaos | NetworkPartition | 7 | 5 | 46 | 1 | two_truncated | [case_4229.md](case_4229.md) |
+| 4257 | PodChaos | PodFailure | 5 | 4 | 56 | 2 | one_truncated | [case_4257.md](case_4257.md) |
+| 4258 | PodChaos | ContainerKill | 5 | 3 | 73 | 2 | one_truncated | [case_4258.md](case_4258.md) |
+| 4309 | PodChaos | ContainerKill | 5 | 4 | 49 | 3 | all_concluded | [case_4309.md](case_4309.md) |
+| 4310 | PodChaos | PodFailure | 5 | 4 | 54 | 2 | one_truncated | [case_4310.md](case_4310.md) |
+| 4353 | JVMChaos | JVMMemoryStress | 10 | 5 | 62 | 1 | two_truncated | [case_4353.md](case_4353.md) |
+| 4363 | JVMChaos | JVMMemoryStress | 5 | 4 | 40 | 2 | one_truncated | [case_4363.md](case_4363.md) |
+| 4375 | PodChaos | ContainerKill | 6 | 3 | 65 | 1 | two_truncated | [case_4375.md](case_4375.md) |
+| 4423 | NetworkChaos | NetworkBandwidth | 5 | 3 | 66 | 1 | two_truncated | [case_4423.md](case_4423.md) |
+| 4463 | PodChaos | ContainerKill | 4 | 3 | 45 | 3 | all_concluded | [case_4463.md](case_4463.md) |
+| 4510 | NetworkChaos | NetworkBandwidth | 4 | 3 | 62 | 2 | one_truncated | [case_4510.md](case_4510.md) |
+| 4519 | JVMChaos | JVMMemoryStress | 5 | 4 | 63 | 1 | two_truncated | [case_4519.md](case_4519.md) |
+| 4530 | JVMChaos | JVMMemoryStress | 8 | 4 | 59 | 2 | one_truncated | [case_4530.md](case_4530.md) |
+| 4617 | JVMChaos | JVMCPUStress | 4 | 3 | 57 | 1 | two_truncated | [case_4617.md](case_4617.md) |
+| 4715 | JVMChaos | JVMMemoryStress | 5 | 4 | 43 | 2 | one_truncated | [case_4715.md](case_4715.md) |
+| 4740 | PodChaos | ContainerKill | 4 | 3 | 50 | 3 | all_concluded | [case_4740.md](case_4740.md) |
+| 4789 | JVMChaos | JVMMemoryStress | 9 | 5 | 49 | 1 | two_truncated | [case_4789.md](case_4789.md) |
+| 4801 | PodChaos | ContainerKill | 5 | 4 | 54 | 2 | one_truncated | [case_4801.md](case_4801.md) |
+| 4832 | JVMChaos | JVMMemoryStress | 4 | 1 | 54 | 2 | one_truncated | [case_4832.md](case_4832.md) |
+| 4841 | NetworkChaos | NetworkDelay | 14 | 5 | 51 | 2 | one_truncated | [case_4841.md](case_4841.md) |

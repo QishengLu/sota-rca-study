@@ -1,0 +1,32 @@
+# Demo Matrix — 合作者验证流程通畅用
+# 2 framework × 2 model × 20 samples ≈ $0.6 / 12 min
+# exp_id 加 'demo-' 前缀, 不污染 prod analysis_cache
+
+version: 1
+preset: demo
+exp_id_template: "demo-{framework}-{model_alias}-d20"
+output_dir: results/matrix/{run_id}/
+
+frameworks: [thinkdepthai, aiq]
+models:
+  - alias: sonnet46    # 引用 configs/models/catalog.yaml 里的 alias
+  - alias: qwen36
+
+subset:
+  kind: demo               # full | demo | filter | indices
+  demo_count: 20           # 从 4 个 chaos_family 均匀采样
+  seed: 42                 # 固定 dataset_index, 保证可复现
+
+execution:
+  cell_concurrency: 2      # 4 个 cell, 同时跑 2
+  rollout_concurrency_max: 3
+  timeout_per_sample: 300
+  resume: true
+  failure_tolerance: 0.3   # demo 容忍度高些
+  retry_failed_samples: 1
+
+post:
+  auto_judge: true
+  auto_intent_classify: true
+  refresh_dashboard_cache: true
+  cache_target: demo_cache.json   # 写到 demo cache, 不污染 prod

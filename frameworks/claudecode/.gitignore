@@ -1,0 +1,23 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Runtime data (hard-copied from RolloutRunner)
+data/
+rca_result*.json
+
+# Environment
+.env
+
+# Databases
+*.db
+
+# Logs
+*.log

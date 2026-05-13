@@ -1,0 +1,481 @@
+case_id: aiq.1114
+framework: aiq-qwen3.5-plus
+data_dir: /home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_1e217c54
+gt_from_injection_json:
+  fault_type: JVMMemoryStress
+  fault_category: JVMChaos
+  injection_name: ts2-ts-config-service-stress-j8gm95
+  gt_services:
+  - ts-config-service
+  source_service: null
+  target_service: null
+  start_time: '2025-08-14T04:24:48Z'
+  end_time: '2025-08-14T04:28:46Z'
+  display_config:
+    duration: 4
+    injection_point:
+      app_name: ts-config-service
+      class_name: config.ConfigApplication
+      method_name: restTemplate
+    mem_type: 2
+    namespace: ts
+gt_from_causal_graph_json:
+  root_causes:
+  - ts-config-service
+  alarm_nodes:
+  - span|loadgenerator::HTTP POST http://ts-ui-dashboard:8080/api/v1/travelplanservice/travelPlan/cheapest
+  - span|loadgenerator::HTTP POST http://ts-ui-dashboard:8080/api/v1/travelplanservice/travelPlan/quickest
+  - span|loadgenerator::HTTP POST http://ts-ui-dashboard:8080/api/v1/travelservice/trips/left
+  - span|loadgenerator::HTTP POST http://ts-ui-dashboard:8080/api/v1/travelplanservice/travelPlan/minStation
+  - span|loadgenerator::HTTP POST http://ts-ui-dashboard:8080/api/v1/travel2service/trips/left
+  - span|loadgenerator::HTTP POST http://ts-ui-dashboard:8080/api/v1/preserveservice/preserve
+agent_predicted:
+  root_causes:
+  - ts-seat-service
+  predicted_graph_nodes:
+  - ts-seat-service
+  - ts-travel-service
+  - ts-travel2-service
+  - ts-basic-service
+  - ts-travel-plan-service
+  - ts-route-plan-service
+  - ts-ui-dashboard
+  - loadgenerator
+raw_sql_count_total: 93
+raw_sql_list_sample:
+- SELECT service_name, level, COUNT(*) as error_count FROM abnormal_logs GROUP BY service_name, level ORDER BY error_count DESC LIMIT 20
+- SELECT service_name, level, COUNT(*) as error_count FROM abnormal_logs GROUP BY service_name, level ORDER BY error_count DESC LIMIT 20
+- SELECT service_name, level, message, COUNT(*) as count FROM abnormal_logs WHERE level IN ('ERROR', 'WARN') GROUP BY service_name, level, message ORDER BY count DESC LIMIT 30
+- SELECT service_name, attr_http_response_status_code, COUNT(*) as count FROM abnormal_traces WHERE attr_http_response_status_code IS NOT NULL GROUP BY service_name, attr_http_response_status_code ORDER
+  BY count DESC LIMIT 30
+- SELECT service_name, attr_http_response_status_code, COUNT(*) as count FROM abnormal_traces WHERE attr_http_response_status_code IN (500, 502, 503, 504, 400, 404) GROUP BY service_name, attr_http_response_status_code
+  ORDER BY count DESC LIMIT 30
+- SELECT trace_id, service_name, span_name, attr_http_response_status_code, duration, parent_span_id FROM abnormal_traces WHERE attr_http_response_status_code IN (500, 503) ORDER BY time LIMIT 20
+- SELECT trace_id, service_name, span_name, attr_status_code, duration FROM abnormal_traces WHERE trace_id = '1c561929c6cbb4bcd81dbbc9ccf2f943' ORDER BY time
+- SELECT trace_id, service_name, span_name, attr_status_code, duration FROM abnormal_traces WHERE trace_id = '1c561929c6cbb4bcd81dbbc9ccf2f943' AND service_name = 'ts-seat-service' ORDER BY time
+- SELECT parent_span_id, span_id FROM abnormal_traces WHERE trace_id = '1c561929c6cbb4bcd81dbbc9ccf2f943' AND service_name = 'ts-seat-service' AND span_name = 'GET' AND attr_status_code = 'Error' LIMIT
+  5
+- SELECT span_id, service_name, span_name, attr_status_code, duration FROM abnormal_traces WHERE trace_id = '1c561929c6cbb4bcd81dbbc9ccf2f943' AND span_id IN ('4aa445e4bfacd09f', 'f7c4935394957682', 'cbfe10611cc18c1e',
+  'df76f2721daa311d', 'c7a688d30e57dfa7')
+- SELECT span_id, service_name, span_name, attr_status_code, duration FROM abnormal_traces WHERE trace_id = '1c561929c6cbb4bcd81dbbc9ccf2f943' AND parent_span_id IN (SELECT span_id FROM abnormal_traces
+  WHERE trace_id = '1c561929c6cbb4bcd81dbbc9ccf2f943' AND service_name = 'ts-seat-service' AND span_name LIKE '%Controller%') LIMIT 30
+- SELECT span_id, service_name, span_name, attr_status_code, duration FROM abnormal_traces WHERE trace_id = '1c561929c6cbb4bcd81dbbc9ccf2f943' AND parent_span_id = '44d2373a89573bc6' LIMIT 20
+- SELECT service_name, metric, value, attr_destination, attr_source FROM abnormal_metrics WHERE service_name = 'ts-seat-service' AND metric LIKE '%error%' OR metric LIKE '%latency%' ORDER BY time DESC LIMIT
+  30
+- SELECT DISTINCT metric FROM abnormal_metrics WHERE service_name = 'ts-seat-service' LIMIT 20
+- SELECT service_name, metric, value, attr_destination FROM abnormal_metrics WHERE metric LIKE '%http%' AND value > 0 ORDER BY value DESC LIMIT 30
+- SELECT service_name, metric, value FROM abnormal_metrics WHERE metric LIKE '%error%' AND value > 0 ORDER BY value DESC LIMIT 30
+- SELECT DISTINCT metric FROM abnormal_metrics WHERE metric LIKE '%error%' LIMIT 20
+- SELECT DISTINCT service_name FROM abnormal_traces ORDER BY service_name
+- SELECT service_name, span_name, attr_http_response_status_code, COUNT(*) as cnt FROM abnormal_traces WHERE attr_http_response_status_code IN (500, 503) GROUP BY service_name, span_name, attr_http_response_status_code
+  ORDER BY cnt DESC LIMIT 20
+- SELECT service_name, message, COUNT(*) as cnt FROM abnormal_logs WHERE service_name = 'ts-seat-service' AND level IN ('ERROR', 'WARN') GROUP BY service_name, message ORDER BY cnt DESC LIMIT 20
+raw_sql_substring_audit:
+  has_baseline_contrast_substring: false
+  has_call_tree_build_substring: true
+  has_trace_follow_substring: true
+  has_jvm_metric_substring: false
+  has_container_metric_substring: false
+  has_k8s_metric_substring: false
+  has_db_metric_substring: false
+  has_network_metric_substring: false
+  has_status_error_filter: true
+  has_status_unset_filter: false
+  where_service_name_filters:
+  - ts-seat-service
+  - ts-basic-service
+  - ts-route-plan-service
+  - ts-travel-plan-service
+  - ts-order-service
+  - ts-config-service
+  - ts-ui-dashboard
+  - ts-travel2-service
+  - ts-travel-service
+  - ts-order-other-service
+parquet_evidence:
+  top_error_services_abnormal_logs:
+  - service: ts-food-service
+    count: 138
+  - service: ts-order-service
+    count: 56
+  - service: ts-preserve-service
+    count: 56
+  - service: ts-delivery-service
+    count: 48
+  - service: ts-notification-service
+    count: 47
+  - service: ts-seat-service
+    count: 39
+  top_error_services_normal_logs:
+  - service: ts-food-service
+    count: 343
+  - service: ts-order-service
+    count: 103
+  - service: ts-preserve-service
+    count: 103
+  - service: ts-delivery-service
+    count: 48
+  - service: ts-notification-service
+    count: 48
+  - service: ts-inside-payment-service
+    count: 2
+  gt_service_abnormal_log_error_count: {}
+  gt_service_normal_log_error_count: {}
+  gt_service_status_code_distribution:
+    ts-config-service:
+      Unset: 6819
+  gt_service_abnormal_span_count:
+    ts-config-service: 6819
+  top_error_span_services:
+  - service: ts-seat-service
+    sc: Error
+    count: 117
+  - service: loadgenerator
+    sc: Error
+    count: 4
+  gt_latency_stats:
+  - service: ts-config-service
+    avg_ms: 6.8
+    max_ms: 1357.9
+    p95_ms: 10.0
+    count: 6819
+  chronic_noise_detail:
+  - service: ts-food-service
+    normal_err: 343
+    abnormal_err: 138
+    ratio: 2.49
+  - service: ts-order-service
+    normal_err: 103
+    abnormal_err: 56
+    ratio: 1.84
+  - service: ts-preserve-service
+    normal_err: 103
+    abnormal_err: 56
+    ratio: 1.84
+  - service: ts-delivery-service
+    normal_err: 48
+    abnormal_err: 48
+    ratio: 1.0
+  - service: ts-notification-service
+    normal_err: 48
+    abnormal_err: 47
+    ratio: 1.02
+  gt_span_name_breakdown:
+  - span_name: SELECT Config
+    avg_ms: 2.7
+    count: 1357
+  - span_name: ConfigRepository.findByName
+    avg_ms: 6.4
+    count: 1357
+  - span_name: SELECT ts.config
+    avg_ms: 1.1
+    count: 1357
+  - span_name: GET /api/v1/configservice/configs/{configName}
+    avg_ms: 14.7
+    count: 1356
+  - span_name: ConfigController.retrieve
+    avg_ms: 9.3
+    count: 1356
+  - span_name: SELECT ts
+    avg_ms: 0.9
+    count: 34
+  - span_name: SELECT ts.ts
+    avg_ms: 2.8
+    count: 2
+  gt_parent_child_pairs:
+  - - ts-seat-service
+    - ts-config-service
+trajectory_reasoning_snippets:
+- idx: 4
+  text: 'Now I have a clear understanding of the schema. Let me start investigating the incident by:
+
+    1. First, looking at the abnormal logs to understand what errors are occurring
+
+    2. Then examining the abnormal traces to understand the service call chains and HTTP status codes
+
+    3. Looking at metrics to identify latency and error rate patterns
+
+
+    Let me start by examining the abnormal logs to see what services are generating errors.
+
+
+    '
+- idx: 16
+  text: 'Interesting! The only service showing HTTP 500 and 503 errors is `ts-seat-service`. This is a strong indicator that `ts-seat-service` might be the root cause. Let me investigate further by looking
+    at the traces to understand the call chains and see how errors propagate.
+
+
+    '
+- idx: 18
+  text: 'The durations are extremely high (in the billions of nanoseconds, i.e., several seconds). This indicates severe latency issues in ts-seat-service. Let me look at the trace structure to understand
+    the call chain - which services are calling ts-seat-service and which services ts-seat-service is calling.
+
+
+    '
+- idx: 22
+  text: 'I can see that ts-seat-service is experiencing errors with very high latency (several seconds). The GET spans with "Error" status and very high duration (3-8 seconds) seem to be the problematic
+    ones. Let me look at what ts-seat-service is calling - I need to see the downstream services it depends on.
+
+
+    '
+- idx: 26
+  text: 'The GET spans are children of SeatController.getLeftTicketOfInterval spans within ts-seat-service itself. Let me look at what ts-seat-service is calling downstream by finding spans where ts-seat-service
+    is the parent.
+
+
+    '
+- idx: 42
+  text: 'Let me look at the traces more carefully to understand the service dependencies. I need to find which services ts-seat-service is calling.
+
+
+    '
+- idx: -1
+  text: 'Based on my investigation, I have gathered strong evidence that **confirms and strengthens** the preliminary root cause graph. Here are my findings:
+
+
+    ## Evidence Summary
+
+
+    ### 1. Root Cause Confirmation: ts-seat-service
+
+
+    **Trace Evidence:**
+
+    - `ts-seat-service` is the **only service** (besides loadgenerator which reflects upstream errors) with `attr_status_code = ''Error''`
+
+    - First errors occurred at `2025-08-14T04:25:01` (Unix timestamp ~1723608301)
+
+    - Error spans show extremely high durations: 8.87s, 8.61s, 3.5-3.8s
+
+    - All errors are in seat-related operations: `POST /api/v1/seatservice/seats/left_tickets`, `SeatController.getLeftTicketOfInterval`, `GET`
+
+
+    **Query Result:**
+
+    ```
+
+    SELECT DISTINCT service_name FROM abnormal_traces WHERE attr_status_code = ''Error''
+
+    → Returns: ts-seat-service, loadgenerator
+
+    ```
+
+
+    ### 2. Fault Propagation Path Confirmed
+
+
+    **Trace Analysis shows two main call chains:**
+
+
+    **Chain 1 (cheapest travel plan):**
+
+    ```
+
+    loadgenerator → ts-ui-dashboard → ts-travel-plan-service → ts-route-plan-service → ts-travel2-service → ts-seat-service (ERROR)
+
+    ```
+
+
+    **Chain 2 (trips/left):**
+
+    ```
+
+    loadgenerator → ts-ui-dashboard → ts-travel-service → ts-seat-service (ERROR)
+
+    ```
+
+
+    ### 3. Latency Impact Evidence
+
+
+    | Service | Avg Duration | Max Duration | Status |
+
+    |---------|-------------|--------------|--------|
+
+    | ts-route-plan-service | 636ms | 50.3s | HIGH_LATENCY |
+
+    | ts-travel-plan-service | 567ms | 50.8s | HIGH_LATENCY |
+
+    | ts-travel2-service | 163ms | 50.3s | HIGH_LATENCY |
+
+    | ts-travel-service | 127ms | 50.1s | HIGH_LATENCY |
+
+    | ts-seat-service | 114ms | 8.87s | HIGH_ERROR_RATE, HIGH_LATENCY |
+
+    | ts-basic-service | 34ms | 3.0s | HIGH_LATENCY |
+
+    | ts-ui-dashboard | 120ms | 20s | HIGH_LATENCY |
+
+    | loadgenerator | 126ms | 20s | HIGH_ERROR_RATE |
+
+
+    ### 4. Refined Causal Graph
+
+
+    The preliminary graph is **accurate**. The refined timestamps based on actual evidence:
+
+
+    - **ts-seat-service**: First error at 2025-08-14T04:25:01 (1723608301)
+
+    - **ts-travel-service/ts-travel2-service**: Affecte'
+- idx: -1
+  text: "Based on my analysis, I have identified the root cause and fault propagation path. Let me construct the final causal graph output.\n\n```json\n{\n  \"nodes\": [\n    {\"component\": \"ts-seat-service\"\
+    , \"state\": [\"HIGH_ERROR_RATE\", \"HIGH_LATENCY\"], \"timestamp\": 1723608000},\n    {\"component\": \"ts-travel-service\", \"state\": [\"HIGH_LATENCY\"], \"timestamp\": 1723608005},\n    {\"component\"\
+    : \"ts-travel2-service\", \"state\": [\"HIGH_LATENCY\"], \"timestamp\": 1723608005},\n    {\"component\": \"ts-basic-service\", \"state\": [\"HIGH_LATENCY\"], \"timestamp\": 1723608010},\n    {\"component\"\
+    : \"ts-travel-plan-service\", \"state\": [\"HIGH_LATENCY\"], \"timestamp\": 1723608015},\n    {\"component\": \"ts-route-plan-service\", \"state\": [\"HIGH_LATENCY\"], \"timestamp\": 1723608015},\n\
+    \    {\"component\": \"ts-ui-dashboard\", \"state\": [\"HIGH_ERROR_RATE\", \"HIGH_LATENCY\"], \"timestamp\": 1723608020},\n    {\"component\": \"loadgenerator\", \"state\": [\"HIGH_ERROR_RATE\"], \"\
+    timestamp\": 1723608025}\n  ],\n  \"edges\": [\n    {\"source\": \"ts-seat-service\", \"target\": \"ts-travel-service\"},\n    {\"source\": \"ts-seat-service\", \"target\": \"ts-travel2-service\"},\n\
+    \    {\"source\": \"ts-travel-service\", \"target\": \"ts-basic-service\"},\n    {\"source\": \"ts-travel2-service\", \"target\": \"ts-basic-service\"},\n    {\"source\": \"ts-travel-service\", \"target\"\
+    : \"ts-travel-plan-service\"},\n    {\"source\": \"ts-travel2-service\", \"target\": \"ts-travel-plan-service\"},\n    {\"source\": \"ts-travel-service\", \"target\": \"ts-route-plan-service\"},\n \
+    \   {\"source\": \"ts-travel2-service\", \"target\": \"ts-route-plan-service\"},\n    {\"source\": \"ts-travel-plan-service\", \"target\": \"ts-ui-dashboard\"},\n    {\"source\": \"ts-route-plan-service\"\
+    , \"target\": \"ts-ui-dashboard\"},\n    {\"source\": \"ts-ui-dashboard\", \"target\": \"loadgenerator\"}\n  ],\n  \"root_causes\": [\n    {\"component\": \"ts-seat-service\", \"state\": [\"HIGH_ERROR_RATE\"\
+    , \"HIGH_LATENCY\"], \"timestamp\": 1723608000}\n  ],\n  \"component_to_service\": {}\n}\n```\n\n## Summary\n\n**Root Cause Service**: `ts-seat-service`\n\n**Evidence**:\n1. **HTTP Errors**: ts-seat-service\
+    \ is the onl"
+gt_required_capabilities:
+  gt_is_silent: true
+  gt_is_loudest: false
+  chronic_noise_present: true
+  chronic_noise_carriers:
+  - ts-food-service
+  - ts-order-service
+  - ts-preserve-service
+  - ts-delivery-service
+  - ts-notification-service
+  required_metric_layer: jvm
+  gt_path_is_edge_fault: false
+  gt_has_name_twin: true
+  name_twin_candidates:
+  - ts-user-service
+  - ts-assurance-service
+  - ts-order-service
+  - ts-security-service
+  - ts-notification-service
+  - ts-travel-service
+  - ts-station-food-service
+  - ts-route-plan-service
+  - ts-contacts-service
+  - ts-auth-service
+  - ts-inside-payment-service
+  - ts-travel2-service
+  - ts-preserve-service
+  - ts-basic-service
+  - ts-travel-plan-service
+  - ts-seat-service
+  - ts-consign-price-service
+  - ts-consign-service
+  - ts-delivery-service
+  - ts-verification-code-service
+  - ts-price-service
+  - ts-food-service
+  - ts-station-service
+  - ts-train-food-service
+  - ts-order-other-service
+  - ts-train-service
+  - ts-route-service
+  - ts-payment-service
+  gt_diluted_across_spans: false
+path_alignment:
+  gt_touched_in_trajectory: false
+  gt_neighbors_touched:
+    ts-seat-service: 38
+  gt_neighbors_from_causal_graph:
+  - ts-seat-service
+  agent_focus_services:
+  - service: ts-seat-service
+    count: 38
+  - service: ts-basic-service
+    count: 1
+  - service: ts-route-plan-service
+    count: 1
+  - service: ts-travel-plan-service
+    count: 1
+  - service: ts-order-service
+    count: 1
+  agent_predicted_rc_in_gt_neighborhood: true
+counterfactual:
+  PD1_baseline_contrast:
+    chronic_noise_in_data: true
+    predicted_rc_is_chronic_carrier: false
+    predicted_rc_error_ratios:
+      ts-seat-service:
+        normal: 0
+        abnormal: 39
+    if_run_would_reveal: false
+  PD2_call_tree_build:
+    gt_is_upstream_of_agent_focus: false
+    if_run_would_surface_gt: false
+  PD3_fault_layer_metric_probe:
+    metric_family_if_probed: jvm
+    gt_metric_anomaly_exists_in_parquet: true
+    gt_metric_families_probed:
+    - jvm.system.cpu.load_1m
+    - jvm.system.cpu.utilization
+    - jvm.cpu.recent_utilization
+  PD4_named_candidate_not_isolated:
+    if_isolated_predicted_rc_show_healthy:
+      ts-seat-service: false
+  R_correct_heuristic_would_reach_gt:
+    if_loudness_applied: false
+    if_baseline_diff_applied: false
+    if_edge_direction_applied: null
+    if_name_twin_check_applied: true
+  D_obstacle_is_structural: true
+parquet_queries_run:
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_1e217c54/abnormal_logs.parquet') WHERE level IN ('ERROR','SEVERE') GROUP BY
+    1 ORDER BY n DESC LIMIT 10
+  purpose: top_error_services_abnormal_logs
+  row_count: 6
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_1e217c54/normal_logs.parquet') WHERE level IN ('ERROR','SEVERE') GROUP BY 1
+    ORDER BY n DESC LIMIT 10
+  purpose: top_error_services_normal_logs
+  row_count: 6
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_1e217c54/abnormal_logs.parquet') WHERE level IN ('ERROR','SEVERE') AND service_name
+    IN ('ts-config-service') GROUP BY 1
+  purpose: gt_service_abnormal_log_error_count
+  row_count: 0
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_1e217c54/normal_logs.parquet') WHERE level IN ('ERROR','SEVERE') AND service_name
+    IN ('ts-config-service') GROUP BY 1
+  purpose: gt_service_normal_log_error_count
+  row_count: 0
+- sql: SELECT service_name, "attr.status_code" as sc, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_1e217c54/abnormal_traces.parquet') WHERE service_name
+    IN ('ts-config-service') GROUP BY 1,2
+  purpose: gt_service_status_code_distribution
+  row_count: 1
+- sql: SELECT service_name, "attr.status_code" as sc, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_1e217c54/abnormal_traces.parquet') WHERE "attr.status_code"
+    IN ('Error','ERROR') GROUP BY 1,2 ORDER BY n DESC LIMIT 5
+  purpose: top_error_span_services
+  row_count: 2
+- sql: SELECT service_name, AVG(duration)/1e6 AS avg_ms, MAX(duration)/1e6 AS max_ms, QUANTILE_CONT(duration, 0.95)/1e6 AS p95_ms, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_1e217c54/abnormal_traces.parquet')
+    WHERE service_name IN ('ts-config-service') GROUP BY 1
+  purpose: gt_latency_stats
+  row_count: 1
+- sql: SELECT DISTINCT service_name FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_1e217c54/abnormal_traces.parquet')
+  purpose: all_abnormal_trace_services
+  row_count: 29
+counterfactual_queries_run:
+- sql: SELECT span_name, AVG(duration)/1e6 AS avg_ms, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_1e217c54/abnormal_traces.parquet') WHERE service_name
+    IN ('ts-config-service') GROUP BY 1 ORDER BY n DESC LIMIT 20
+  purpose: gt_span_name_breakdown
+  row_count: 7
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_1e217c54/normal_logs.parquet') WHERE level IN ('ERROR','SEVERE') AND service_name
+    IN ('ts-seat-service') GROUP BY 1
+  purpose: predicted_rc_normal_err
+  row_count: 0
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_1e217c54/abnormal_logs.parquet') WHERE level IN ('ERROR','SEVERE') AND service_name
+    IN ('ts-seat-service') GROUP BY 1
+  purpose: predicted_rc_abnormal_err
+  row_count: 1
+- sql: SELECT DISTINCT p.service_name, c.service_name FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_1e217c54/abnormal_traces.parquet') c JOIN read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_1e217c54/abnormal_traces.parquet')
+    p ON c.parent_span_id=p.span_id WHERE c.service_name IN ('ts-config-service') OR p.service_name IN ('ts-config-service') LIMIT 200
+  purpose: gt_parent_child_pairs
+  row_count: 2
+- sql: SELECT DISTINCT metric FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/aiq-qwen3.5-plus/data_1e217c54/abnormal_metrics.parquet') WHERE service_name IN ('ts-config-service') AND metric
+    LIKE 'jvm.%' LIMIT 10
+  purpose: gt_metric_families_probed
+  row_count: 3
+classes_to_verify:
+- D5
+- PD_NoBaselineContrast
+- U1_LoudnessAnchorOverSilentVictim
+- aiq.PD_ReflectionStageWithoutNewProbe
+- aiq.PD_StageEndsWithoutCommitment

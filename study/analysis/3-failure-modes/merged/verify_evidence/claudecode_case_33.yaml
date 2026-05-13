@@ -1,0 +1,363 @@
+case_id: claudecode.33
+framework: claudecode-qwen3.5-plus
+data_dir: /home/nn/SOTA-agents/RCAgentEval/eval-data/claudecode-qwen3.5-plus/data_7fc200cc
+gt_from_injection_json:
+  fault_type: JVMMemoryStress
+  fault_category: JVMChaos
+  injection_name: ts0-ts-auth-service-stress-nlpsfx
+  gt_services:
+  - ts-auth-service
+  source_service: null
+  target_service: null
+  start_time: '2025-07-21T13:46:56Z'
+  end_time: '2025-07-21T13:50:54Z'
+  display_config:
+    duration: 4
+    injection_point:
+      app_name: ts-auth-service
+      class_name: auth.security.jwt.JWTProvider
+      method_name: init
+    mem_type: 2
+    namespace: ts
+gt_from_causal_graph_json:
+  root_causes:
+  - ts-auth-service
+  alarm_nodes:
+  - span|loadgenerator::HTTP POST http://ts-ui-dashboard:8080/api/v1/users/login
+agent_predicted:
+  root_causes:
+  - ts-ui-dashboard
+  predicted_graph_nodes:
+  - ts-ui-dashboard
+  - loadgenerator
+raw_sql_count_total: 83
+raw_sql_list_sample:
+- SELECT * FROM 'normal_logs.parquet' LIMIT 0;"
+- SELECT * FROM 'normal_traces.parquet' LIMIT 0;"
+- SELECT * FROM 'normal_metrics.parquet' LIMIT 0;"
+- SELECT * FROM 'normal_metrics_histogram.parquet' LIMIT 0;"
+- SELECT * FROM 'normal_metrics_sum.parquet' LIMIT 0;"
+- SELECT service_name, level, COUNT(*) as count FROM 'abnormal_logs.parquet' GROUP BY service_name, level ORDER BY count DESC LIMIT 20;"
+- SELECT service_name, COUNT(*) as total, SUM(CASE WHEN attr.status_code = 'ERROR' THEN 1 ELSE 0 END) as errors FROM 'abnormal_traces.parquet' GROUP BY service_name ORDER BY errors DESC;"
+- SELECT service_name, COUNT(*) as total, SUM(CASE WHEN \"attr.status_code\" = 'ERROR' THEN 1 ELSE 0 END) as errors FROM 'abnormal_traces.parquet' GROUP BY service_name ORDER BY errors DESC LIMIT 20;"
+- SELECT \"attr.status_code\", COUNT(*) as count FROM 'abnormal_traces.parquet' GROUP BY \"attr.status_code\";"
+- SELECT service_name, COUNT(*) as errors FROM 'abnormal_traces.parquet' WHERE \"attr.status_code\" = 'Error' GROUP BY service_name ORDER BY errors DESC LIMIT 20;"
+- SELECT service_name, level, message, COUNT(*) as count FROM 'abnormal_logs.parquet' WHERE level IN ('ERROR', 'WARN') GROUP BY service_name, level, message ORDER BY count DESC LIMIT 30;"
+- SELECT time, service_name, level, message FROM 'abnormal_logs.parquet' WHERE service_name = 'ts-ui-dashboard' AND level = 'ERROR' ORDER BY time LIMIT 30;"
+- SELECT service_name, COUNT(*) as count FROM 'abnormal_logs.parquet' WHERE level = 'ERROR' GROUP BY service_name ORDER BY count DESC;"
+- SELECT message, COUNT(*) as count FROM 'abnormal_logs.parquet' WHERE service_name = 'ts-ui-dashboard' AND level = 'ERROR' GROUP BY message ORDER BY count DESC;"
+- SELECT DISTINCT \"attr.http.request.method\", \"attr.http.response.status_code\", service_name, COUNT(*) as count FROM 'abnormal_traces.parquet' WHERE \"attr.http.response.status_code\" >= 500 GROUP BY
+  \"attr.http.request.method\", \"attr.http.response.status_code\", service_name ORDER BY count DESC;"
+- SELECT \"trace_id\", \"span_id\", \"parent_span_id\", service_name, \"span_name\", \"attr.http.response.status_code\", duration FROM 'abnormal_traces.parquet' WHERE service_name = 'ts-ui-dashboard' AND
+  \"attr.http.response.status_code\" = 503 ORDER BY time LIMIT 20;"
+- SELECT \"trace_id\", service_name, \"span_name\", duration, \"attr.status_code\" FROM 'abnormal_traces.parquet' WHERE \"trace_id\" IN (SELECT \"trace_id\" FROM 'abnormal_traces.parquet' WHERE service_name
+  = 'ts-ui-dashboard' AND \"attr.http.response.status_code\" = 503 LIMIT 5) ORDER BY \"trace_id\", time;"
+- SELECT \"trace_id\", service_name, \"span_name\", \"parent_span_id\", \"attr.http.response.status_code\", \"attr.status_code\", duration FROM 'abnormal_traces.parquet' WHERE \"trace_id\" = '8d00ee6adb3e82cf0f1fefb512901f33'
+  ORDER BY time;"
+- SELECT DISTINCT service_name FROM 'abnormal_traces.parquet' ORDER BY service_name;"
+- SELECT \"span_id\", service_name, \"span_name\" FROM 'abnormal_traces.parquet' WHERE \"trace_id\" = '8d00ee6adb3e82cf0f1fefb512901f33' AND \"parent_span_id\" = '' OR \"parent_span_id\" IS NULL;"
+raw_sql_substring_audit:
+  has_baseline_contrast_substring: true
+  has_call_tree_build_substring: true
+  has_trace_follow_substring: false
+  has_jvm_metric_substring: false
+  has_container_metric_substring: false
+  has_k8s_metric_substring: true
+  has_db_metric_substring: false
+  has_network_metric_substring: false
+  has_status_error_filter: true
+  has_status_unset_filter: false
+  where_service_name_filters:
+  - ts-ui-dashboard
+  - ts-auth-service
+  - ts-verification-code-service
+parquet_evidence:
+  top_error_services_abnormal_logs:
+  - service: ts-food-service
+    count: 126
+  - service: ts-ui-dashboard
+    count: 57
+  - service: ts-delivery-service
+    count: 48
+  - service: ts-notification-service
+    count: 47
+  - service: ts-preserve-service
+    count: 42
+  - service: ts-order-service
+    count: 42
+  top_error_services_normal_logs:
+  - service: ts-food-service
+    count: 217
+  - service: ts-notification-service
+    count: 48
+  - service: ts-delivery-service
+    count: 48
+  - service: ts-preserve-service
+    count: 45
+  - service: ts-order-service
+    count: 45
+  - service: ts-inside-payment-service
+    count: 1
+  gt_service_abnormal_log_error_count: {}
+  gt_service_normal_log_error_count: {}
+  gt_service_status_code_distribution:
+    ts-auth-service:
+      Unset: 4310
+  gt_service_abnormal_span_count:
+    ts-auth-service: 4310
+  top_error_span_services:
+  - service: ts-ui-dashboard
+    sc: Error
+    count: 57
+  - service: loadgenerator
+    sc: Error
+    count: 12
+  gt_latency_stats:
+  - service: ts-auth-service
+    avg_ms: 25.5
+    max_ms: 2869.3
+    p95_ms: 100.5
+    count: 4310
+  chronic_noise_detail:
+  - service: ts-food-service
+    normal_err: 217
+    abnormal_err: 126
+    ratio: 1.72
+  - service: ts-delivery-service
+    normal_err: 48
+    abnormal_err: 48
+    ratio: 1.0
+  - service: ts-notification-service
+    normal_err: 48
+    abnormal_err: 47
+    ratio: 1.02
+  - service: ts-preserve-service
+    normal_err: 45
+    abnormal_err: 42
+    ratio: 1.07
+  - service: ts-order-service
+    normal_err: 45
+    abnormal_err: 42
+    ratio: 1.07
+  gt_span_name_breakdown:
+  - span_name: SELECT User
+    avg_ms: 1.4
+    count: 855
+  - span_name: UserRepository.findByUsername
+    avg_ms: 3.7
+    count: 855
+  - span_name: SELECT ts.auth_user
+    avg_ms: 0.7
+    count: 855
+  - span_name: POST /api/v1/users/login
+    avg_ms: 125.4
+    count: 427
+  - span_name: UserController.getToken
+    avg_ms: 111.5
+    count: 427
+  - span_name: GET
+    avg_ms: 6.5
+    count: 427
+  - span_name: SELECT ts.user_roles
+    avg_ms: 0.9
+    count: 426
+  - span_name: SELECT ts
+    avg_ms: 22.6
+    count: 34
+  - span_name: SELECT ts.ts
+    avg_ms: 3.0
+    count: 2
+  - span_name: CREATE TABLE `ts`.`user_roles`
+    avg_ms: 34.5
+    count: 1
+  - span_name: ALTER table ts
+    avg_ms: 7.2
+    count: 1
+  gt_parent_child_pairs:
+  - - ts-auth-service
+    - ts-verification-code-service
+  - - ts-ui-dashboard
+    - ts-auth-service
+trajectory_reasoning_snippets:
+- idx: 0
+  text: '[thinking] I need to start by discovering the available data files and understanding their schemas before writing any SQL queries, as instructed.
+
+    '
+- idx: 3
+  text: '[thinking] Now I need to understand the schema of each parquet file before writing any queries.
+
+    '
+- idx: 10
+  text: '[thinking] Now let me check the schemas for the remaining files (histogram and sum) and then start identifying anomalies by comparing normal vs abnormal data.
+
+    '
+- idx: 15
+  text: '[thinking] Now that I understand the schemas, let me identify anomalies by first looking at the abnormal logs to see what errors are occurring.'
+- idx: 16
+  text: 'Now I understand the schemas. Let me identify anomalies by examining the abnormal data.
+
+
+    '
+- idx: 21
+  text: '[thinking] Need to fix the query - the column is ''attr.status_code'' not a separate table reference.'
+- idx: -1
+  text: "Based on my thorough investigation of the telemetry data, I have identified the root cause and fault propagation path.\n\n## Root Cause Analysis Results\n\n### Root Cause Service: **ts-ui-dashboard**\n\
+    \n### Evidence:\n\n1. **503 Errors at ts-ui-dashboard**: The login endpoint `POST /api/v1/users/login` is returning 503 Service Unavailable errors (57 occurrences in abnormal data)\n\n2. **No Downstream\
+    \ Calls in Failed Traces**: When ts-ui-dashboard returns 503, the traces show ONLY:\n   - `loadgenerator → ts-ui-dashboard` \n   - NO calls to ts-verification-code-service or ts-auth-service\n   \n\
+    3. **Healthy Downstream Services**:\n   - `ts-auth-service`: 0 errors, 4310 total traces in abnormal data\n   - `ts-verification-code-service`: 0 errors, 1750 total traces in abnormal data\n\n4. **Successful\
+    \ Login Flow** (for comparison):\n   - `loadgenerator → ts-ui-dashboard → ts-verification-code-service → ts-auth-service`\n   - All downstream database calls complete successfully\n\n5. **Error Pattern**:\
+    \ The 503 response comes from the Envoy/Caddy proxy layer with `X-Envoy-Upstream-Service-Time` showing 3-9 second delays, indicating ts-ui-dashboard is failing internally before routing to downstream\
+    \ services.\n\n### Fault Propagation Graph:\n\n```\nts-ui-dashboard (ROOT CAUSE)\n       │\n       ▼\nloadgenerator (receives 503 errors)\n```\n\n### CausalGraph JSON:\n\n```json\n{\n  \"nodes\": [\n\
+    \    {\"component\": \"ts-ui-dashboard\", \"state\": [\"HIGH_ERROR_RATE\"], \"timestamp\": 1753105639},\n    {\"component\": \"loadgenerator\", \"state\": [\"HIGH_ERROR_RATE\"], \"timestamp\": 1753105639}\n\
+    \  ],\n  \"edges\": [\n    {\"source\": \"ts-ui-dashboard\", \"target\": \"loadgenerator\"}\n  ],\n  \"root_causes\": [\n    {\"component\": \"ts-ui-dashboard\", \"state\": [\"HIGH_ERROR_RATE\"], \"\
+    timestamp\": 1753105639}\n  ],\n  \"component_to_service\": {}\n}\n```\n\nThe **ts-ui-dashboard** service is the origin of the failure. It's returning 503 errors on login requests BEFORE it can call\
+    \ any downstream services (ts-verification-code-service, ts-auth-service), which are both hea"
+- idx: -1
+  text: '[thinking] Since Write tool is not available, I''ll output the RCA result directly in the required JSON format.
+
+    '
+gt_required_capabilities:
+  gt_is_silent: true
+  gt_is_loudest: false
+  chronic_noise_present: true
+  chronic_noise_carriers:
+  - ts-food-service
+  - ts-delivery-service
+  - ts-notification-service
+  - ts-preserve-service
+  - ts-order-service
+  required_metric_layer: jvm
+  gt_path_is_edge_fault: false
+  gt_has_name_twin: true
+  name_twin_candidates:
+  - ts-user-service
+  - ts-assurance-service
+  - ts-order-service
+  - ts-security-service
+  - ts-notification-service
+  - ts-travel-service
+  - ts-cancel-service
+  - ts-station-food-service
+  - ts-route-plan-service
+  - ts-contacts-service
+  - ts-config-service
+  - ts-inside-payment-service
+  - ts-travel2-service
+  - ts-preserve-service
+  - ts-basic-service
+  - ts-travel-plan-service
+  - ts-seat-service
+  - ts-consign-price-service
+  - ts-consign-service
+  - ts-delivery-service
+  - ts-price-service
+  - ts-verification-code-service
+  - ts-food-service
+  - ts-station-service
+  - ts-train-food-service
+  - ts-order-other-service
+  - ts-train-service
+  - ts-route-service
+  - ts-payment-service
+  gt_diluted_across_spans: false
+path_alignment:
+  gt_touched_in_trajectory: true
+  gt_neighbors_touched:
+    ts-ui-dashboard: 26
+  gt_neighbors_from_causal_graph:
+  - ts-ui-dashboard
+  agent_focus_services:
+  - service: ts-ui-dashboard
+    count: 26
+  - service: ts-auth-service
+    count: 13
+  - service: ts-verification-code-service
+    count: 6
+  agent_predicted_rc_in_gt_neighborhood: true
+counterfactual:
+  PD1_baseline_contrast:
+    chronic_noise_in_data: true
+    predicted_rc_is_chronic_carrier: false
+    predicted_rc_error_ratios:
+      ts-ui-dashboard:
+        normal: 0
+        abnormal: 57
+    if_run_would_reveal: false
+  PD2_call_tree_build:
+    gt_is_upstream_of_agent_focus: true
+    if_run_would_surface_gt: true
+  PD3_fault_layer_metric_probe:
+    metric_family_if_probed: jvm
+    gt_metric_anomaly_exists_in_parquet: true
+    gt_metric_families_probed:
+    - jvm.cpu.recent_utilization
+    - jvm.system.cpu.load_1m
+    - jvm.system.cpu.utilization
+  PD4_named_candidate_not_isolated:
+    if_isolated_predicted_rc_show_healthy:
+      ts-ui-dashboard: false
+  R_correct_heuristic_would_reach_gt:
+    if_loudness_applied: false
+    if_baseline_diff_applied: false
+    if_edge_direction_applied: null
+    if_name_twin_check_applied: true
+  D_obstacle_is_structural: true
+parquet_queries_run:
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/claudecode-qwen3.5-plus/data_7fc200cc/abnormal_logs.parquet') WHERE level IN ('ERROR','SEVERE') GROUP
+    BY 1 ORDER BY n DESC LIMIT 10
+  purpose: top_error_services_abnormal_logs
+  row_count: 6
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/claudecode-qwen3.5-plus/data_7fc200cc/normal_logs.parquet') WHERE level IN ('ERROR','SEVERE') GROUP
+    BY 1 ORDER BY n DESC LIMIT 10
+  purpose: top_error_services_normal_logs
+  row_count: 6
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/claudecode-qwen3.5-plus/data_7fc200cc/abnormal_logs.parquet') WHERE level IN ('ERROR','SEVERE') AND
+    service_name IN ('ts-auth-service') GROUP BY 1
+  purpose: gt_service_abnormal_log_error_count
+  row_count: 0
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/claudecode-qwen3.5-plus/data_7fc200cc/normal_logs.parquet') WHERE level IN ('ERROR','SEVERE') AND
+    service_name IN ('ts-auth-service') GROUP BY 1
+  purpose: gt_service_normal_log_error_count
+  row_count: 0
+- sql: SELECT service_name, "attr.status_code" as sc, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/claudecode-qwen3.5-plus/data_7fc200cc/abnormal_traces.parquet') WHERE service_name
+    IN ('ts-auth-service') GROUP BY 1,2
+  purpose: gt_service_status_code_distribution
+  row_count: 1
+- sql: SELECT service_name, "attr.status_code" as sc, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/claudecode-qwen3.5-plus/data_7fc200cc/abnormal_traces.parquet') WHERE "attr.status_code"
+    IN ('Error','ERROR') GROUP BY 1,2 ORDER BY n DESC LIMIT 5
+  purpose: top_error_span_services
+  row_count: 2
+- sql: SELECT service_name, AVG(duration)/1e6 AS avg_ms, MAX(duration)/1e6 AS max_ms, QUANTILE_CONT(duration, 0.95)/1e6 AS p95_ms, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/claudecode-qwen3.5-plus/data_7fc200cc/abnormal_traces.parquet')
+    WHERE service_name IN ('ts-auth-service') GROUP BY 1
+  purpose: gt_latency_stats
+  row_count: 1
+- sql: SELECT DISTINCT service_name FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/claudecode-qwen3.5-plus/data_7fc200cc/abnormal_traces.parquet')
+  purpose: all_abnormal_trace_services
+  row_count: 30
+counterfactual_queries_run:
+- sql: SELECT span_name, AVG(duration)/1e6 AS avg_ms, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/claudecode-qwen3.5-plus/data_7fc200cc/abnormal_traces.parquet') WHERE service_name
+    IN ('ts-auth-service') GROUP BY 1 ORDER BY n DESC LIMIT 20
+  purpose: gt_span_name_breakdown
+  row_count: 11
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/claudecode-qwen3.5-plus/data_7fc200cc/normal_logs.parquet') WHERE level IN ('ERROR','SEVERE') AND
+    service_name IN ('ts-ui-dashboard') GROUP BY 1
+  purpose: predicted_rc_normal_err
+  row_count: 0
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/claudecode-qwen3.5-plus/data_7fc200cc/abnormal_logs.parquet') WHERE level IN ('ERROR','SEVERE') AND
+    service_name IN ('ts-ui-dashboard') GROUP BY 1
+  purpose: predicted_rc_abnormal_err
+  row_count: 1
+- sql: SELECT DISTINCT p.service_name, c.service_name FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/claudecode-qwen3.5-plus/data_7fc200cc/abnormal_traces.parquet') c JOIN read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/claudecode-qwen3.5-plus/data_7fc200cc/abnormal_traces.parquet')
+    p ON c.parent_span_id=p.span_id WHERE c.service_name IN ('ts-auth-service') OR p.service_name IN ('ts-auth-service') LIMIT 200
+  purpose: gt_parent_child_pairs
+  row_count: 3
+- sql: SELECT DISTINCT metric FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/claudecode-qwen3.5-plus/data_7fc200cc/abnormal_metrics.parquet') WHERE service_name IN ('ts-auth-service') AND
+    metric LIKE 'jvm.%' LIMIT 10
+  purpose: gt_metric_families_probed
+  row_count: 3
+classes_to_verify:
+- D1
+- PD_NoBaselineContrast
+- PD_NoFaultLayerMetricProbe
+- PD_SurveyWithoutDrill
+- U1_LoudnessAnchorOverSilentVictim

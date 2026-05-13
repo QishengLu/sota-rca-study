@@ -1,0 +1,3272 @@
+{
+    "fault_hierarchy": {
+        "HTTP": {
+            "total": 1655,
+            "percentage": "45.29%",
+            "items": {
+                "response-delay": {
+                    "count": 353,
+                    "category_percentage": "21.33%"
+                },
+                "request-delay": {
+                    "count": 348,
+                    "category_percentage": "21.03%"
+                },
+                "bandwidth": {
+                    "count": 325,
+                    "category_percentage": "19.64%"
+                },
+                "response-replace-code": {
+                    "count": 205,
+                    "category_percentage": "12.39%"
+                },
+                "request-replace-method": {
+                    "count": 175,
+                    "category_percentage": "10.57%"
+                },
+                "response-replace-body": {
+                    "count": 87,
+                    "category_percentage": "5.26%"
+                },
+                "request-abort": {
+                    "count": 56,
+                    "category_percentage": "3.38%"
+                },
+                "response-abort": {
+                    "count": 40,
+                    "category_percentage": "2.42%"
+                },
+                "request-replace-path": {
+                    "count": 38,
+                    "category_percentage": "2.30%"
+                },
+                "response-patch-body": {
+                    "count": 28,
+                    "category_percentage": "1.69%"
+                }
+            }
+        },
+        "Code(JVM)": {
+            "total": 860,
+            "percentage": "23.54%",
+            "items": {
+                "stress": {
+                    "count": 371,
+                    "category_percentage": "43.14%"
+                },
+                "return": {
+                    "count": 200,
+                    "category_percentage": "23.26%"
+                },
+                "mysql": {
+                    "count": 160,
+                    "category_percentage": "18.60%"
+                },
+                "exception": {
+                    "count": 127,
+                    "category_percentage": "14.77%"
+                },
+                "gc": {
+                    "count": 2,
+                    "category_percentage": "0.23%"
+                }
+            }
+        },
+        "Network": {
+            "total": 845,
+            "percentage": "23.13%",
+            "items": {
+                "delay": {
+                    "count": 160,
+                    "category_percentage": "18.93%"
+                },
+                "corrupt": {
+                    "count": 155,
+                    "category_percentage": "18.34%"
+                },
+                "partition": {
+                    "count": 143,
+                    "category_percentage": "16.92%"
+                },
+                "loss": {
+                    "count": 139,
+                    "category_percentage": "16.45%"
+                },
+                "latency": {
+                    "count": 124,
+                    "category_percentage": "14.67%"
+                },
+                "duplicate": {
+                    "count": 124,
+                    "category_percentage": "14.67%"
+                }
+            }
+        },
+        "resource": {
+            "total": 183,
+            "percentage": "5.01%",
+            "items": {
+                "container-kill": {
+                    "count": 79,
+                    "category_percentage": "43.17%"
+                },
+                "cpu-exhaustion": {
+                    "count": 59,
+                    "category_percentage": "32.24%"
+                },
+                "memory-exhaustion": {
+                    "count": 34,
+                    "category_percentage": "18.58%"
+                },
+                "pod-kill": {
+                    "count": 9,
+                    "category_percentage": "4.92%"
+                },
+                "pod-failure": {
+                    "count": 2,
+                    "category_percentage": "1.09%"
+                }
+            }
+        },
+        "DNS": {
+            "total": 73,
+            "percentage": "2.00%",
+            "items": {
+                "dns": {
+                    "count": 73,
+                    "category_percentage": "100.00%"
+                }
+            }
+        },
+        "Time": {
+            "total": 38,
+            "percentage": "1.04%",
+            "items": {
+                "time": {
+                    "count": 38,
+                    "category_percentage": "100.00%"
+                }
+            }
+        }
+    },
+    "service_hierarchy": {
+        "Top-Level Services": {
+            "total": 1301,
+            "percentage": "35.60%",
+            "items": {
+                "ts-route-plan-service": {
+                    "count": 300,
+                    "category_percentage": "23.06%"
+                },
+                "ts-travel-service": {
+                    "count": 280,
+                    "category_percentage": "21.52%"
+                },
+                "ts-travel2-service": {
+                    "count": 252,
+                    "category_percentage": "19.37%"
+                },
+                "ts-preserve-service": {
+                    "count": 247,
+                    "category_percentage": "18.99%"
+                },
+                "ts-travel-plan-service": {
+                    "count": 220,
+                    "category_percentage": "16.91%"
+                },
+                "ts-cancel-service": {
+                    "count": 2,
+                    "category_percentage": "0.15%"
+                }
+            }
+        },
+        "Core Services": {
+            "total": 1181,
+            "percentage": "32.32%",
+            "items": {
+                "ts-basic-service": {
+                    "count": 385,
+                    "category_percentage": "32.60%"
+                },
+                "ts-order-service": {
+                    "count": 171,
+                    "category_percentage": "14.48%"
+                },
+                "ts-route-service": {
+                    "count": 157,
+                    "category_percentage": "13.29%"
+                },
+                "ts-seat-service": {
+                    "count": 145,
+                    "category_percentage": "12.28%"
+                },
+                "ts-order-other-service": {
+                    "count": 118,
+                    "category_percentage": "9.99%"
+                },
+                "ts-train-service": {
+                    "count": 96,
+                    "category_percentage": "8.13%"
+                },
+                "ts-station-service": {
+                    "count": 69,
+                    "category_percentage": "5.84%"
+                },
+                "ts-inside-payment-service": {
+                    "count": 34,
+                    "category_percentage": "2.88%"
+                },
+                "ts-payment-service": {
+                    "count": 6,
+                    "category_percentage": "0.51%"
+                }
+            }
+        },
+        "Auxiliary Services": {
+            "total": 621,
+            "percentage": "17.00%",
+            "items": {
+                "ts-food-service": {
+                    "count": 123,
+                    "category_percentage": "19.81%"
+                },
+                "ts-security-service": {
+                    "count": 95,
+                    "category_percentage": "15.30%"
+                },
+                "ts-user-service": {
+                    "count": 62,
+                    "category_percentage": "9.98%"
+                },
+                "ts-config-service": {
+                    "count": 58,
+                    "category_percentage": "9.34%"
+                },
+                "ts-consign-service": {
+                    "count": 55,
+                    "category_percentage": "8.86%"
+                },
+                "ts-contacts-service": {
+                    "count": 55,
+                    "category_percentage": "8.86%"
+                },
+                "ts-auth-service": {
+                    "count": 52,
+                    "category_percentage": "8.37%"
+                },
+                "ts-price-service": {
+                    "count": 41,
+                    "category_percentage": "6.60%"
+                },
+                "ts-assurance-service": {
+                    "count": 23,
+                    "category_percentage": "3.70%"
+                },
+                "ts-train-food-service": {
+                    "count": 21,
+                    "category_percentage": "3.38%"
+                },
+                "ts-station-food-service": {
+                    "count": 21,
+                    "category_percentage": "3.38%"
+                },
+                "ts-verification-code-service": {
+                    "count": 11,
+                    "category_percentage": "1.77%"
+                },
+                "ts-consign-price-service": {
+                    "count": 4,
+                    "category_percentage": "0.64%"
+                }
+            }
+        },
+        "Frontend": {
+            "total": 404,
+            "percentage": "11.06%",
+            "items": {
+                "ts-ui-dashboard": {
+                    "count": 404,
+                    "category_percentage": "100.00%"
+                }
+            }
+        },
+        "Infrastructure": {
+            "total": 147,
+            "percentage": "4.02%",
+            "items": {
+                "mysql": {
+                    "count": 147,
+                    "category_percentage": "100.00%"
+                }
+            }
+        }
+    },
+    "service_pairs": {
+        "HTTP & Top-Level Services": {
+            "fault_category": "HTTP",
+            "service_category": "Top-Level Services",
+            "total": 710,
+            "percentage": "19.43%",
+            "pairs": [
+                {
+                    "service": "ts-route-plan-service",
+                    "fault": "response-delay",
+                    "count": 64,
+                    "percentage": "9.01%"
+                },
+                {
+                    "service": "ts-route-plan-service",
+                    "fault": "request-delay",
+                    "count": 60,
+                    "percentage": "8.45%"
+                },
+                {
+                    "service": "ts-preserve-service",
+                    "fault": "response-delay",
+                    "count": 35,
+                    "percentage": "4.93%"
+                },
+                {
+                    "service": "ts-preserve-service",
+                    "fault": "request-delay",
+                    "count": 33,
+                    "percentage": "4.65%"
+                },
+                {
+                    "service": "ts-travel-service",
+                    "fault": "bandwidth",
+                    "count": 31,
+                    "percentage": "4.37%"
+                },
+                {
+                    "service": "ts-travel-plan-service",
+                    "fault": "request-delay",
+                    "count": 29,
+                    "percentage": "4.08%"
+                },
+                {
+                    "service": "ts-travel-plan-service",
+                    "fault": "response-delay",
+                    "count": 28,
+                    "percentage": "3.94%"
+                },
+                {
+                    "service": "ts-travel2-service",
+                    "fault": "response-delay",
+                    "count": 25,
+                    "percentage": "3.52%"
+                },
+                {
+                    "service": "ts-preserve-service",
+                    "fault": "response-replace-code",
+                    "count": 25,
+                    "percentage": "3.52%"
+                },
+                {
+                    "service": "ts-travel-service",
+                    "fault": "request-delay",
+                    "count": 24,
+                    "percentage": "3.38%"
+                },
+                {
+                    "service": "ts-travel2-service",
+                    "fault": "bandwidth",
+                    "count": 22,
+                    "percentage": "3.10%"
+                },
+                {
+                    "service": "ts-route-plan-service",
+                    "fault": "request-replace-method",
+                    "count": 22,
+                    "percentage": "3.10%"
+                },
+                {
+                    "service": "ts-route-plan-service",
+                    "fault": "response-replace-code",
+                    "count": 21,
+                    "percentage": "2.96%"
+                },
+                {
+                    "service": "ts-travel2-service",
+                    "fault": "request-delay",
+                    "count": 20,
+                    "percentage": "2.82%"
+                },
+                {
+                    "service": "ts-preserve-service",
+                    "fault": "request-replace-method",
+                    "count": 20,
+                    "percentage": "2.82%"
+                },
+                {
+                    "service": "ts-travel-service",
+                    "fault": "response-delay",
+                    "count": 16,
+                    "percentage": "2.25%"
+                },
+                {
+                    "service": "ts-travel2-service",
+                    "fault": "request-replace-method",
+                    "count": 16,
+                    "percentage": "2.25%"
+                },
+                {
+                    "service": "ts-preserve-service",
+                    "fault": "bandwidth",
+                    "count": 15,
+                    "percentage": "2.11%"
+                },
+                {
+                    "service": "ts-route-plan-service",
+                    "fault": "bandwidth",
+                    "count": 14,
+                    "percentage": "1.97%"
+                },
+                {
+                    "service": "ts-route-plan-service",
+                    "fault": "response-replace-body",
+                    "count": 13,
+                    "percentage": "1.83%"
+                },
+                {
+                    "service": "ts-travel-plan-service",
+                    "fault": "bandwidth",
+                    "count": 13,
+                    "percentage": "1.83%"
+                },
+                {
+                    "service": "ts-travel-plan-service",
+                    "fault": "response-replace-code",
+                    "count": 13,
+                    "percentage": "1.83%"
+                },
+                {
+                    "service": "ts-travel-service",
+                    "fault": "response-replace-code",
+                    "count": 11,
+                    "percentage": "1.55%"
+                },
+                {
+                    "service": "ts-travel2-service",
+                    "fault": "response-replace-code",
+                    "count": 11,
+                    "percentage": "1.55%"
+                },
+                {
+                    "service": "ts-route-plan-service",
+                    "fault": "request-abort",
+                    "count": 10,
+                    "percentage": "1.41%"
+                },
+                {
+                    "service": "ts-preserve-service",
+                    "fault": "response-replace-body",
+                    "count": 9,
+                    "percentage": "1.27%"
+                },
+                {
+                    "service": "ts-travel-plan-service",
+                    "fault": "request-replace-method",
+                    "count": 8,
+                    "percentage": "1.13%"
+                },
+                {
+                    "service": "ts-travel2-service",
+                    "fault": "response-replace-body",
+                    "count": 8,
+                    "percentage": "1.13%"
+                },
+                {
+                    "service": "ts-travel-service",
+                    "fault": "request-replace-method",
+                    "count": 8,
+                    "percentage": "1.13%"
+                },
+                {
+                    "service": "ts-travel-service",
+                    "fault": "response-replace-body",
+                    "count": 7,
+                    "percentage": "0.99%"
+                },
+                {
+                    "service": "ts-route-plan-service",
+                    "fault": "response-abort",
+                    "count": 7,
+                    "percentage": "0.99%"
+                },
+                {
+                    "service": "ts-travel-plan-service",
+                    "fault": "response-replace-body",
+                    "count": 7,
+                    "percentage": "0.99%"
+                },
+                {
+                    "service": "ts-preserve-service",
+                    "fault": "response-abort",
+                    "count": 6,
+                    "percentage": "0.85%"
+                },
+                {
+                    "service": "ts-preserve-service",
+                    "fault": "request-abort",
+                    "count": 6,
+                    "percentage": "0.85%"
+                },
+                {
+                    "service": "ts-travel-plan-service",
+                    "fault": "request-abort",
+                    "count": 5,
+                    "percentage": "0.70%"
+                },
+                {
+                    "service": "ts-travel-plan-service",
+                    "fault": "request-replace-path",
+                    "count": 5,
+                    "percentage": "0.70%"
+                },
+                {
+                    "service": "ts-route-plan-service",
+                    "fault": "request-replace-path",
+                    "count": 5,
+                    "percentage": "0.70%"
+                },
+                {
+                    "service": "ts-preserve-service",
+                    "fault": "request-replace-path",
+                    "count": 4,
+                    "percentage": "0.56%"
+                },
+                {
+                    "service": "ts-travel-plan-service",
+                    "fault": "response-abort",
+                    "count": 4,
+                    "percentage": "0.56%"
+                },
+                {
+                    "service": "ts-route-plan-service",
+                    "fault": "response-patch-body",
+                    "count": 4,
+                    "percentage": "0.56%"
+                },
+                {
+                    "service": "ts-travel2-service",
+                    "fault": "response-abort",
+                    "count": 4,
+                    "percentage": "0.56%"
+                },
+                {
+                    "service": "ts-travel2-service",
+                    "fault": "response-patch-body",
+                    "count": 3,
+                    "percentage": "0.42%"
+                },
+                {
+                    "service": "ts-travel2-service",
+                    "fault": "request-replace-path",
+                    "count": 3,
+                    "percentage": "0.42%"
+                },
+                {
+                    "service": "ts-travel-service",
+                    "fault": "request-abort",
+                    "count": 3,
+                    "percentage": "0.42%"
+                },
+                {
+                    "service": "ts-travel-service",
+                    "fault": "response-abort",
+                    "count": 3,
+                    "percentage": "0.42%"
+                },
+                {
+                    "service": "ts-preserve-service",
+                    "fault": "response-patch-body",
+                    "count": 2,
+                    "percentage": "0.28%"
+                },
+                {
+                    "service": "ts-travel-plan-service",
+                    "fault": "response-patch-body",
+                    "count": 2,
+                    "percentage": "0.28%"
+                },
+                {
+                    "service": "ts-travel2-service",
+                    "fault": "request-abort",
+                    "count": 2,
+                    "percentage": "0.28%"
+                },
+                {
+                    "service": "ts-travel-service",
+                    "fault": "request-replace-path",
+                    "count": 2,
+                    "percentage": "0.28%"
+                },
+                {
+                    "service": "ts-travel-service",
+                    "fault": "response-patch-body",
+                    "count": 2,
+                    "percentage": "0.28%"
+                }
+            ]
+        },
+        "HTTP & Core Services": {
+            "fault_category": "HTTP",
+            "service_category": "Core Services",
+            "total": 434,
+            "percentage": "11.88%",
+            "pairs": [
+                {
+                    "service": "ts-basic-service",
+                    "fault": "response-delay",
+                    "count": 70,
+                    "percentage": "16.13%"
+                },
+                {
+                    "service": "ts-basic-service",
+                    "fault": "request-delay",
+                    "count": 69,
+                    "percentage": "15.90%"
+                },
+                {
+                    "service": "ts-basic-service",
+                    "fault": "response-replace-code",
+                    "count": 48,
+                    "percentage": "11.06%"
+                },
+                {
+                    "service": "ts-basic-service",
+                    "fault": "request-replace-method",
+                    "count": 44,
+                    "percentage": "10.14%"
+                },
+                {
+                    "service": "ts-basic-service",
+                    "fault": "response-replace-body",
+                    "count": 21,
+                    "percentage": "4.84%"
+                },
+                {
+                    "service": "ts-seat-service",
+                    "fault": "bandwidth",
+                    "count": 18,
+                    "percentage": "4.15%"
+                },
+                {
+                    "service": "ts-seat-service",
+                    "fault": "request-delay",
+                    "count": 18,
+                    "percentage": "4.15%"
+                },
+                {
+                    "service": "ts-order-service",
+                    "fault": "bandwidth",
+                    "count": 17,
+                    "percentage": "3.92%"
+                },
+                {
+                    "service": "ts-seat-service",
+                    "fault": "response-delay",
+                    "count": 15,
+                    "percentage": "3.46%"
+                },
+                {
+                    "service": "ts-route-service",
+                    "fault": "bandwidth",
+                    "count": 14,
+                    "percentage": "3.23%"
+                },
+                {
+                    "service": "ts-basic-service",
+                    "fault": "bandwidth",
+                    "count": 13,
+                    "percentage": "3.00%"
+                },
+                {
+                    "service": "ts-basic-service",
+                    "fault": "request-replace-path",
+                    "count": 13,
+                    "percentage": "3.00%"
+                },
+                {
+                    "service": "ts-basic-service",
+                    "fault": "request-abort",
+                    "count": 11,
+                    "percentage": "2.53%"
+                },
+                {
+                    "service": "ts-seat-service",
+                    "fault": "response-replace-code",
+                    "count": 10,
+                    "percentage": "2.30%"
+                },
+                {
+                    "service": "ts-train-service",
+                    "fault": "bandwidth",
+                    "count": 10,
+                    "percentage": "2.30%"
+                },
+                {
+                    "service": "ts-seat-service",
+                    "fault": "request-replace-method",
+                    "count": 9,
+                    "percentage": "2.07%"
+                },
+                {
+                    "service": "ts-basic-service",
+                    "fault": "response-abort",
+                    "count": 7,
+                    "percentage": "1.61%"
+                },
+                {
+                    "service": "ts-basic-service",
+                    "fault": "response-patch-body",
+                    "count": 6,
+                    "percentage": "1.38%"
+                },
+                {
+                    "service": "ts-station-service",
+                    "fault": "bandwidth",
+                    "count": 5,
+                    "percentage": "1.15%"
+                },
+                {
+                    "service": "ts-order-other-service",
+                    "fault": "bandwidth",
+                    "count": 4,
+                    "percentage": "0.92%"
+                },
+                {
+                    "service": "ts-seat-service",
+                    "fault": "request-abort",
+                    "count": 3,
+                    "percentage": "0.69%"
+                },
+                {
+                    "service": "ts-seat-service",
+                    "fault": "response-abort",
+                    "count": 3,
+                    "percentage": "0.69%"
+                },
+                {
+                    "service": "ts-seat-service",
+                    "fault": "response-replace-body",
+                    "count": 3,
+                    "percentage": "0.69%"
+                },
+                {
+                    "service": "ts-seat-service",
+                    "fault": "request-replace-path",
+                    "count": 2,
+                    "percentage": "0.46%"
+                },
+                {
+                    "service": "ts-seat-service",
+                    "fault": "response-patch-body",
+                    "count": 1,
+                    "percentage": "0.23%"
+                }
+            ]
+        },
+        "Code(JVM) & Core Services": {
+            "fault_category": "Code(JVM)",
+            "service_category": "Core Services",
+            "total": 384,
+            "percentage": "10.51%",
+            "pairs": [
+                {
+                    "service": "ts-order-service",
+                    "fault": "stress",
+                    "count": 51,
+                    "percentage": "13.28%"
+                },
+                {
+                    "service": "ts-route-service",
+                    "fault": "mysql",
+                    "count": 46,
+                    "percentage": "11.98%"
+                },
+                {
+                    "service": "ts-order-other-service",
+                    "fault": "stress",
+                    "count": 32,
+                    "percentage": "8.33%"
+                },
+                {
+                    "service": "ts-order-other-service",
+                    "fault": "return",
+                    "count": 18,
+                    "percentage": "4.69%"
+                },
+                {
+                    "service": "ts-station-service",
+                    "fault": "stress",
+                    "count": 18,
+                    "percentage": "4.69%"
+                },
+                {
+                    "service": "ts-inside-payment-service",
+                    "fault": "stress",
+                    "count": 16,
+                    "percentage": "4.17%"
+                },
+                {
+                    "service": "ts-route-service",
+                    "fault": "stress",
+                    "count": 15,
+                    "percentage": "3.91%"
+                },
+                {
+                    "service": "ts-order-service",
+                    "fault": "exception",
+                    "count": 14,
+                    "percentage": "3.65%"
+                },
+                {
+                    "service": "ts-order-service",
+                    "fault": "mysql",
+                    "count": 14,
+                    "percentage": "3.65%"
+                },
+                {
+                    "service": "ts-order-other-service",
+                    "fault": "exception",
+                    "count": 14,
+                    "percentage": "3.65%"
+                },
+                {
+                    "service": "ts-order-service",
+                    "fault": "return",
+                    "count": 14,
+                    "percentage": "3.65%"
+                },
+                {
+                    "service": "ts-basic-service",
+                    "fault": "stress",
+                    "count": 12,
+                    "percentage": "3.12%"
+                },
+                {
+                    "service": "ts-station-service",
+                    "fault": "return",
+                    "count": 11,
+                    "percentage": "2.86%"
+                },
+                {
+                    "service": "ts-basic-service",
+                    "fault": "return",
+                    "count": 11,
+                    "percentage": "2.86%"
+                },
+                {
+                    "service": "ts-train-service",
+                    "fault": "stress",
+                    "count": 10,
+                    "percentage": "2.60%"
+                },
+                {
+                    "service": "ts-route-service",
+                    "fault": "return",
+                    "count": 10,
+                    "percentage": "2.60%"
+                },
+                {
+                    "service": "ts-train-service",
+                    "fault": "mysql",
+                    "count": 9,
+                    "percentage": "2.34%"
+                },
+                {
+                    "service": "ts-train-service",
+                    "fault": "exception",
+                    "count": 7,
+                    "percentage": "1.82%"
+                },
+                {
+                    "service": "ts-train-service",
+                    "fault": "return",
+                    "count": 7,
+                    "percentage": "1.82%"
+                },
+                {
+                    "service": "ts-route-service",
+                    "fault": "exception",
+                    "count": 6,
+                    "percentage": "1.56%"
+                },
+                {
+                    "service": "ts-station-service",
+                    "fault": "mysql",
+                    "count": 6,
+                    "percentage": "1.56%"
+                },
+                {
+                    "service": "ts-order-other-service",
+                    "fault": "mysql",
+                    "count": 6,
+                    "percentage": "1.56%"
+                },
+                {
+                    "service": "ts-seat-service",
+                    "fault": "return",
+                    "count": 6,
+                    "percentage": "1.56%"
+                },
+                {
+                    "service": "ts-seat-service",
+                    "fault": "stress",
+                    "count": 6,
+                    "percentage": "1.56%"
+                },
+                {
+                    "service": "ts-basic-service",
+                    "fault": "exception",
+                    "count": 5,
+                    "percentage": "1.30%"
+                },
+                {
+                    "service": "ts-station-service",
+                    "fault": "exception",
+                    "count": 5,
+                    "percentage": "1.30%"
+                },
+                {
+                    "service": "ts-inside-payment-service",
+                    "fault": "return",
+                    "count": 5,
+                    "percentage": "1.30%"
+                },
+                {
+                    "service": "ts-inside-payment-service",
+                    "fault": "exception",
+                    "count": 3,
+                    "percentage": "0.78%"
+                },
+                {
+                    "service": "ts-payment-service",
+                    "fault": "stress",
+                    "count": 3,
+                    "percentage": "0.78%"
+                },
+                {
+                    "service": "ts-seat-service",
+                    "fault": "exception",
+                    "count": 2,
+                    "percentage": "0.52%"
+                },
+                {
+                    "service": "ts-payment-service",
+                    "fault": "exception",
+                    "count": 1,
+                    "percentage": "0.26%"
+                },
+                {
+                    "service": "ts-order-service",
+                    "fault": "gc",
+                    "count": 1,
+                    "percentage": "0.26%"
+                }
+            ]
+        },
+        "HTTP & Frontend": {
+            "fault_category": "HTTP",
+            "service_category": "Frontend",
+            "total": 288,
+            "percentage": "7.88%",
+            "pairs": [
+                {
+                    "service": "ts-ui-dashboard",
+                    "fault": "response-delay",
+                    "count": 69,
+                    "percentage": "23.96%"
+                },
+                {
+                    "service": "ts-ui-dashboard",
+                    "fault": "request-delay",
+                    "count": 63,
+                    "percentage": "21.88%"
+                },
+                {
+                    "service": "ts-ui-dashboard",
+                    "fault": "response-replace-code",
+                    "count": 48,
+                    "percentage": "16.67%"
+                },
+                {
+                    "service": "ts-ui-dashboard",
+                    "fault": "bandwidth",
+                    "count": 48,
+                    "percentage": "16.67%"
+                },
+                {
+                    "service": "ts-ui-dashboard",
+                    "fault": "request-replace-method",
+                    "count": 30,
+                    "percentage": "10.42%"
+                },
+                {
+                    "service": "ts-ui-dashboard",
+                    "fault": "response-replace-body",
+                    "count": 14,
+                    "percentage": "4.86%"
+                },
+                {
+                    "service": "ts-ui-dashboard",
+                    "fault": "request-abort",
+                    "count": 7,
+                    "percentage": "2.43%"
+                },
+                {
+                    "service": "ts-ui-dashboard",
+                    "fault": "response-patch-body",
+                    "count": 5,
+                    "percentage": "1.74%"
+                },
+                {
+                    "service": "ts-ui-dashboard",
+                    "fault": "response-abort",
+                    "count": 3,
+                    "percentage": "1.04%"
+                },
+                {
+                    "service": "ts-ui-dashboard",
+                    "fault": "request-replace-path",
+                    "count": 1,
+                    "percentage": "0.35%"
+                }
+            ]
+        },
+        "Code(JVM) & Top-Level Services": {
+            "fault_category": "Code(JVM)",
+            "service_category": "Top-Level Services",
+            "total": 278,
+            "percentage": "7.61%",
+            "pairs": [
+                {
+                    "service": "ts-travel-service",
+                    "fault": "stress",
+                    "count": 39,
+                    "percentage": "14.03%"
+                },
+                {
+                    "service": "ts-travel-service",
+                    "fault": "return",
+                    "count": 30,
+                    "percentage": "10.79%"
+                },
+                {
+                    "service": "ts-travel2-service",
+                    "fault": "stress",
+                    "count": 29,
+                    "percentage": "10.43%"
+                },
+                {
+                    "service": "ts-travel-plan-service",
+                    "fault": "stress",
+                    "count": 23,
+                    "percentage": "8.27%"
+                },
+                {
+                    "service": "ts-travel2-service",
+                    "fault": "return",
+                    "count": 20,
+                    "percentage": "7.19%"
+                },
+                {
+                    "service": "ts-travel-plan-service",
+                    "fault": "return",
+                    "count": 17,
+                    "percentage": "6.12%"
+                },
+                {
+                    "service": "ts-route-plan-service",
+                    "fault": "stress",
+                    "count": 15,
+                    "percentage": "5.40%"
+                },
+                {
+                    "service": "ts-preserve-service",
+                    "fault": "stress",
+                    "count": 14,
+                    "percentage": "5.04%"
+                },
+                {
+                    "service": "ts-travel-plan-service",
+                    "fault": "exception",
+                    "count": 14,
+                    "percentage": "5.04%"
+                },
+                {
+                    "service": "ts-travel2-service",
+                    "fault": "exception",
+                    "count": 12,
+                    "percentage": "4.32%"
+                },
+                {
+                    "service": "ts-route-plan-service",
+                    "fault": "return",
+                    "count": 12,
+                    "percentage": "4.32%"
+                },
+                {
+                    "service": "ts-travel-service",
+                    "fault": "exception",
+                    "count": 11,
+                    "percentage": "3.96%"
+                },
+                {
+                    "service": "ts-travel2-service",
+                    "fault": "mysql",
+                    "count": 10,
+                    "percentage": "3.60%"
+                },
+                {
+                    "service": "ts-preserve-service",
+                    "fault": "return",
+                    "count": 9,
+                    "percentage": "3.24%"
+                },
+                {
+                    "service": "ts-preserve-service",
+                    "fault": "exception",
+                    "count": 8,
+                    "percentage": "2.88%"
+                },
+                {
+                    "service": "ts-travel-service",
+                    "fault": "mysql",
+                    "count": 7,
+                    "percentage": "2.52%"
+                },
+                {
+                    "service": "ts-route-plan-service",
+                    "fault": "exception",
+                    "count": 6,
+                    "percentage": "2.16%"
+                },
+                {
+                    "service": "ts-cancel-service",
+                    "fault": "stress",
+                    "count": 2,
+                    "percentage": "0.72%"
+                }
+            ]
+        },
+        "Network & Core Services": {
+            "fault_category": "Network",
+            "service_category": "Core Services",
+            "total": 269,
+            "percentage": "7.36%",
+            "pairs": [
+                {
+                    "service": "ts-order-service",
+                    "fault": "delay",
+                    "count": 13,
+                    "percentage": "4.83%"
+                },
+                {
+                    "service": "ts-order-service",
+                    "fault": "loss",
+                    "count": 12,
+                    "percentage": "4.46%"
+                },
+                {
+                    "service": "ts-train-service",
+                    "fault": "corrupt",
+                    "count": 11,
+                    "percentage": "4.09%"
+                },
+                {
+                    "service": "ts-route-service",
+                    "fault": "duplicate",
+                    "count": 11,
+                    "percentage": "4.09%"
+                },
+                {
+                    "service": "ts-route-service",
+                    "fault": "latency",
+                    "count": 10,
+                    "percentage": "3.72%"
+                },
+                {
+                    "service": "ts-train-service",
+                    "fault": "duplicate",
+                    "count": 10,
+                    "percentage": "3.72%"
+                },
+                {
+                    "service": "ts-seat-service",
+                    "fault": "corrupt",
+                    "count": 10,
+                    "percentage": "3.72%"
+                },
+                {
+                    "service": "ts-route-service",
+                    "fault": "delay",
+                    "count": 9,
+                    "percentage": "3.35%"
+                },
+                {
+                    "service": "ts-seat-service",
+                    "fault": "partition",
+                    "count": 9,
+                    "percentage": "3.35%"
+                },
+                {
+                    "service": "ts-basic-service",
+                    "fault": "corrupt",
+                    "count": 8,
+                    "percentage": "2.97%"
+                },
+                {
+                    "service": "ts-order-other-service",
+                    "fault": "loss",
+                    "count": 8,
+                    "percentage": "2.97%"
+                },
+                {
+                    "service": "ts-basic-service",
+                    "fault": "partition",
+                    "count": 8,
+                    "percentage": "2.97%"
+                },
+                {
+                    "service": "ts-basic-service",
+                    "fault": "duplicate",
+                    "count": 7,
+                    "percentage": "2.60%"
+                },
+                {
+                    "service": "ts-route-service",
+                    "fault": "partition",
+                    "count": 7,
+                    "percentage": "2.60%"
+                },
+                {
+                    "service": "ts-seat-service",
+                    "fault": "delay",
+                    "count": 7,
+                    "percentage": "2.60%"
+                },
+                {
+                    "service": "ts-route-service",
+                    "fault": "corrupt",
+                    "count": 7,
+                    "percentage": "2.60%"
+                },
+                {
+                    "service": "ts-train-service",
+                    "fault": "delay",
+                    "count": 7,
+                    "percentage": "2.60%"
+                },
+                {
+                    "service": "ts-route-service",
+                    "fault": "loss",
+                    "count": 7,
+                    "percentage": "2.60%"
+                },
+                {
+                    "service": "ts-order-service",
+                    "fault": "latency",
+                    "count": 7,
+                    "percentage": "2.60%"
+                },
+                {
+                    "service": "ts-order-other-service",
+                    "fault": "corrupt",
+                    "count": 7,
+                    "percentage": "2.60%"
+                },
+                {
+                    "service": "ts-order-other-service",
+                    "fault": "latency",
+                    "count": 6,
+                    "percentage": "2.23%"
+                },
+                {
+                    "service": "ts-order-service",
+                    "fault": "partition",
+                    "count": 6,
+                    "percentage": "2.23%"
+                },
+                {
+                    "service": "ts-train-service",
+                    "fault": "loss",
+                    "count": 5,
+                    "percentage": "1.86%"
+                },
+                {
+                    "service": "ts-seat-service",
+                    "fault": "loss",
+                    "count": 5,
+                    "percentage": "1.86%"
+                },
+                {
+                    "service": "ts-basic-service",
+                    "fault": "delay",
+                    "count": 5,
+                    "percentage": "1.86%"
+                },
+                {
+                    "service": "ts-basic-service",
+                    "fault": "latency",
+                    "count": 5,
+                    "percentage": "1.86%"
+                },
+                {
+                    "service": "ts-station-service",
+                    "fault": "latency",
+                    "count": 5,
+                    "percentage": "1.86%"
+                },
+                {
+                    "service": "ts-order-service",
+                    "fault": "duplicate",
+                    "count": 5,
+                    "percentage": "1.86%"
+                },
+                {
+                    "service": "ts-train-service",
+                    "fault": "partition",
+                    "count": 5,
+                    "percentage": "1.86%"
+                },
+                {
+                    "service": "ts-order-other-service",
+                    "fault": "duplicate",
+                    "count": 4,
+                    "percentage": "1.49%"
+                },
+                {
+                    "service": "ts-basic-service",
+                    "fault": "loss",
+                    "count": 4,
+                    "percentage": "1.49%"
+                },
+                {
+                    "service": "ts-inside-payment-service",
+                    "fault": "latency",
+                    "count": 4,
+                    "percentage": "1.49%"
+                },
+                {
+                    "service": "ts-order-other-service",
+                    "fault": "delay",
+                    "count": 4,
+                    "percentage": "1.49%"
+                },
+                {
+                    "service": "ts-seat-service",
+                    "fault": "duplicate",
+                    "count": 4,
+                    "percentage": "1.49%"
+                },
+                {
+                    "service": "ts-station-service",
+                    "fault": "duplicate",
+                    "count": 4,
+                    "percentage": "1.49%"
+                },
+                {
+                    "service": "ts-train-service",
+                    "fault": "latency",
+                    "count": 4,
+                    "percentage": "1.49%"
+                },
+                {
+                    "service": "ts-station-service",
+                    "fault": "loss",
+                    "count": 3,
+                    "percentage": "1.12%"
+                },
+                {
+                    "service": "ts-order-other-service",
+                    "fault": "partition",
+                    "count": 3,
+                    "percentage": "1.12%"
+                },
+                {
+                    "service": "ts-order-service",
+                    "fault": "corrupt",
+                    "count": 3,
+                    "percentage": "1.12%"
+                },
+                {
+                    "service": "ts-seat-service",
+                    "fault": "latency",
+                    "count": 3,
+                    "percentage": "1.12%"
+                },
+                {
+                    "service": "ts-station-service",
+                    "fault": "corrupt",
+                    "count": 3,
+                    "percentage": "1.12%"
+                },
+                {
+                    "service": "ts-station-service",
+                    "fault": "partition",
+                    "count": 2,
+                    "percentage": "0.74%"
+                },
+                {
+                    "service": "ts-payment-service",
+                    "fault": "latency",
+                    "count": 1,
+                    "percentage": "0.37%"
+                },
+                {
+                    "service": "ts-station-service",
+                    "fault": "delay",
+                    "count": 1,
+                    "percentage": "0.37%"
+                }
+            ]
+        },
+        "Network & Top-Level Services": {
+            "fault_category": "Network",
+            "service_category": "Top-Level Services",
+            "total": 214,
+            "percentage": "5.86%",
+            "pairs": [
+                {
+                    "service": "ts-travel-service",
+                    "fault": "latency",
+                    "count": 20,
+                    "percentage": "9.35%"
+                },
+                {
+                    "service": "ts-travel-service",
+                    "fault": "delay",
+                    "count": 14,
+                    "percentage": "6.54%"
+                },
+                {
+                    "service": "ts-travel-plan-service",
+                    "fault": "delay",
+                    "count": 10,
+                    "percentage": "4.67%"
+                },
+                {
+                    "service": "ts-travel2-service",
+                    "fault": "duplicate",
+                    "count": 10,
+                    "percentage": "4.67%"
+                },
+                {
+                    "service": "ts-preserve-service",
+                    "fault": "delay",
+                    "count": 10,
+                    "percentage": "4.67%"
+                },
+                {
+                    "service": "ts-preserve-service",
+                    "fault": "partition",
+                    "count": 10,
+                    "percentage": "4.67%"
+                },
+                {
+                    "service": "ts-travel-service",
+                    "fault": "partition",
+                    "count": 10,
+                    "percentage": "4.67%"
+                },
+                {
+                    "service": "ts-route-plan-service",
+                    "fault": "corrupt",
+                    "count": 9,
+                    "percentage": "4.21%"
+                },
+                {
+                    "service": "ts-travel2-service",
+                    "fault": "delay",
+                    "count": 9,
+                    "percentage": "4.21%"
+                },
+                {
+                    "service": "ts-route-plan-service",
+                    "fault": "partition",
+                    "count": 8,
+                    "percentage": "3.74%"
+                },
+                {
+                    "service": "ts-travel-service",
+                    "fault": "duplicate",
+                    "count": 7,
+                    "percentage": "3.27%"
+                },
+                {
+                    "service": "ts-travel-plan-service",
+                    "fault": "loss",
+                    "count": 7,
+                    "percentage": "3.27%"
+                },
+                {
+                    "service": "ts-travel-service",
+                    "fault": "loss",
+                    "count": 7,
+                    "percentage": "3.27%"
+                },
+                {
+                    "service": "ts-preserve-service",
+                    "fault": "latency",
+                    "count": 7,
+                    "percentage": "3.27%"
+                },
+                {
+                    "service": "ts-travel2-service",
+                    "fault": "corrupt",
+                    "count": 7,
+                    "percentage": "3.27%"
+                },
+                {
+                    "service": "ts-travel2-service",
+                    "fault": "latency",
+                    "count": 7,
+                    "percentage": "3.27%"
+                },
+                {
+                    "service": "ts-travel2-service",
+                    "fault": "loss",
+                    "count": 6,
+                    "percentage": "2.80%"
+                },
+                {
+                    "service": "ts-travel-service",
+                    "fault": "corrupt",
+                    "count": 6,
+                    "percentage": "2.80%"
+                },
+                {
+                    "service": "ts-route-plan-service",
+                    "fault": "loss",
+                    "count": 6,
+                    "percentage": "2.80%"
+                },
+                {
+                    "service": "ts-preserve-service",
+                    "fault": "loss",
+                    "count": 5,
+                    "percentage": "2.34%"
+                },
+                {
+                    "service": "ts-route-plan-service",
+                    "fault": "latency",
+                    "count": 5,
+                    "percentage": "2.34%"
+                },
+                {
+                    "service": "ts-preserve-service",
+                    "fault": "corrupt",
+                    "count": 5,
+                    "percentage": "2.34%"
+                },
+                {
+                    "service": "ts-travel2-service",
+                    "fault": "partition",
+                    "count": 5,
+                    "percentage": "2.34%"
+                },
+                {
+                    "service": "ts-travel-plan-service",
+                    "fault": "duplicate",
+                    "count": 4,
+                    "percentage": "1.87%"
+                },
+                {
+                    "service": "ts-route-plan-service",
+                    "fault": "delay",
+                    "count": 4,
+                    "percentage": "1.87%"
+                },
+                {
+                    "service": "ts-preserve-service",
+                    "fault": "duplicate",
+                    "count": 4,
+                    "percentage": "1.87%"
+                },
+                {
+                    "service": "ts-travel-plan-service",
+                    "fault": "latency",
+                    "count": 4,
+                    "percentage": "1.87%"
+                },
+                {
+                    "service": "ts-route-plan-service",
+                    "fault": "duplicate",
+                    "count": 3,
+                    "percentage": "1.40%"
+                },
+                {
+                    "service": "ts-travel-plan-service",
+                    "fault": "corrupt",
+                    "count": 3,
+                    "percentage": "1.40%"
+                },
+                {
+                    "service": "ts-travel-plan-service",
+                    "fault": "partition",
+                    "count": 2,
+                    "percentage": "0.93%"
+                }
+            ]
+        },
+        "Code(JVM) & Auxiliary Services": {
+            "fault_category": "Code(JVM)",
+            "service_category": "Auxiliary Services",
+            "total": 198,
+            "percentage": "5.42%",
+            "pairs": [
+                {
+                    "service": "ts-food-service",
+                    "fault": "stress",
+                    "count": 16,
+                    "percentage": "8.08%"
+                },
+                {
+                    "service": "ts-user-service",
+                    "fault": "stress",
+                    "count": 15,
+                    "percentage": "7.58%"
+                },
+                {
+                    "service": "ts-contacts-service",
+                    "fault": "mysql",
+                    "count": 11,
+                    "percentage": "5.56%"
+                },
+                {
+                    "service": "ts-config-service",
+                    "fault": "mysql",
+                    "count": 10,
+                    "percentage": "5.05%"
+                },
+                {
+                    "service": "ts-config-service",
+                    "fault": "return",
+                    "count": 9,
+                    "percentage": "4.55%"
+                },
+                {
+                    "service": "ts-security-service",
+                    "fault": "mysql",
+                    "count": 8,
+                    "percentage": "4.04%"
+                },
+                {
+                    "service": "ts-assurance-service",
+                    "fault": "stress",
+                    "count": 7,
+                    "percentage": "3.54%"
+                },
+                {
+                    "service": "ts-user-service",
+                    "fault": "mysql",
+                    "count": 7,
+                    "percentage": "3.54%"
+                },
+                {
+                    "service": "ts-auth-service",
+                    "fault": "stress",
+                    "count": 7,
+                    "percentage": "3.54%"
+                },
+                {
+                    "service": "ts-config-service",
+                    "fault": "stress",
+                    "count": 7,
+                    "percentage": "3.54%"
+                },
+                {
+                    "service": "ts-consign-service",
+                    "fault": "stress",
+                    "count": 7,
+                    "percentage": "3.54%"
+                },
+                {
+                    "service": "ts-price-service",
+                    "fault": "mysql",
+                    "count": 6,
+                    "percentage": "3.03%"
+                },
+                {
+                    "service": "ts-price-service",
+                    "fault": "stress",
+                    "count": 6,
+                    "percentage": "3.03%"
+                },
+                {
+                    "service": "ts-station-food-service",
+                    "fault": "stress",
+                    "count": 6,
+                    "percentage": "3.03%"
+                },
+                {
+                    "service": "ts-train-food-service",
+                    "fault": "mysql",
+                    "count": 6,
+                    "percentage": "3.03%"
+                },
+                {
+                    "service": "ts-contacts-service",
+                    "fault": "stress",
+                    "count": 6,
+                    "percentage": "3.03%"
+                },
+                {
+                    "service": "ts-station-food-service",
+                    "fault": "mysql",
+                    "count": 6,
+                    "percentage": "3.03%"
+                },
+                {
+                    "service": "ts-user-service",
+                    "fault": "return",
+                    "count": 6,
+                    "percentage": "3.03%"
+                },
+                {
+                    "service": "ts-consign-service",
+                    "fault": "return",
+                    "count": 5,
+                    "percentage": "2.53%"
+                },
+                {
+                    "service": "ts-consign-service",
+                    "fault": "mysql",
+                    "count": 5,
+                    "percentage": "2.53%"
+                },
+                {
+                    "service": "ts-food-service",
+                    "fault": "return",
+                    "count": 4,
+                    "percentage": "2.02%"
+                },
+                {
+                    "service": "ts-security-service",
+                    "fault": "exception",
+                    "count": 4,
+                    "percentage": "2.02%"
+                },
+                {
+                    "service": "ts-security-service",
+                    "fault": "stress",
+                    "count": 4,
+                    "percentage": "2.02%"
+                },
+                {
+                    "service": "ts-price-service",
+                    "fault": "exception",
+                    "count": 4,
+                    "percentage": "2.02%"
+                },
+                {
+                    "service": "ts-auth-service",
+                    "fault": "mysql",
+                    "count": 3,
+                    "percentage": "1.52%"
+                },
+                {
+                    "service": "ts-consign-service",
+                    "fault": "exception",
+                    "count": 3,
+                    "percentage": "1.52%"
+                },
+                {
+                    "service": "ts-config-service",
+                    "fault": "exception",
+                    "count": 2,
+                    "percentage": "1.01%"
+                },
+                {
+                    "service": "ts-security-service",
+                    "fault": "return",
+                    "count": 2,
+                    "percentage": "1.01%"
+                },
+                {
+                    "service": "ts-food-service",
+                    "fault": "exception",
+                    "count": 2,
+                    "percentage": "1.01%"
+                },
+                {
+                    "service": "ts-contacts-service",
+                    "fault": "exception",
+                    "count": 2,
+                    "percentage": "1.01%"
+                },
+                {
+                    "service": "ts-consign-price-service",
+                    "fault": "stress",
+                    "count": 2,
+                    "percentage": "1.01%"
+                },
+                {
+                    "service": "ts-train-food-service",
+                    "fault": "stress",
+                    "count": 2,
+                    "percentage": "1.01%"
+                },
+                {
+                    "service": "ts-price-service",
+                    "fault": "return",
+                    "count": 2,
+                    "percentage": "1.01%"
+                },
+                {
+                    "service": "ts-assurance-service",
+                    "fault": "exception",
+                    "count": 1,
+                    "percentage": "0.51%"
+                },
+                {
+                    "service": "ts-auth-service",
+                    "fault": "exception",
+                    "count": 1,
+                    "percentage": "0.51%"
+                },
+                {
+                    "service": "ts-auth-service",
+                    "fault": "gc",
+                    "count": 1,
+                    "percentage": "0.51%"
+                },
+                {
+                    "service": "ts-contacts-service",
+                    "fault": "return",
+                    "count": 1,
+                    "percentage": "0.51%"
+                },
+                {
+                    "service": "ts-train-food-service",
+                    "fault": "return",
+                    "count": 1,
+                    "percentage": "0.51%"
+                },
+                {
+                    "service": "ts-verification-code-service",
+                    "fault": "stress",
+                    "count": 1,
+                    "percentage": "0.51%"
+                }
+            ]
+        },
+        "HTTP & Auxiliary Services": {
+            "fault_category": "HTTP",
+            "service_category": "Auxiliary Services",
+            "total": 186,
+            "percentage": "5.09%",
+            "pairs": [
+                {
+                    "service": "ts-security-service",
+                    "fault": "bandwidth",
+                    "count": 18,
+                    "percentage": "9.68%"
+                },
+                {
+                    "service": "ts-food-service",
+                    "fault": "response-delay",
+                    "count": 16,
+                    "percentage": "8.60%"
+                },
+                {
+                    "service": "ts-food-service",
+                    "fault": "request-delay",
+                    "count": 16,
+                    "percentage": "8.60%"
+                },
+                {
+                    "service": "ts-security-service",
+                    "fault": "request-delay",
+                    "count": 11,
+                    "percentage": "5.91%"
+                },
+                {
+                    "service": "ts-security-service",
+                    "fault": "response-delay",
+                    "count": 11,
+                    "percentage": "5.91%"
+                },
+                {
+                    "service": "ts-food-service",
+                    "fault": "request-replace-method",
+                    "count": 10,
+                    "percentage": "5.38%"
+                },
+                {
+                    "service": "ts-security-service",
+                    "fault": "response-replace-code",
+                    "count": 9,
+                    "percentage": "4.84%"
+                },
+                {
+                    "service": "ts-food-service",
+                    "fault": "bandwidth",
+                    "count": 8,
+                    "percentage": "4.30%"
+                },
+                {
+                    "service": "ts-consign-service",
+                    "fault": "bandwidth",
+                    "count": 6,
+                    "percentage": "3.23%"
+                },
+                {
+                    "service": "ts-food-service",
+                    "fault": "response-replace-code",
+                    "count": 6,
+                    "percentage": "3.23%"
+                },
+                {
+                    "service": "ts-user-service",
+                    "fault": "bandwidth",
+                    "count": 6,
+                    "percentage": "3.23%"
+                },
+                {
+                    "service": "ts-auth-service",
+                    "fault": "bandwidth",
+                    "count": 5,
+                    "percentage": "2.69%"
+                },
+                {
+                    "service": "ts-contacts-service",
+                    "fault": "bandwidth",
+                    "count": 5,
+                    "percentage": "2.69%"
+                },
+                {
+                    "service": "ts-auth-service",
+                    "fault": "request-delay",
+                    "count": 5,
+                    "percentage": "2.69%"
+                },
+                {
+                    "service": "ts-auth-service",
+                    "fault": "request-abort",
+                    "count": 5,
+                    "percentage": "2.69%"
+                },
+                {
+                    "service": "ts-security-service",
+                    "fault": "request-replace-method",
+                    "count": 5,
+                    "percentage": "2.69%"
+                },
+                {
+                    "service": "ts-assurance-service",
+                    "fault": "bandwidth",
+                    "count": 4,
+                    "percentage": "2.15%"
+                },
+                {
+                    "service": "ts-auth-service",
+                    "fault": "response-delay",
+                    "count": 4,
+                    "percentage": "2.15%"
+                },
+                {
+                    "service": "ts-auth-service",
+                    "fault": "request-replace-method",
+                    "count": 3,
+                    "percentage": "1.61%"
+                },
+                {
+                    "service": "ts-auth-service",
+                    "fault": "response-replace-code",
+                    "count": 3,
+                    "percentage": "1.61%"
+                },
+                {
+                    "service": "ts-verification-code-service",
+                    "fault": "bandwidth",
+                    "count": 3,
+                    "percentage": "1.61%"
+                },
+                {
+                    "service": "ts-food-service",
+                    "fault": "response-abort",
+                    "count": 3,
+                    "percentage": "1.61%"
+                },
+                {
+                    "service": "ts-food-service",
+                    "fault": "request-abort",
+                    "count": 3,
+                    "percentage": "1.61%"
+                },
+                {
+                    "service": "ts-price-service",
+                    "fault": "bandwidth",
+                    "count": 3,
+                    "percentage": "1.61%"
+                },
+                {
+                    "service": "ts-config-service",
+                    "fault": "bandwidth",
+                    "count": 3,
+                    "percentage": "1.61%"
+                },
+                {
+                    "service": "ts-train-food-service",
+                    "fault": "bandwidth",
+                    "count": 2,
+                    "percentage": "1.08%"
+                },
+                {
+                    "service": "ts-food-service",
+                    "fault": "response-replace-body",
+                    "count": 2,
+                    "percentage": "1.08%"
+                },
+                {
+                    "service": "ts-food-service",
+                    "fault": "request-replace-path",
+                    "count": 2,
+                    "percentage": "1.08%"
+                },
+                {
+                    "service": "ts-security-service",
+                    "fault": "response-replace-body",
+                    "count": 2,
+                    "percentage": "1.08%"
+                },
+                {
+                    "service": "ts-auth-service",
+                    "fault": "response-patch-body",
+                    "count": 1,
+                    "percentage": "0.54%"
+                },
+                {
+                    "service": "ts-auth-service",
+                    "fault": "response-replace-body",
+                    "count": 1,
+                    "percentage": "0.54%"
+                },
+                {
+                    "service": "ts-auth-service",
+                    "fault": "request-replace-path",
+                    "count": 1,
+                    "percentage": "0.54%"
+                },
+                {
+                    "service": "ts-security-service",
+                    "fault": "request-abort",
+                    "count": 1,
+                    "percentage": "0.54%"
+                },
+                {
+                    "service": "ts-food-service",
+                    "fault": "response-patch-body",
+                    "count": 1,
+                    "percentage": "0.54%"
+                },
+                {
+                    "service": "ts-security-service",
+                    "fault": "response-patch-body",
+                    "count": 1,
+                    "percentage": "0.54%"
+                },
+                {
+                    "service": "ts-station-food-service",
+                    "fault": "bandwidth",
+                    "count": 1,
+                    "percentage": "0.54%"
+                }
+            ]
+        },
+        "Network & Auxiliary Services": {
+            "fault_category": "Network",
+            "service_category": "Auxiliary Services",
+            "total": 164,
+            "percentage": "4.49%",
+            "pairs": [
+                {
+                    "service": "ts-consign-service",
+                    "fault": "latency",
+                    "count": 9,
+                    "percentage": "5.49%"
+                },
+                {
+                    "service": "ts-food-service",
+                    "fault": "duplicate",
+                    "count": 7,
+                    "percentage": "4.27%"
+                },
+                {
+                    "service": "ts-contacts-service",
+                    "fault": "loss",
+                    "count": 6,
+                    "percentage": "3.66%"
+                },
+                {
+                    "service": "ts-contacts-service",
+                    "fault": "delay",
+                    "count": 6,
+                    "percentage": "3.66%"
+                },
+                {
+                    "service": "ts-config-service",
+                    "fault": "corrupt",
+                    "count": 5,
+                    "percentage": "3.05%"
+                },
+                {
+                    "service": "ts-contacts-service",
+                    "fault": "partition",
+                    "count": 5,
+                    "percentage": "3.05%"
+                },
+                {
+                    "service": "ts-food-service",
+                    "fault": "delay",
+                    "count": 5,
+                    "percentage": "3.05%"
+                },
+                {
+                    "service": "ts-security-service",
+                    "fault": "corrupt",
+                    "count": 5,
+                    "percentage": "3.05%"
+                },
+                {
+                    "service": "ts-consign-service",
+                    "fault": "corrupt",
+                    "count": 4,
+                    "percentage": "2.44%"
+                },
+                {
+                    "service": "ts-security-service",
+                    "fault": "latency",
+                    "count": 4,
+                    "percentage": "2.44%"
+                },
+                {
+                    "service": "ts-price-service",
+                    "fault": "delay",
+                    "count": 4,
+                    "percentage": "2.44%"
+                },
+                {
+                    "service": "ts-food-service",
+                    "fault": "corrupt",
+                    "count": 4,
+                    "percentage": "2.44%"
+                },
+                {
+                    "service": "ts-security-service",
+                    "fault": "partition",
+                    "count": 4,
+                    "percentage": "2.44%"
+                },
+                {
+                    "service": "ts-contacts-service",
+                    "fault": "corrupt",
+                    "count": 4,
+                    "percentage": "2.44%"
+                },
+                {
+                    "service": "ts-user-service",
+                    "fault": "latency",
+                    "count": 4,
+                    "percentage": "2.44%"
+                },
+                {
+                    "service": "ts-food-service",
+                    "fault": "partition",
+                    "count": 3,
+                    "percentage": "1.83%"
+                },
+                {
+                    "service": "ts-food-service",
+                    "fault": "latency",
+                    "count": 3,
+                    "percentage": "1.83%"
+                },
+                {
+                    "service": "ts-station-food-service",
+                    "fault": "latency",
+                    "count": 3,
+                    "percentage": "1.83%"
+                },
+                {
+                    "service": "ts-user-service",
+                    "fault": "partition",
+                    "count": 3,
+                    "percentage": "1.83%"
+                },
+                {
+                    "service": "ts-user-service",
+                    "fault": "loss",
+                    "count": 3,
+                    "percentage": "1.83%"
+                },
+                {
+                    "service": "ts-user-service",
+                    "fault": "duplicate",
+                    "count": 3,
+                    "percentage": "1.83%"
+                },
+                {
+                    "service": "ts-price-service",
+                    "fault": "loss",
+                    "count": 3,
+                    "percentage": "1.83%"
+                },
+                {
+                    "service": "ts-auth-service",
+                    "fault": "corrupt",
+                    "count": 3,
+                    "percentage": "1.83%"
+                },
+                {
+                    "service": "ts-food-service",
+                    "fault": "loss",
+                    "count": 3,
+                    "percentage": "1.83%"
+                },
+                {
+                    "service": "ts-config-service",
+                    "fault": "latency",
+                    "count": 3,
+                    "percentage": "1.83%"
+                },
+                {
+                    "service": "ts-assurance-service",
+                    "fault": "loss",
+                    "count": 3,
+                    "percentage": "1.83%"
+                },
+                {
+                    "service": "ts-consign-service",
+                    "fault": "partition",
+                    "count": 3,
+                    "percentage": "1.83%"
+                },
+                {
+                    "service": "ts-contacts-service",
+                    "fault": "latency",
+                    "count": 3,
+                    "percentage": "1.83%"
+                },
+                {
+                    "service": "ts-assurance-service",
+                    "fault": "partition",
+                    "count": 2,
+                    "percentage": "1.22%"
+                },
+                {
+                    "service": "ts-auth-service",
+                    "fault": "loss",
+                    "count": 2,
+                    "percentage": "1.22%"
+                },
+                {
+                    "service": "ts-verification-code-service",
+                    "fault": "partition",
+                    "count": 2,
+                    "percentage": "1.22%"
+                },
+                {
+                    "service": "ts-verification-code-service",
+                    "fault": "latency",
+                    "count": 2,
+                    "percentage": "1.22%"
+                },
+                {
+                    "service": "ts-train-food-service",
+                    "fault": "delay",
+                    "count": 2,
+                    "percentage": "1.22%"
+                },
+                {
+                    "service": "ts-verification-code-service",
+                    "fault": "delay",
+                    "count": 2,
+                    "percentage": "1.22%"
+                },
+                {
+                    "service": "ts-security-service",
+                    "fault": "duplicate",
+                    "count": 2,
+                    "percentage": "1.22%"
+                },
+                {
+                    "service": "ts-security-service",
+                    "fault": "loss",
+                    "count": 2,
+                    "percentage": "1.22%"
+                },
+                {
+                    "service": "ts-auth-service",
+                    "fault": "latency",
+                    "count": 2,
+                    "percentage": "1.22%"
+                },
+                {
+                    "service": "ts-price-service",
+                    "fault": "corrupt",
+                    "count": 2,
+                    "percentage": "1.22%"
+                },
+                {
+                    "service": "ts-consign-service",
+                    "fault": "duplicate",
+                    "count": 2,
+                    "percentage": "1.22%"
+                },
+                {
+                    "service": "ts-auth-service",
+                    "fault": "partition",
+                    "count": 2,
+                    "percentage": "1.22%"
+                },
+                {
+                    "service": "ts-config-service",
+                    "fault": "delay",
+                    "count": 2,
+                    "percentage": "1.22%"
+                },
+                {
+                    "service": "ts-contacts-service",
+                    "fault": "duplicate",
+                    "count": 2,
+                    "percentage": "1.22%"
+                },
+                {
+                    "service": "ts-consign-service",
+                    "fault": "delay",
+                    "count": 2,
+                    "percentage": "1.22%"
+                },
+                {
+                    "service": "ts-assurance-service",
+                    "fault": "corrupt",
+                    "count": 1,
+                    "percentage": "0.61%"
+                },
+                {
+                    "service": "ts-auth-service",
+                    "fault": "delay",
+                    "count": 1,
+                    "percentage": "0.61%"
+                },
+                {
+                    "service": "ts-config-service",
+                    "fault": "duplicate",
+                    "count": 1,
+                    "percentage": "0.61%"
+                },
+                {
+                    "service": "ts-config-service",
+                    "fault": "loss",
+                    "count": 1,
+                    "percentage": "0.61%"
+                },
+                {
+                    "service": "ts-consign-price-service",
+                    "fault": "latency",
+                    "count": 1,
+                    "percentage": "0.61%"
+                },
+                {
+                    "service": "ts-config-service",
+                    "fault": "partition",
+                    "count": 1,
+                    "percentage": "0.61%"
+                },
+                {
+                    "service": "ts-assurance-service",
+                    "fault": "delay",
+                    "count": 1,
+                    "percentage": "0.61%"
+                },
+                {
+                    "service": "ts-assurance-service",
+                    "fault": "duplicate",
+                    "count": 1,
+                    "percentage": "0.61%"
+                },
+                {
+                    "service": "ts-assurance-service",
+                    "fault": "latency",
+                    "count": 1,
+                    "percentage": "0.61%"
+                },
+                {
+                    "service": "ts-price-service",
+                    "fault": "latency",
+                    "count": 1,
+                    "percentage": "0.61%"
+                },
+                {
+                    "service": "ts-price-service",
+                    "fault": "duplicate",
+                    "count": 1,
+                    "percentage": "0.61%"
+                },
+                {
+                    "service": "ts-security-service",
+                    "fault": "delay",
+                    "count": 1,
+                    "percentage": "0.61%"
+                },
+                {
+                    "service": "ts-price-service",
+                    "fault": "partition",
+                    "count": 1,
+                    "percentage": "0.61%"
+                },
+                {
+                    "service": "ts-user-service",
+                    "fault": "delay",
+                    "count": 1,
+                    "percentage": "0.61%"
+                },
+                {
+                    "service": "ts-train-food-service",
+                    "fault": "duplicate",
+                    "count": 1,
+                    "percentage": "0.61%"
+                },
+                {
+                    "service": "ts-station-food-service",
+                    "fault": "corrupt",
+                    "count": 1,
+                    "percentage": "0.61%"
+                },
+                {
+                    "service": "ts-user-service",
+                    "fault": "corrupt",
+                    "count": 1,
+                    "percentage": "0.61%"
+                },
+                {
+                    "service": "ts-train-food-service",
+                    "fault": "partition",
+                    "count": 1,
+                    "percentage": "0.61%"
+                },
+                {
+                    "service": "ts-verification-code-service",
+                    "fault": "corrupt",
+                    "count": 1,
+                    "percentage": "0.61%"
+                }
+            ]
+        },
+        "Network & Infrastructure": {
+            "fault_category": "Network",
+            "service_category": "Infrastructure",
+            "total": 110,
+            "percentage": "3.01%",
+            "pairs": [
+                {
+                    "service": "mysql",
+                    "fault": "corrupt",
+                    "count": 27,
+                    "percentage": "24.55%"
+                },
+                {
+                    "service": "mysql",
+                    "fault": "partition",
+                    "count": 23,
+                    "percentage": "20.91%"
+                },
+                {
+                    "service": "mysql",
+                    "fault": "loss",
+                    "count": 23,
+                    "percentage": "20.91%"
+                },
+                {
+                    "service": "mysql",
+                    "fault": "delay",
+                    "count": 22,
+                    "percentage": "20.00%"
+                },
+                {
+                    "service": "mysql",
+                    "fault": "duplicate",
+                    "count": 15,
+                    "percentage": "13.64%"
+                }
+            ]
+        },
+        "Network & Frontend": {
+            "fault_category": "Network",
+            "service_category": "Frontend",
+            "total": 88,
+            "percentage": "2.41%",
+            "pairs": [
+                {
+                    "service": "ts-ui-dashboard",
+                    "fault": "corrupt",
+                    "count": 18,
+                    "percentage": "20.45%"
+                },
+                {
+                    "service": "ts-ui-dashboard",
+                    "fault": "delay",
+                    "count": 18,
+                    "percentage": "20.45%"
+                },
+                {
+                    "service": "ts-ui-dashboard",
+                    "fault": "loss",
+                    "count": 18,
+                    "percentage": "20.45%"
+                },
+                {
+                    "service": "ts-ui-dashboard",
+                    "fault": "partition",
+                    "count": 18,
+                    "percentage": "20.45%"
+                },
+                {
+                    "service": "ts-ui-dashboard",
+                    "fault": "duplicate",
+                    "count": 16,
+                    "percentage": "18.18%"
+                }
+            ]
+        },
+        "resource & Core Services": {
+            "fault_category": "resource",
+            "service_category": "Core Services",
+            "total": 63,
+            "percentage": "1.72%",
+            "pairs": [
+                {
+                    "service": "ts-order-service",
+                    "fault": "cpu-exhaustion",
+                    "count": 5,
+                    "percentage": "7.94%"
+                },
+                {
+                    "service": "ts-seat-service",
+                    "fault": "cpu-exhaustion",
+                    "count": 5,
+                    "percentage": "7.94%"
+                },
+                {
+                    "service": "ts-route-service",
+                    "fault": "container-kill",
+                    "count": 4,
+                    "percentage": "6.35%"
+                },
+                {
+                    "service": "ts-train-service",
+                    "fault": "cpu-exhaustion",
+                    "count": 4,
+                    "percentage": "6.35%"
+                },
+                {
+                    "service": "ts-route-service",
+                    "fault": "cpu-exhaustion",
+                    "count": 4,
+                    "percentage": "6.35%"
+                },
+                {
+                    "service": "ts-basic-service",
+                    "fault": "cpu-exhaustion",
+                    "count": 4,
+                    "percentage": "6.35%"
+                },
+                {
+                    "service": "ts-inside-payment-service",
+                    "fault": "container-kill",
+                    "count": 3,
+                    "percentage": "4.76%"
+                },
+                {
+                    "service": "ts-basic-service",
+                    "fault": "memory-exhaustion",
+                    "count": 3,
+                    "percentage": "4.76%"
+                },
+                {
+                    "service": "ts-order-other-service",
+                    "fault": "container-kill",
+                    "count": 3,
+                    "percentage": "4.76%"
+                },
+                {
+                    "service": "ts-station-service",
+                    "fault": "container-kill",
+                    "count": 2,
+                    "percentage": "3.17%"
+                },
+                {
+                    "service": "ts-order-service",
+                    "fault": "container-kill",
+                    "count": 2,
+                    "percentage": "3.17%"
+                },
+                {
+                    "service": "ts-order-other-service",
+                    "fault": "cpu-exhaustion",
+                    "count": 2,
+                    "percentage": "3.17%"
+                },
+                {
+                    "service": "ts-train-service",
+                    "fault": "container-kill",
+                    "count": 2,
+                    "percentage": "3.17%"
+                },
+                {
+                    "service": "ts-basic-service",
+                    "fault": "container-kill",
+                    "count": 2,
+                    "percentage": "3.17%"
+                },
+                {
+                    "service": "ts-seat-service",
+                    "fault": "container-kill",
+                    "count": 2,
+                    "percentage": "3.17%"
+                },
+                {
+                    "service": "ts-train-service",
+                    "fault": "memory-exhaustion",
+                    "count": 2,
+                    "percentage": "3.17%"
+                },
+                {
+                    "service": "ts-order-service",
+                    "fault": "pod-failure",
+                    "count": 1,
+                    "percentage": "1.59%"
+                },
+                {
+                    "service": "ts-order-service",
+                    "fault": "memory-exhaustion",
+                    "count": 1,
+                    "percentage": "1.59%"
+                },
+                {
+                    "service": "ts-inside-payment-service",
+                    "fault": "cpu-exhaustion",
+                    "count": 1,
+                    "percentage": "1.59%"
+                },
+                {
+                    "service": "ts-inside-payment-service",
+                    "fault": "memory-exhaustion",
+                    "count": 1,
+                    "percentage": "1.59%"
+                },
+                {
+                    "service": "ts-inside-payment-service",
+                    "fault": "pod-kill",
+                    "count": 1,
+                    "percentage": "1.59%"
+                },
+                {
+                    "service": "ts-order-other-service",
+                    "fault": "memory-exhaustion",
+                    "count": 1,
+                    "percentage": "1.59%"
+                },
+                {
+                    "service": "ts-route-service",
+                    "fault": "pod-kill",
+                    "count": 1,
+                    "percentage": "1.59%"
+                },
+                {
+                    "service": "ts-route-service",
+                    "fault": "pod-failure",
+                    "count": 1,
+                    "percentage": "1.59%"
+                },
+                {
+                    "service": "ts-route-service",
+                    "fault": "memory-exhaustion",
+                    "count": 1,
+                    "percentage": "1.59%"
+                },
+                {
+                    "service": "ts-order-service",
+                    "fault": "pod-kill",
+                    "count": 1,
+                    "percentage": "1.59%"
+                },
+                {
+                    "service": "ts-payment-service",
+                    "fault": "container-kill",
+                    "count": 1,
+                    "percentage": "1.59%"
+                },
+                {
+                    "service": "ts-seat-service",
+                    "fault": "memory-exhaustion",
+                    "count": 1,
+                    "percentage": "1.59%"
+                },
+                {
+                    "service": "ts-station-service",
+                    "fault": "cpu-exhaustion",
+                    "count": 1,
+                    "percentage": "1.59%"
+                },
+                {
+                    "service": "ts-station-service",
+                    "fault": "memory-exhaustion",
+                    "count": 1,
+                    "percentage": "1.59%"
+                }
+            ]
+        },
+        "resource & Auxiliary Services": {
+            "fault_category": "resource",
+            "service_category": "Auxiliary Services",
+            "total": 61,
+            "percentage": "1.67%",
+            "pairs": [
+                {
+                    "service": "ts-consign-service",
+                    "fault": "container-kill",
+                    "count": 7,
+                    "percentage": "11.48%"
+                },
+                {
+                    "service": "ts-user-service",
+                    "fault": "container-kill",
+                    "count": 6,
+                    "percentage": "9.84%"
+                },
+                {
+                    "service": "ts-config-service",
+                    "fault": "cpu-exhaustion",
+                    "count": 5,
+                    "percentage": "8.20%"
+                },
+                {
+                    "service": "ts-config-service",
+                    "fault": "container-kill",
+                    "count": 5,
+                    "percentage": "8.20%"
+                },
+                {
+                    "service": "ts-food-service",
+                    "fault": "container-kill",
+                    "count": 5,
+                    "percentage": "8.20%"
+                },
+                {
+                    "service": "ts-station-food-service",
+                    "fault": "container-kill",
+                    "count": 4,
+                    "percentage": "6.56%"
+                },
+                {
+                    "service": "ts-price-service",
+                    "fault": "container-kill",
+                    "count": 4,
+                    "percentage": "6.56%"
+                },
+                {
+                    "service": "ts-train-food-service",
+                    "fault": "container-kill",
+                    "count": 4,
+                    "percentage": "6.56%"
+                },
+                {
+                    "service": "ts-price-service",
+                    "fault": "cpu-exhaustion",
+                    "count": 3,
+                    "percentage": "4.92%"
+                },
+                {
+                    "service": "ts-config-service",
+                    "fault": "memory-exhaustion",
+                    "count": 2,
+                    "percentage": "3.28%"
+                },
+                {
+                    "service": "ts-user-service",
+                    "fault": "cpu-exhaustion",
+                    "count": 2,
+                    "percentage": "3.28%"
+                },
+                {
+                    "service": "ts-contacts-service",
+                    "fault": "container-kill",
+                    "count": 2,
+                    "percentage": "3.28%"
+                },
+                {
+                    "service": "ts-consign-price-service",
+                    "fault": "container-kill",
+                    "count": 1,
+                    "percentage": "1.64%"
+                },
+                {
+                    "service": "ts-assurance-service",
+                    "fault": "container-kill",
+                    "count": 1,
+                    "percentage": "1.64%"
+                },
+                {
+                    "service": "ts-assurance-service",
+                    "fault": "pod-kill",
+                    "count": 1,
+                    "percentage": "1.64%"
+                },
+                {
+                    "service": "ts-auth-service",
+                    "fault": "container-kill",
+                    "count": 1,
+                    "percentage": "1.64%"
+                },
+                {
+                    "service": "ts-contacts-service",
+                    "fault": "memory-exhaustion",
+                    "count": 1,
+                    "percentage": "1.64%"
+                },
+                {
+                    "service": "ts-consign-service",
+                    "fault": "cpu-exhaustion",
+                    "count": 1,
+                    "percentage": "1.64%"
+                },
+                {
+                    "service": "ts-consign-service",
+                    "fault": "pod-kill",
+                    "count": 1,
+                    "percentage": "1.64%"
+                },
+                {
+                    "service": "ts-contacts-service",
+                    "fault": "cpu-exhaustion",
+                    "count": 1,
+                    "percentage": "1.64%"
+                },
+                {
+                    "service": "ts-train-food-service",
+                    "fault": "memory-exhaustion",
+                    "count": 1,
+                    "percentage": "1.64%"
+                },
+                {
+                    "service": "ts-security-service",
+                    "fault": "cpu-exhaustion",
+                    "count": 1,
+                    "percentage": "1.64%"
+                },
+                {
+                    "service": "ts-train-food-service",
+                    "fault": "pod-kill",
+                    "count": 1,
+                    "percentage": "1.64%"
+                },
+                {
+                    "service": "ts-user-service",
+                    "fault": "memory-exhaustion",
+                    "count": 1,
+                    "percentage": "1.64%"
+                }
+            ]
+        },
+        "resource & Top-Level Services": {
+            "fault_category": "resource",
+            "service_category": "Top-Level Services",
+            "total": 46,
+            "percentage": "1.26%",
+            "pairs": [
+                {
+                    "service": "ts-travel-plan-service",
+                    "fault": "memory-exhaustion",
+                    "count": 8,
+                    "percentage": "17.39%"
+                },
+                {
+                    "service": "ts-travel-plan-service",
+                    "fault": "cpu-exhaustion",
+                    "count": 6,
+                    "percentage": "13.04%"
+                },
+                {
+                    "service": "ts-travel-service",
+                    "fault": "container-kill",
+                    "count": 5,
+                    "percentage": "10.87%"
+                },
+                {
+                    "service": "ts-travel2-service",
+                    "fault": "container-kill",
+                    "count": 4,
+                    "percentage": "8.70%"
+                },
+                {
+                    "service": "ts-preserve-service",
+                    "fault": "cpu-exhaustion",
+                    "count": 3,
+                    "percentage": "6.52%"
+                },
+                {
+                    "service": "ts-travel-service",
+                    "fault": "cpu-exhaustion",
+                    "count": 3,
+                    "percentage": "6.52%"
+                },
+                {
+                    "service": "ts-travel2-service",
+                    "fault": "cpu-exhaustion",
+                    "count": 3,
+                    "percentage": "6.52%"
+                },
+                {
+                    "service": "ts-preserve-service",
+                    "fault": "container-kill",
+                    "count": 2,
+                    "percentage": "4.35%"
+                },
+                {
+                    "service": "ts-route-plan-service",
+                    "fault": "container-kill",
+                    "count": 2,
+                    "percentage": "4.35%"
+                },
+                {
+                    "service": "ts-preserve-service",
+                    "fault": "memory-exhaustion",
+                    "count": 2,
+                    "percentage": "4.35%"
+                },
+                {
+                    "service": "ts-travel-service",
+                    "fault": "memory-exhaustion",
+                    "count": 2,
+                    "percentage": "4.35%"
+                },
+                {
+                    "service": "ts-route-plan-service",
+                    "fault": "cpu-exhaustion",
+                    "count": 2,
+                    "percentage": "4.35%"
+                },
+                {
+                    "service": "ts-travel-plan-service",
+                    "fault": "container-kill",
+                    "count": 1,
+                    "percentage": "2.17%"
+                },
+                {
+                    "service": "ts-route-plan-service",
+                    "fault": "pod-kill",
+                    "count": 1,
+                    "percentage": "2.17%"
+                },
+                {
+                    "service": "ts-preserve-service",
+                    "fault": "pod-kill",
+                    "count": 1,
+                    "percentage": "2.17%"
+                },
+                {
+                    "service": "ts-travel-service",
+                    "fault": "pod-kill",
+                    "count": 1,
+                    "percentage": "2.17%"
+                }
+            ]
+        },
+        "HTTP & Infrastructure": {
+            "fault_category": "HTTP",
+            "service_category": "Infrastructure",
+            "total": 37,
+            "percentage": "1.01%",
+            "pairs": [
+                {
+                    "service": "mysql",
+                    "fault": "bandwidth",
+                    "count": 37,
+                    "percentage": "100.00%"
+                }
+            ]
+        },
+        "DNS & Top-Level Services": {
+            "fault_category": "DNS",
+            "service_category": "Top-Level Services",
+            "total": 37,
+            "percentage": "1.01%",
+            "pairs": [
+                {
+                    "service": "ts-preserve-service",
+                    "fault": "dns",
+                    "count": 12,
+                    "percentage": "32.43%"
+                },
+                {
+                    "service": "ts-travel2-service",
+                    "fault": "dns",
+                    "count": 9,
+                    "percentage": "24.32%"
+                },
+                {
+                    "service": "ts-travel-service",
+                    "fault": "dns",
+                    "count": 7,
+                    "percentage": "18.92%"
+                },
+                {
+                    "service": "ts-route-plan-service",
+                    "fault": "dns",
+                    "count": 6,
+                    "percentage": "16.22%"
+                },
+                {
+                    "service": "ts-travel-plan-service",
+                    "fault": "dns",
+                    "count": 3,
+                    "percentage": "8.11%"
+                }
+            ]
+        },
+        "DNS & Core Services": {
+            "fault_category": "DNS",
+            "service_category": "Core Services",
+            "total": 18,
+            "percentage": "0.49%",
+            "pairs": [
+                {
+                    "service": "ts-basic-service",
+                    "fault": "dns",
+                    "count": 5,
+                    "percentage": "27.78%"
+                },
+                {
+                    "service": "ts-order-service",
+                    "fault": "dns",
+                    "count": 3,
+                    "percentage": "16.67%"
+                },
+                {
+                    "service": "ts-seat-service",
+                    "fault": "dns",
+                    "count": 3,
+                    "percentage": "16.67%"
+                },
+                {
+                    "service": "ts-order-other-service",
+                    "fault": "dns",
+                    "count": 2,
+                    "percentage": "11.11%"
+                },
+                {
+                    "service": "ts-route-service",
+                    "fault": "dns",
+                    "count": 2,
+                    "percentage": "11.11%"
+                },
+                {
+                    "service": "ts-train-service",
+                    "fault": "dns",
+                    "count": 2,
+                    "percentage": "11.11%"
+                },
+                {
+                    "service": "ts-station-service",
+                    "fault": "dns",
+                    "count": 1,
+                    "percentage": "5.56%"
+                }
+            ]
+        },
+        "Time & Top-Level Services": {
+            "fault_category": "Time",
+            "service_category": "Top-Level Services",
+            "total": 16,
+            "percentage": "0.44%",
+            "pairs": [
+                {
+                    "service": "ts-travel2-service",
+                    "fault": "time",
+                    "count": 7,
+                    "percentage": "43.75%"
+                },
+                {
+                    "service": "ts-travel-plan-service",
+                    "fault": "time",
+                    "count": 4,
+                    "percentage": "25.00%"
+                },
+                {
+                    "service": "ts-travel-service",
+                    "fault": "time",
+                    "count": 4,
+                    "percentage": "25.00%"
+                },
+                {
+                    "service": "ts-route-plan-service",
+                    "fault": "time",
+                    "count": 1,
+                    "percentage": "6.25%"
+                }
+            ]
+        },
+        "DNS & Frontend": {
+            "fault_category": "DNS",
+            "service_category": "Frontend",
+            "total": 14,
+            "percentage": "0.38%",
+            "pairs": [
+                {
+                    "service": "ts-ui-dashboard",
+                    "fault": "dns",
+                    "count": 14,
+                    "percentage": "100.00%"
+                }
+            ]
+        },
+        "Time & Core Services": {
+            "fault_category": "Time",
+            "service_category": "Core Services",
+            "total": 13,
+            "percentage": "0.36%",
+            "pairs": [
+                {
+                    "service": "ts-basic-service",
+                    "fault": "time",
+                    "count": 4,
+                    "percentage": "30.77%"
+                },
+                {
+                    "service": "ts-order-other-service",
+                    "fault": "time",
+                    "count": 4,
+                    "percentage": "30.77%"
+                },
+                {
+                    "service": "ts-route-service",
+                    "fault": "time",
+                    "count": 2,
+                    "percentage": "15.38%"
+                },
+                {
+                    "service": "ts-order-service",
+                    "fault": "time",
+                    "count": 1,
+                    "percentage": "7.69%"
+                },
+                {
+                    "service": "ts-station-service",
+                    "fault": "time",
+                    "count": 1,
+                    "percentage": "7.69%"
+                },
+                {
+                    "service": "ts-train-service",
+                    "fault": "time",
+                    "count": 1,
+                    "percentage": "7.69%"
+                }
+            ]
+        },
+        "resource & Frontend": {
+            "fault_category": "resource",
+            "service_category": "Frontend",
+            "total": 13,
+            "percentage": "0.36%",
+            "pairs": [
+                {
+                    "service": "ts-ui-dashboard",
+                    "fault": "memory-exhaustion",
+                    "count": 6,
+                    "percentage": "46.15%"
+                },
+                {
+                    "service": "ts-ui-dashboard",
+                    "fault": "container-kill",
+                    "count": 4,
+                    "percentage": "30.77%"
+                },
+                {
+                    "service": "ts-ui-dashboard",
+                    "fault": "cpu-exhaustion",
+                    "count": 3,
+                    "percentage": "23.08%"
+                }
+            ]
+        },
+        "Time & Auxiliary Services": {
+            "fault_category": "Time",
+            "service_category": "Auxiliary Services",
+            "total": 8,
+            "percentage": "0.22%",
+            "pairs": [
+                {
+                    "service": "ts-user-service",
+                    "fault": "time",
+                    "count": 4,
+                    "percentage": "50.00%"
+                },
+                {
+                    "service": "ts-auth-service",
+                    "fault": "time",
+                    "count": 1,
+                    "percentage": "12.50%"
+                },
+                {
+                    "service": "ts-config-service",
+                    "fault": "time",
+                    "count": 1,
+                    "percentage": "12.50%"
+                },
+                {
+                    "service": "ts-food-service",
+                    "fault": "time",
+                    "count": 1,
+                    "percentage": "12.50%"
+                },
+                {
+                    "service": "ts-price-service",
+                    "fault": "time",
+                    "count": 1,
+                    "percentage": "12.50%"
+                }
+            ]
+        },
+        "DNS & Auxiliary Services": {
+            "fault_category": "DNS",
+            "service_category": "Auxiliary Services",
+            "total": 4,
+            "percentage": "0.11%",
+            "pairs": [
+                {
+                    "service": "ts-food-service",
+                    "fault": "dns",
+                    "count": 3,
+                    "percentage": "75.00%"
+                },
+                {
+                    "service": "ts-config-service",
+                    "fault": "dns",
+                    "count": 1,
+                    "percentage": "25.00%"
+                }
+            ]
+        },
+        "Time & Frontend": {
+            "fault_category": "Time",
+            "service_category": "Frontend",
+            "total": 1,
+            "percentage": "0.03%",
+            "pairs": [
+                {
+                    "service": "ts-ui-dashboard",
+                    "fault": "time",
+                    "count": 1,
+                    "percentage": "100.00%"
+                }
+            ]
+        }
+    }
+}

@@ -1,0 +1,563 @@
+case_id: sonnet.3112
+framework: thinkdepthai-claude-sonnet-4.6
+data_dir: /home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-claude-sonnet-4.6/data_9425322c
+gt_from_injection_json:
+  fault_type: NetworkPartition
+  fault_category: NetworkChaos
+  injection_name: ts5-ts-preserve-service-partition-dkhqzh
+  gt_services:
+  - ts-preserve-service
+  - ts-seat-service
+  source_service: ts-preserve-service
+  target_service: ts-seat-service
+  start_time: '2025-07-22T17:07:54Z'
+  end_time: '2025-07-22T17:11:54Z'
+  display_config:
+    direction: both
+    duration: 4
+    injection_point:
+      source_service: ts-preserve-service
+      target_service: ts-seat-service
+    namespace: ts
+gt_from_causal_graph_json:
+  root_causes:
+  - ts-preserve-service
+  alarm_nodes:
+  - span|loadgenerator::HTTP POST http://ts-ui-dashboard:8080/api/v1/preserveservice/preserve
+agent_predicted:
+  root_causes:
+  - rabbitmq
+  predicted_graph_nodes:
+  - rabbitmq
+  - ts-food-service
+  - ts-notification-service
+  - ts-delivery-service
+  - ts-preserve-service
+  - ts-ui-dashboard
+raw_sql_count_total: 29
+raw_sql_list_sample:
+- "\nSELECT service_name, span_name, attr_status_code, attr_http_response_status_code, \n       COUNT(*) as span_count,\n       AVG(duration) as avg_duration_ns,\n       PERCENTILE_CONT(0.99) WITHIN GROUP\
+  \ (ORDER BY duration) as p99_duration_ns,\n       SUM(CASE WHEN attr_status_code = 'STATUS_CODE_ERROR' THEN 1 ELSE 0 END) as error_count\nFROM abnormal_traces\nGROUP BY service_name, span_name, attr_status_code,\
+  \ attr_http_response_status_code\nORDER BY error_count DESC, avg_duration_ns DESC\nLIMIT 30\n"
+- '
+
+  SELECT service_name, level, COUNT(*) as count
+
+  FROM abnormal_logs
+
+  GROUP BY service_name, level
+
+  ORDER BY count DESC
+
+  LIMIT 30
+
+  '
+- "\n-- Get trace IDs that involve the preserve endpoint\nSELECT DISTINCT trace_id \nFROM abnormal_traces \nWHERE span_name LIKE '%preserve%'\nLIMIT 10\n"
+- "\nSELECT time, service_name, level, message \nFROM abnormal_logs \nWHERE level IN ('ERROR', 'WARN')\nORDER BY time ASC\nLIMIT 50\n"
+- "\n-- Get the full trace for one preserve endpoint call\nSELECT trace_id, span_id, parent_span_id, span_name, service_name, \n       duration, attr_status_code, attr_http_response_status_code,\n     \
+  \  time\nFROM abnormal_traces \nWHERE trace_id = '4eb55ef540bba2dbd42cb649b75bfaf5'\nORDER BY time ASC\n"
+- "\nSELECT time, service_name, level, message \nFROM abnormal_logs \nWHERE service_name IN ('ts-notification-service', 'ts-preserve-service')\nAND level IN ('ERROR', 'WARN')\nORDER BY time ASC\nLIMIT 50\n"
+- "\n-- Get the full trace for one preserve endpoint call - fewer columns\nSELECT trace_id, span_name, service_name, duration, attr_status_code, attr_http_response_status_code, time\nFROM abnormal_traces\
+  \ \nWHERE trace_id = '4eb55ef540bba2dbd42cb649b75bfaf5'\nORDER BY time ASC\nLIMIT 25\n"
+- "\nSELECT time, service_name, level, message \nFROM abnormal_logs \nWHERE service_name = 'ts-preserve-service'\nORDER BY time ASC\nLIMIT 30\n"
+- "\n-- Get ALL spans for the preserve trace sorted by duration to find the bottleneck\nSELECT span_name, service_name, duration/1000000000.0 as duration_sec, \n       attr_status_code, attr_http_response_status_code\n\
+  FROM abnormal_traces \nWHERE trace_id = '4eb55ef540bba2dbd42cb649b75bfaf5'\nORDER BY duration DESC\nLIMIT 25\n"
+- "\n-- Find which spans from ts-preserve-service have the longest duration \nSELECT span_name, service_name, duration/1000000000.0 as duration_sec, \n       attr_status_code, attr_http_response_status_code,\
+  \ time\nFROM abnormal_traces \nWHERE service_name = 'ts-preserve-service'\nORDER BY duration DESC\nLIMIT 20\n"
+- "\n-- Look at normal preserve service logs to see the full happy path\nSELECT time, service_name, level, message \nFROM normal_logs \nWHERE service_name = 'ts-preserve-service'\nORDER BY time ASC\nLIMIT\
+  \ 20\n"
+- "\n-- Check what metrics are available for RabbitMQ or message queue services\nSELECT DISTINCT metric, service_name\nFROM abnormal_metrics\nWHERE service_name LIKE '%rabbit%' OR service_name LIKE '%mq%'\
+  \ OR service_name LIKE '%queue%'\n   OR metric LIKE '%rabbit%' OR metric LIKE '%amqp%'\nLIMIT 20\n"
+- '
+
+  -- Compare RabbitMQ metrics between normal and abnormal
+
+  SELECT ''abnormal'' as period, metric, AVG(value) as avg_value, MAX(value) as max_value
+
+  FROM abnormal_metrics
+
+  WHERE service_name = ''rabbitmq''
+
+  GROUP BY metric
+
+  UNION ALL
+
+  SELECT ''normal'' as period, metric, AVG(value) as avg_value, MAX(value) as max_value
+
+  FROM normal_metrics
+
+  WHERE service_name = ''rabbitmq''
+
+  GROUP BY metric
+
+  ORDER BY metric, period
+
+  LIMIT 40
+
+  '
+- '
+
+  -- Check RabbitMQ memory and CPU during incident
+
+  SELECT time, metric, value
+
+  FROM abnormal_metrics
+
+  WHERE service_name = ''rabbitmq''
+
+  AND metric IN (''k8s.pod.memory_limit_utilization'', ''k8s.pod.cpu_limit_utilization'', ''container.memory.usage'', ''k8s.pod.cpu.usage'')
+
+  ORDER BY time
+
+  LIMIT 20
+
+  '
+- '
+
+  -- Check RabbitMQ statefulset and network metrics
+
+  SELECT time, metric, value
+
+  FROM abnormal_metrics
+
+  WHERE service_name = ''rabbitmq''
+
+  AND metric IN (''k8s.statefulset.current_pods'', ''k8s.statefulset.ready_pods'', ''k8s.pod.network.errors'', ''k8s.pod.network.io'')
+
+  ORDER BY time
+
+  LIMIT 20
+
+  '
+- '
+
+  -- Check ts-preserve-service metrics in sum to see HTTP errors
+
+  SELECT time, metric, value, service_name
+
+  FROM abnormal_metrics_sum
+
+  WHERE service_name = ''ts-preserve-service''
+
+  ORDER BY time
+
+  LIMIT 20
+
+  '
+- '
+
+  -- Check if food-service or notification-service have errors in normal period
+
+  SELECT service_name, level, COUNT(*) as count
+
+  FROM normal_logs
+
+  WHERE service_name IN (''ts-food-service'', ''ts-notification-service'', ''ts-preserve-service'')
+
+  AND level IN (''ERROR'', ''WARN'')
+
+  GROUP BY service_name, level
+
+  ORDER BY count DESC
+
+  LIMIT 10
+
+  '
+- '
+
+  -- Get all error-level logs from all services in abnormal period
+
+  SELECT service_name, level, message, COUNT(*) as count
+
+  FROM abnormal_logs
+
+  WHERE level = ''ERROR''
+
+  GROUP BY service_name, level, message
+
+  ORDER BY count DESC
+
+  LIMIT 20
+
+  '
+- '
+
+  -- Check normal period errors from notification and preserve services
+
+  SELECT service_name, level, message, COUNT(*) as count
+
+  FROM normal_logs
+
+  WHERE service_name IN (''ts-notification-service'', ''ts-preserve-service'', ''ts-delivery-service'', ''ts-food-service'')
+
+  AND level = ''ERROR''
+
+  GROUP BY service_name, level, message
+
+  ORDER BY count DESC
+
+  LIMIT 15
+
+  '
+- "\n-- Compare normal vs abnormal trace errors for preserve endpoint\nSELECT service_name, span_name, attr_status_code, \n       COUNT(*) as count,\n       AVG(duration)/1000000.0 as avg_duration_ms\n\
+  FROM normal_traces\nWHERE span_name LIKE '%preserve%'\nGROUP BY service_name, span_name, attr_status_code\nORDER BY count DESC\nLIMIT 15\n"
+raw_sql_substring_audit:
+  has_baseline_contrast_substring: false
+  has_call_tree_build_substring: false
+  has_trace_follow_substring: true
+  has_jvm_metric_substring: false
+  has_container_metric_substring: true
+  has_k8s_metric_substring: true
+  has_db_metric_substring: false
+  has_network_metric_substring: true
+  has_status_error_filter: false
+  has_status_unset_filter: false
+  where_service_name_filters:
+  - ts-preserve-service
+  - rabbitmq
+  - ts-food-service
+  - ts-delivery-service
+  - ts-notification-service
+parquet_evidence:
+  top_error_services_abnormal_logs:
+  - service: ts-food-service
+    count: 39
+  - service: ts-notification-service
+    count: 33
+  - service: ts-delivery-service
+    count: 33
+  - service: ts-preserve-service
+    count: 10
+  top_error_services_normal_logs:
+  - service: ts-food-service
+    count: 285
+  - service: ts-order-service
+    count: 81
+  - service: ts-preserve-service
+    count: 81
+  - service: ts-notification-service
+    count: 31
+  - service: ts-delivery-service
+    count: 31
+  gt_service_abnormal_log_error_count:
+    ts-preserve-service: 10
+  gt_service_normal_log_error_count:
+    ts-preserve-service: 81
+  gt_service_status_code_distribution:
+    ts-preserve-service:
+      Unset: 102
+      Error: 36
+    ts-seat-service:
+      Unset: 1816
+  gt_service_abnormal_span_count:
+    ts-preserve-service: 138
+    ts-seat-service: 1816
+  top_error_span_services:
+  - service: ts-preserve-service
+    sc: Error
+    count: 36
+  - service: loadgenerator
+    sc: Error
+    count: 20
+  gt_latency_stats:
+  - service: ts-preserve-service
+    avg_ms: 31884.4
+    max_ms: 131405.0
+    p95_ms: 131132.1
+    count: 138
+  - service: ts-seat-service
+    avg_ms: 12.3
+    max_ms: 681.1
+    p95_ms: 19.4
+    count: 1816
+  chronic_noise_detail:
+  - service: ts-food-service
+    normal_err: 285
+    abnormal_err: 39
+    ratio: 7.31
+  - service: ts-notification-service
+    normal_err: 31
+    abnormal_err: 33
+    ratio: 0.94
+  - service: ts-delivery-service
+    normal_err: 31
+    abnormal_err: 33
+    ratio: 0.94
+  gt_span_name_breakdown:
+  - span_name: POST
+    avg_ms: 2873.5
+    count: 512
+  - span_name: GET
+    avg_ms: 5.8
+    count: 500
+  - span_name: SeatController.getLeftTicketOfInterval
+    avg_ms: 18.1
+    count: 454
+  - span_name: POST /api/v1/seatservice/seats/left_tickets
+    avg_ms: 19.1
+    count: 454
+  - span_name: POST /api/v1/preserveservice/preserve
+    avg_ms: 122144.0
+    count: 12
+  - span_name: PreserveController.preserve
+    avg_ms: 122136.6
+    count: 12
+  - span_name: BasicErrorController.error
+    avg_ms: 1.1
+    count: 10
+  gt_parent_child_pairs:
+  - - ts-travel-service
+    - ts-seat-service
+  - - ts-seat-service
+    - ts-order-other-service
+  - - ts-seat-service
+    - ts-config-service
+  - - ts-preserve-service
+    - ts-security-service
+  - - ts-preserve-service
+    - ts-contacts-service
+  - - ts-preserve-service
+    - ts-order-service
+  - - ts-preserve-service
+    - ts-assurance-service
+  - - ts-preserve-service
+    - ts-travel-service
+  - - ts-seat-service
+    - ts-order-service
+  - - ts-travel-plan-service
+    - ts-seat-service
+  - - ts-preserve-service
+    - ts-user-service
+  - - ts-preserve-service
+    - ts-food-service
+  - - ts-travel2-service
+    - ts-seat-service
+  - - ts-ui-dashboard
+    - ts-preserve-service
+  - - ts-preserve-service
+    - ts-basic-service
+  gt_caller_distribution:
+  - caller: ts-seat-service
+    count: 1362
+  - caller: ts-travel-service
+    count: 196
+  - caller: ts-travel-plan-service
+    count: 154
+  - caller: ts-travel2-service
+    count: 104
+  - caller: ts-preserve-service
+    count: 82
+trajectory_reasoning_snippets:
+- idx: 0
+  text: I'll systematically investigate the incident by analyzing the telemetry data. Let me start by discovering the available data files.
+- idx: 2
+  text: 'Now let me get the schema for all 10 files at once:'
+- idx: 6
+  text: 'Now let me query the traces and logs simultaneously to identify abnormal patterns:'
+- idx: 83
+  text: 'Based on my thorough investigation, I have identified the root cause and the complete fault propagation path. Let me provide the final structured analysis.
+
+
+    ## Root Cause Analysis Summary
+
+
+    ### Incident Timeline
+
+    - **17:07:54 UTC** — First ts-food-service AMQP error: `send delivery info to mq error][AmqpIOException: java.io.IOException]`
+
+    - **17:07:55 UTC** — First preserve request completes (food-service responded quickly despite AMQP error)
+
+    - **17:07:56 UTC** — ts-notification-service begins logging: `"Failed to check/redeclare auto-delete queue(s)."` (every ~7s throughout incident)
+
+    - **17:07:57 UTC** — Second preserve request starts → ts-food-service''s `createFoodOrder` now **hangs for 131 seconds** (TCP connection to RabbitMQ drops/packets dropped)
+
+    - **17:07:57–17:11:50 UTC** — All subsequent preserve requests fail with HTTP 500 (~131s timeouts)
+
+
+    ### Root Cause
+
+    **RabbitMQ AMQP broker became network-unreachable** (TCP-level connection hang). While the K8s pod appeared "ready" per health checks, the AMQP port became unresponsive — incoming TCP SYN packets were
+    dropped rather than rejected, causing 131-second TCP timeouts in connecting services.
+
+
+    ### Fault Propagation
+
+    1. **RabbitMQ**'
+- idx: -1
+  text: "Based on my thorough investigation, I have identified the root cause and the complete fault propagation path. Let me provide the final structured analysis.\n\n## Root Cause Analysis Summary\n\n\
+    ### Incident Timeline\n- **17:07:54 UTC** — First ts-food-service AMQP error: `send delivery info to mq error][AmqpIOException: java.io.IOException]`\n- **17:07:55 UTC** — First preserve request completes\
+    \ (food-service responded quickly despite AMQP error)\n- **17:07:56 UTC** — ts-notification-service begins logging: `\"Failed to check/redeclare auto-delete queue(s).\"` (every ~7s throughout incident)\n\
+    - **17:07:57 UTC** — Second preserve request starts → ts-food-service's `createFoodOrder` now **hangs for 131 seconds** (TCP connection to RabbitMQ drops/packets dropped)\n- **17:07:57–17:11:50 UTC**\
+    \ — All subsequent preserve requests fail with HTTP 500 (~131s timeouts)\n\n### Root Cause\n**RabbitMQ AMQP broker became network-unreachable** (TCP-level connection hang). While the K8s pod appeared\
+    \ \"ready\" per health checks, the AMQP port became unresponsive — incoming TCP SYN packets were dropped rather than rejected, causing 131-second TCP timeouts in connecting services.\n\n### Fault Propagation\n\
+    1. **RabbitMQ** → becomes unreachable at AMQP/TCP level\n2. **ts-food-service** → `createFoodOrder` blocks for 131s on AMQP publish (TCP timeout) — no HTTP response sent to ts-preserve-service during\
+    \ this time\n3. **ts-preserve-service** → waiting for ts-food-service HTTP response, blocks for 131s → returns HTTP 500\n4. **ts-ui-dashboard** → proxy times out at 20s\n5. **ts-notification-service**\
+    \ & **ts-delivery-service** → fail independently trying to check/redeclare AMQP queues\n\n```json\n{\n  \"nodes\": [\n    {\n      \"component\": \"rabbitmq\",\n      \"state\": [\"UNAVAILABLE\"],\n\
+    \      \"timestamp\": 1753203074\n    },\n    {\n      \"component\": \"ts-food-service\",\n      \"state\": [\"TIMEOUT\", \"HIGH_LATENCY\"],\n      \"timestamp\": 1753203074\n    },\n    {\n      \"\
+    component\": \"ts-notification-service\",\n      \"state\": [\"HIGH_LOG_ER"
+- idx: -1
+  text: 'Now let me query the traces and logs simultaneously to identify abnormal patterns:'
+gt_required_capabilities:
+  gt_is_silent: false
+  gt_is_loudest: false
+  chronic_noise_present: true
+  chronic_noise_carriers:
+  - ts-food-service
+  - ts-notification-service
+  - ts-delivery-service
+  required_metric_layer: network/db
+  gt_path_is_edge_fault: true
+  gt_has_name_twin: true
+  name_twin_candidates:
+  - ts-user-service
+  - ts-assurance-service
+  - ts-order-service
+  - ts-security-service
+  - ts-notification-service
+  - ts-travel-service
+  - ts-station-food-service
+  - ts-route-plan-service
+  - ts-contacts-service
+  - ts-auth-service
+  - ts-config-service
+  - ts-inside-payment-service
+  - ts-travel2-service
+  - ts-basic-service
+  - ts-travel-plan-service
+  - ts-seat-service
+  - ts-consign-service
+  - ts-consign-price-service
+  - ts-delivery-service
+  - ts-price-service
+  - ts-verification-code-service
+  - ts-food-service
+  - ts-station-service
+  - ts-train-food-service
+  - ts-order-other-service
+  - ts-train-service
+  - ts-route-service
+  - ts-payment-service
+  - ts-user-service
+  - ts-assurance-service
+  - ts-order-service
+  - ts-security-service
+  - ts-notification-service
+  - ts-travel-service
+  - ts-station-food-service
+  - ts-route-plan-service
+  - ts-contacts-service
+  - ts-auth-service
+  - ts-config-service
+  - ts-inside-payment-service
+  - ts-travel2-service
+  - ts-preserve-service
+  - ts-basic-service
+  - ts-travel-plan-service
+  - ts-consign-service
+  - ts-consign-price-service
+  - ts-delivery-service
+  - ts-price-service
+  - ts-verification-code-service
+  - ts-food-service
+  - ts-station-service
+  - ts-train-food-service
+  - ts-order-other-service
+  - ts-train-service
+  - ts-route-service
+  - ts-payment-service
+  gt_diluted_across_spans: false
+path_alignment:
+  gt_touched_in_trajectory: true
+  gt_neighbors_touched: {}
+  gt_neighbors_from_causal_graph:
+  - ts-ui-dashboard
+  agent_focus_services:
+  - service: ts-preserve-service
+    count: 6
+  - service: rabbitmq
+    count: 4
+  - service: ts-food-service
+    count: 1
+  agent_predicted_rc_in_gt_neighborhood: false
+counterfactual:
+  PD1_baseline_contrast:
+    chronic_noise_in_data: true
+    predicted_rc_is_chronic_carrier: false
+    predicted_rc_error_ratios:
+      rabbitmq:
+        normal: 0
+        abnormal: 0
+    if_run_would_reveal: false
+  PD2_call_tree_build:
+    gt_is_upstream_of_agent_focus: true
+    if_run_would_surface_gt: true
+  PD3_fault_layer_metric_probe:
+    metric_family_if_probed: network/db
+    gt_metric_anomaly_exists_in_parquet: null
+  PD4_named_candidate_not_isolated:
+    if_isolated_predicted_rc_show_healthy:
+      rabbitmq: true
+  R_correct_heuristic_would_reach_gt:
+    if_loudness_applied: false
+    if_baseline_diff_applied: true
+    if_edge_direction_applied: true
+    if_name_twin_check_applied: true
+  D_obstacle_is_structural: true
+parquet_queries_run:
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-claude-sonnet-4.6/data_9425322c/abnormal_logs.parquet') WHERE level IN ('ERROR','SEVERE')
+    GROUP BY 1 ORDER BY n DESC LIMIT 10
+  purpose: top_error_services_abnormal_logs
+  row_count: 4
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-claude-sonnet-4.6/data_9425322c/normal_logs.parquet') WHERE level IN ('ERROR','SEVERE')
+    GROUP BY 1 ORDER BY n DESC LIMIT 10
+  purpose: top_error_services_normal_logs
+  row_count: 5
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-claude-sonnet-4.6/data_9425322c/abnormal_logs.parquet') WHERE level IN ('ERROR','SEVERE')
+    AND service_name IN ('ts-preserve-service','ts-seat-service') GROUP BY 1
+  purpose: gt_service_abnormal_log_error_count
+  row_count: 1
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-claude-sonnet-4.6/data_9425322c/normal_logs.parquet') WHERE level IN ('ERROR','SEVERE')
+    AND service_name IN ('ts-preserve-service','ts-seat-service') GROUP BY 1
+  purpose: gt_service_normal_log_error_count
+  row_count: 1
+- sql: SELECT service_name, "attr.status_code" as sc, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-claude-sonnet-4.6/data_9425322c/abnormal_traces.parquet') WHERE
+    service_name IN ('ts-preserve-service','ts-seat-service') GROUP BY 1,2
+  purpose: gt_service_status_code_distribution
+  row_count: 3
+- sql: SELECT service_name, "attr.status_code" as sc, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-claude-sonnet-4.6/data_9425322c/abnormal_traces.parquet') WHERE
+    "attr.status_code" IN ('Error','ERROR') GROUP BY 1,2 ORDER BY n DESC LIMIT 5
+  purpose: top_error_span_services
+  row_count: 2
+- sql: SELECT service_name, AVG(duration)/1e6 AS avg_ms, MAX(duration)/1e6 AS max_ms, QUANTILE_CONT(duration, 0.95)/1e6 AS p95_ms, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-claude-sonnet-4.6/data_9425322c/abnormal_traces.parquet')
+    WHERE service_name IN ('ts-preserve-service','ts-seat-service') GROUP BY 1
+  purpose: gt_latency_stats
+  row_count: 2
+- sql: SELECT DISTINCT service_name FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-claude-sonnet-4.6/data_9425322c/abnormal_traces.parquet')
+  purpose: all_abnormal_trace_services
+  row_count: 29
+counterfactual_queries_run:
+- sql: SELECT span_name, AVG(duration)/1e6 AS avg_ms, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-claude-sonnet-4.6/data_9425322c/abnormal_traces.parquet') WHERE
+    service_name IN ('ts-preserve-service','ts-seat-service') GROUP BY 1 ORDER BY n DESC LIMIT 20
+  purpose: gt_span_name_breakdown
+  row_count: 7
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-claude-sonnet-4.6/data_9425322c/normal_logs.parquet') WHERE level IN ('ERROR','SEVERE')
+    AND service_name IN ('rabbitmq') GROUP BY 1
+  purpose: predicted_rc_normal_err
+  row_count: 0
+- sql: SELECT service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-claude-sonnet-4.6/data_9425322c/abnormal_logs.parquet') WHERE level IN ('ERROR','SEVERE')
+    AND service_name IN ('rabbitmq') GROUP BY 1
+  purpose: predicted_rc_abnormal_err
+  row_count: 0
+- sql: SELECT DISTINCT p.service_name, c.service_name FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-claude-sonnet-4.6/data_9425322c/abnormal_traces.parquet') c JOIN read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-claude-sonnet-4.6/data_9425322c/abnormal_traces.parquet')
+    p ON c.parent_span_id=p.span_id WHERE c.service_name IN ('ts-preserve-service','ts-seat-service') OR p.service_name IN ('ts-preserve-service','ts-seat-service') LIMIT 200
+  purpose: gt_parent_child_pairs
+  row_count: 17
+- sql: SELECT p.service_name, COUNT(*) AS n FROM read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-claude-sonnet-4.6/data_9425322c/abnormal_traces.parquet') c JOIN read_parquet('/home/nn/SOTA-agents/RCAgentEval/eval-data/thinkdepthai-claude-sonnet-4.6/data_9425322c/abnormal_traces.parquet')
+    p ON c.parent_span_id=p.span_id WHERE c.service_name IN ('ts-preserve-service','ts-seat-service') GROUP BY 1 ORDER BY n DESC LIMIT 5
+  purpose: gt_caller_distribution
+  row_count: 5
+classes_to_verify:
+- D3
+- PD_NamedCandidateNotIsolated
+- U2_ChronicAmbientNoiseAnchor
+- sonnet.PD5_ThinkNarrationDominant
