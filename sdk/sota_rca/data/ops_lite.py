@@ -93,21 +93,65 @@ def download_dataset(
 
 
 def load_manifest(cache_dir: Path = DEFAULT_CACHE_DIR) -> list[dict]:
-    """Load manifest.jsonl, return list of dicts."""
+    """Build manifest by scanning cases/ directory.
+
+    ops-lite organizes data as cases/batch-XXX/{*.parquet, injection.json,
+    causal_graph.json, env.json, label.txt}. There is no manifest.jsonl;
+    we synthesize one here from injection.json + env.json.
+    """
     cache_dir = Path(cache_dir).expanduser().resolve()
-    mp = cache_dir / "manifest.jsonl"
-    if not mp.exists():
+    cases_dir = cache_dir / "cases"
+    if not cases_dir.exists():
         raise FileNotFoundError(
-            f"manifest.jsonl not found at {mp}. "
+            f"cases/ dir not found at {cases_dir}. "
             f"Run: uv run sota-rca data download"
         )
     out = []
-    with open(mp) as f:
-        for line in f:
-            line = line.strip()
-            if not line:
-                continue
-            out.append(json.loads(line))
+    for case_dir in sorted(cases_dir.iterdir()):
+        if not case_dir.is_dir():
+            continue
+        rec = {"name": case_dir.name}
+        # Pull metadata from env.json + injection.json + label.txt
+        env_p = case_dir / "env.json"
+        inj_p = case_dir / "injection.json"
+        lbl_p = case_dir / "label.txt"
+        if env_p.exists():
+            try:
+                env = json.loads(env_p.read_text())
+                rec["system"] = env.get("NAMESPACE", "unknown")
+                rec.update({k: v for k, v in env.items() if k.startswith(("NORMAL_", "ABNORMAL_"))})
+            except Exception:
+                pass
+        if inj_p.exists():
+            try:
+                inj = json.loads(inj_p.read_text())
+                rec["injection"] = inj
+                # ops-lite uses: fault_type ("hybrid"|"single"), category ("hs"|"ts"|...),
+                # engine_config_summary (list of {app, chaos_type, namespace, ...})
+                rec["fault_type"] = inj.get("fault_type", "unknown")
+                rec["category"] = inj.get("category", "unknown")
+                rec["chaos_family"] = inj.get("fault_type", "unknown")  # alias
+                # Extract chaos types + target apps from engine_config_summary
+                ecs = inj.get("engine_config_summary") or []
+                chaos_types = list({e.get("chaos_type", "") for e in ecs if e.get("chaos_type")})
+                target_apps = list({e.get("app", "") for e in ecs if e.get("app")})
+                rec["primary_kind"] = chaos_types[0] if chaos_types else "unknown"
+                rec["subtypes"] = chaos_types
+                rec["root_services"] = target_apps
+                rec["n_svc"] = len(set(target_apps))
+                rec["n_alarm_svc"] = len(ecs)
+                rec["hybrid"] = inj.get("fault_type") == "hybrid"
+                rec["has_kill_leg"] = any("Kill" in t for t in chaos_types)
+                rec["start_time"] = inj.get("start_time")
+                rec["end_time"] = inj.get("end_time")
+            except Exception:
+                pass
+        if lbl_p.exists():
+            try:
+                rec["label"] = lbl_p.read_text().strip()
+            except Exception:
+                pass
+        out.append(rec)
     return out
 
 
