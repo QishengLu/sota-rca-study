@@ -57,10 +57,39 @@ if ! command -v node >/dev/null 2>&1; then
 fi
 green "node $(node --version 2>/dev/null || echo 'NOT INSTALLED')"
 
-# ---------- 5. Sync Python deps ----------
-cyan "==> uv sync (Python deps)"
+# ---------- 5. Sync Python deps (root) ----------
+cyan "==> uv sync (root)"
 cd "$REPO_DIR"
 uv sync --all-extras
+
+# ---------- 5.5 Install 6 framework deps (each in its own .venv) ----------
+cyan "==> Installing 6 framework dependencies"
+for entry in \
+    "thinkdepthai:uv" \
+    "aiq:uv" \
+    "openrca:uv" \
+    "claudecode:uv" \
+    "taskweaver:pip" \
+    "mabc:pip"; do
+    fw="${entry%%:*}"; mode="${entry##*:}"
+    fw_dir="$REPO_DIR/frameworks/$fw"
+    [ -d "$fw_dir" ] || continue
+    cyan "--- $fw ($mode) ---"
+    cd "$fw_dir"
+    if [[ "$mode" == "uv" ]]; then
+        # Use existing uv.lock for reproducibility
+        uv sync 2>&1 | tail -5 || yellow "$fw uv sync had issues; continuing"
+    else
+        # taskweaver / mabc use legacy requirements.txt
+        if [[ ! -d .venv ]]; then
+            uv venv --python 3.10
+        fi
+        uv pip install -r requirements.txt 2>&1 | tail -5 || yellow "$fw pip install had issues; continuing"
+    fi
+    # Install sota-rca-study root SDK so `from sota_rca.tracker import auto_install` works
+    uv pip install -e "$REPO_DIR" 2>&1 | tail -3 || yellow "$fw could not install root SDK"
+done
+cd "$REPO_DIR"
 
 # ---------- 6. Submodule init (if .gitmodules has real URLs) ----------
 if grep -q "^\[submodule" "$REPO_DIR/.gitmodules" 2>/dev/null; then

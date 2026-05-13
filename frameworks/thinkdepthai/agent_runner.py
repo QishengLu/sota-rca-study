@@ -20,7 +20,7 @@ except ImportError:
     _tracker = None  # sota_rca not on PYTHONPATH; tracker disabled
 
 # 根据模型选择 hook：Claude 走 Anthropic SDK，其余走 OpenAI SDK
-_RCA_MODEL = os.environ.get("RCA_MODEL", "claude-sonnet-4-6")
+_RCA_MODEL = os.environ.get("UTU_LLM_MODEL", os.environ.get("RCA_MODEL", "claude-sonnet-4-6"))
 if _RCA_MODEL.startswith("claude"):
     _tracker.install_anthropic_hooks()
 
@@ -56,7 +56,7 @@ RCA_TOOLS_BY_NAME = {t.name: t for t in RCA_TOOLS}
 
 # ── 节点工厂（闭包注入 prompt/tools，保持原拓扑）─────────────────────────────
 
-RCA_MODEL = os.environ.get("RCA_MODEL", "claude-sonnet-4-6")
+RCA_MODEL = os.environ.get("UTU_LLM_MODEL", os.environ.get("RCA_MODEL", "claude-sonnet-4-6"))
 
 
 def _make_model(max_tokens: int = 32768):

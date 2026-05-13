@@ -107,7 +107,21 @@ def find_case_data_dir(data_dir, question):
 
 
 def convert_parquet_to_mabc(parquet_dir):
-    """Convert parquet data to mABC JSON format on-the-fly."""
+    """Convert parquet data to mABC JSON format on-the-fly.
+
+    Tries the new sota-rca-study data_adapter first (ops-lite-aware);
+    falls back to legacy convert_all if not available.
+    """
+    # Preferred: new ops-lite-aware adapter (handles both lowercase OTel and PascalCase)
+    try:
+        from data_adapter import ensure_mabc_data_for_case
+        basename = os.path.basename(parquet_dir.rstrip("/")) or "unknown_case"
+        out = ensure_mabc_data_for_case(parquet_dir, basename)
+        return str(out)
+    except Exception as e:
+        logging.warning(f"data_adapter fallback to legacy convert_all: {e}")
+
+    # Legacy fallback
     from convert_all import parse_traces_fast, get_timestamp_from_env
     import tempfile
 

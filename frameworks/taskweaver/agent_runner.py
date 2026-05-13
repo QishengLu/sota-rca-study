@@ -640,7 +640,7 @@ def main():
     app_dir = os.path.join(os.path.dirname(__file__), "project")
 
     # 动态读取模型配置：RCA_MODEL 由 RolloutRunner 传入，API key/base_url 从 .env 读取
-    rca_model = os.environ.get("RCA_MODEL", "claude-sonnet-4-6")
+    rca_model = os.environ.get("UTU_LLM_MODEL", os.environ.get("RCA_MODEL", "claude-sonnet-4-6"))
     logger.info(f"[{_SAMPLE_TAG}] Model: {rca_model}")
 
     config_override = {
@@ -649,7 +649,7 @@ def main():
         "planner.prompt_file_path": prompt_yaml_path,
         "llm.model": rca_model,
         "llm.api_key": os.environ.get("OPENAI_API_KEY", ""),
-        "llm.api_base": os.environ.get("OPENAI_BASE_URL", "https://api.shubiaobiao.cn/v1"),
+        "llm.api_base": os.environ.get("UTU_LLM_BASE_URL", os.environ.get("OPENAI_BASE_URL", "https://api.shubiaobiao.cn/v1")),
     }
 
     app = TaskWeaverApp(app_dir=app_dir, config=config_override)

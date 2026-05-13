@@ -19,8 +19,12 @@ env/
 htmlcov/
 .tox/
 
-# uv
-uv.lock
+# uv (root uv.lock is ignored; per-framework uv.lock is committed)
+/uv.lock
+
+# Docker volume (PG data dir)
+infra/pgdata/
+infra/pgdata/**
 
 # Node / Frontend
 node_modules/

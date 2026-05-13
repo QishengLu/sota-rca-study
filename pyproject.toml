@@ -8,10 +8,9 @@ license = { text = "Apache-2.0" }
 authors = [{ name = "sota-rca-study contributors" }]
 
 dependencies = [
-    # 框架底座: aegis v3 (pin commit, 防止 upstream breaking change)
-    # 注: 用户 fork 完后改成: "rcabench-platform @ git+https://github.com/<user-fork>/aegis.git@<pin-hash>#subdirectory=rcabench-platform"
-    # 占位用本地 path，等 fork 完替换
-    # "rcabench-platform @ file:///home/nn/aegis/rcabench-platform",
+    # 框架底座: aegis v3 with [sdk, llm-eval] extras (pin commit hash)
+    # Pinned: 2026-05-13 main HEAD; bump when needed.
+    "rcabench-platform[sdk,llm-eval] @ git+https://github.com/OperationsPAI/aegis.git@0a2da31690df187842483b124bf816860daf1c9b#subdirectory=rcabench-platform",
 
     # 数据处理
     "polars>=1.0",
@@ -88,6 +87,10 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["sdk/sota_rca"]
+
+[tool.hatch.metadata]
+# Allow git+https direct refs in dependencies (rcabench-platform via git)
+allow-direct-references = true
 
 [tool.uv]
 package = true

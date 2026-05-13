@@ -1,38 +1,29 @@
-# 6 个 RCA agent submodules
-# URL 在用户 fork 后填入 (WP1 阶段占位)
-#
-# 用法:
-#   git submodule add <forked-url> frameworks/<name>
-#   git submodule update --init --recursive
-#
-# 占位条目，等用户提供 fork URL 后取消注释:
+[submodule "frameworks/thinkdepthai"]
+	path = frameworks/thinkdepthai
+	url = https://github.com/QishengLu/rca_study_thinkdepthai.git
+	branch = main
 
-# [submodule "frameworks/thinkdepthai"]
-#     path = frameworks/thinkdepthai
-#     url = https://github.com/LGU-SE-Internal/ThinkDepthAI.git
-#     branch = main
+[submodule "frameworks/aiq"]
+	path = frameworks/aiq
+	url = https://github.com/QishengLu/rca_study_aiq.git
+	branch = main
 
-# [submodule "frameworks/aiq"]
-#     path = frameworks/aiq
-#     url = TBD-user-fork-url
-#     branch = main
+[submodule "frameworks/taskweaver"]
+	path = frameworks/taskweaver
+	url = https://github.com/QishengLu/rca_study_taskweaver.git
+	branch = main
 
-# [submodule "frameworks/taskweaver"]
-#     path = frameworks/taskweaver
-#     url = TBD-user-fork-url
-#     branch = main
+[submodule "frameworks/openrca"]
+	path = frameworks/openrca
+	url = https://github.com/QishengLu/rca_study_openrca.git
+	branch = main
 
-# [submodule "frameworks/openrca"]
-#     path = frameworks/openrca
-#     url = TBD-user-fork-url
-#     branch = main
+[submodule "frameworks/claudecode"]
+	path = frameworks/claudecode
+	url = https://github.com/QishengLu/rca_study_claudecode.git
+	branch = main
 
-# [submodule "frameworks/claudecode"]
-#     path = frameworks/claudecode
-#     url = TBD-user-fork-url
-#     branch = main
-
-# [submodule "frameworks/mabc"]
-#     path = frameworks/mabc
-#     url = TBD-user-fork-url
-#     branch = main
+[submodule "frameworks/mabc"]
+	path = frameworks/mabc
+	url = https://github.com/QishengLu/rca_study_mabc.git
+	branch = main
